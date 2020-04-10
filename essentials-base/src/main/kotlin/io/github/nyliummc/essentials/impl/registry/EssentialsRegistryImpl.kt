@@ -15,7 +15,8 @@ class EssentialsRegistryImpl(private val essentials: EssentialsImpl) : Essential
     }
 
     override fun <T, B : Builder<T>> supplyBuilder(builderClass: Class<B>): B {
-        return builders[builderClass]?.get() as B;
+        @Suppress("UNCHECKED_CAST")
+        return builders[builderClass]?.get() as B
     }
 
     override fun <T, B : Builder<T>> registerBuilder(builderClass: Class<B>, builderSupplier: Supplier<B>) {

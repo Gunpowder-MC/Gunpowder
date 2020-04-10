@@ -73,6 +73,7 @@ allprojects {
 	}
 
 	dependencies {
+		// Kotlin Magic, flesh this out.
 		implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
 		minecraft "com.mojang:minecraft:$Globals.minecraftVersion"
@@ -93,6 +94,8 @@ allprojects {
 		// Soft Dependencies - Permissions (To be debated because of fabric api WIP: i509VCB)
 		compile 'net.luckperms:api:5.0' // LuckPerms
 		// modCompileOnly 'ca.stellardrift.permissionsex:permissionsex-fabric:2.0-SNAPSHOT' // PEX
+
+
 	}
 
 	afterEvaluate {
@@ -122,6 +125,16 @@ allprojects {
 	task sourcesJar(type: Jar, dependsOn: classes) {
 		classifier = 'sources'
 		from sourceSets.main.allSource
+	}
+}
+
+dependencies {
+	// Gradle is funky for some weird reason
+	// So we have to parse this out so the main source set sees the modules
+	String[] modules = project.essentials_modules.split(",")
+	modules.each {module ->
+		String localModule = ':' + module
+		implementation project(localModule)
 	}
 }
 

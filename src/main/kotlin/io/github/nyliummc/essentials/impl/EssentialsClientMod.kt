@@ -7,6 +7,9 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.server.MinecraftServer
 
+/**
+ * An implementation of the mod for clients which run an IntegratedServer.
+ */
 @Environment(EnvType.CLIENT)
 class EssentialsClientMod : AbstractEssentialsMod(), ClientModInitializer {
     private var client: MinecraftClient? = null
