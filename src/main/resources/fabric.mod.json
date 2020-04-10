@@ -24,10 +24,8 @@
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-
   "license": "MIT",
   "icon": "assets/essentials/icon.png",
-
   "environment": "*",
   "entrypoints": {
     "server": [
@@ -37,15 +35,9 @@
       "io.github.nyliummc.essentials.impl.EssentialsClientMod"
     ]
   },
-  "mixins": [
-    "mixins.essentials.json"
-  ],
-
   "depends": {
     "fabricloader": ">=0.7.2",
     "fabric": "*",
     "playerabilitylib": ">=1.1.0"
-  },
-  "suggests": {
   }
 }

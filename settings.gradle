@@ -11,9 +11,6 @@ pluginManagement {
 
 rootProject.name = "essentials"
 
-// Make sure you add this to the list in 'gradle.properties'
 // The base module
 include 'essentials-base'
 // All other modules should be below
-// For example:
-// include 'essentials-foo'
