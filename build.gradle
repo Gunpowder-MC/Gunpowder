@@ -1,0 +1,141 @@
+plugins {
+	id 'fabric-loom' version '0.2.7-SNAPSHOT' apply false
+	id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+}
+
+class Globals {
+	static def version = "0.1"
+	static def minecraftVersion = "1.15.2"
+	static def yarnBuild = "+build.15"
+	static def loaderVersion = "0.8.2+build.194"
+}
+
+class Dependencies {
+	static def fabricApiVersion = "0.5.1+build.294-1.15"
+	static def palVersion = "1.1.0"
+}
+
+version = Globals.version + "+" + Globals.minecraftVersion
+logger.lifecycle("""
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+	Building Essentials
+	Version: $Globals.version
+	Minecraft Version: $Globals.minecraftVersion
+	Fabric-Loader Version: $Globals.loaderVersion
+
+	Using:
+	Fabric-API Version: $Dependencies.fabricApiVersion
+	PlayerAbilityLib Version: $Dependencies.palVersion
+	
+	Output files will be in /build/libs
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+""")
+
+
+allprojects {
+	apply plugin: 'fabric-loom'
+	apply plugin: 'maven-publish'
+	apply plugin: 'org.jetbrains.kotlin.jvm'
+
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+	configurations {
+		dev
+	}
+
+	compileKotlin {
+		kotlinOptions {
+			jvmTarget = "1.8"
+		}
+	}
+	compileTestKotlin {
+		kotlinOptions {
+			jvmTarget = "1.8"
+		}
+	}
+
+	repositories {
+		mavenCentral()
+		maven {
+			name = "Ladysnake Libs"
+			url = "https://dl.bintray.com/ladysnake/libs"
+		}
+		maven {
+			name = "pex-repo"
+			url = "https://repo.glaremasters.me/repository/permissionsex/"
+		}
+		maven {
+			name = "Sponge Repo"
+			url = "https://repo.spongepowered.org/maven"
+		}
+	}
+
+	dependencies {
+		implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+		minecraft "com.mojang:minecraft:$Globals.minecraftVersion"
+		mappings "net.fabricmc:yarn:${Globals.minecraftVersion}${Globals.yarnBuild}:v2"
+		modCompile "net.fabricmc:fabric-loader:$Globals.loaderVersion"
+
+		// Fabric API. This is technically optional, but you probably want it anyway.
+		modCompile "net.fabricmc.fabric-api:fabric-api:$Dependencies.fabricApiVersion"
+
+		// Hard Dependencies
+		modImplementation "io.github.ladysnake:PlayerAbilityLib:$Dependencies.palVersion"
+		include "io.github.ladysnake:PlayerAbilityLib:$Dependencies.palVersion"
+
+		// Libraries - To be debated
+		compile 'me.lucko.configurate:configurate-hocon:3.5'
+		compile 'com.github.ben-manes.caffeine:caffeine:2.8.0'
+
+		// Soft Dependencies - Permissions (To be debated because of fabric api WIP: i509VCB)
+		compile 'net.luckperms:api:5.0' // LuckPerms
+		// modCompileOnly 'ca.stellardrift.permissionsex:permissionsex-fabric:2.0-SNAPSHOT' // PEX
+	}
+
+	afterEvaluate {
+		remapJar {
+			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+			archiveName = "${archivesBaseName}-${version}.jar"
+		}
+
+		artifacts {
+			dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+		}
+
+		processResources {
+			inputs.property "version", project.version
+
+			from(sourceSets.main.resources.srcDirs) {
+				include "fabric.mod.json"
+				expand "version": project.version
+			}
+
+			from(sourceSets.main.resources.srcDirs) {
+				exclude "fabric.mod.json"
+			}
+		}
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+}
+
+jar {
+	from "LICENSE"
+}
+
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}

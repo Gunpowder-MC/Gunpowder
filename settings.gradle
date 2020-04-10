@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        jcenter()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "essentials"
+
+// The base module
+include 'essentials-base'
+
+// For extensions, we define them below, just add a new entry and gradle will auto generate the module

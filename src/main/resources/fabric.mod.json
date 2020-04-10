@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "essentials-mod",
+  "version": "${version}",
+  "name": "Essentials",
+  "description": "A server sided mod providing essential functions for server users and administrators",
+  "authors": [
+    {
+      "name": "NyliumMC",
+      "contact": {
+        "homepage": "https://github.com/NyliumMC"
+      }
+    },
+    {
+      "name": "i509VCB",
+      "minecraft": "765e5d33-c991-454f-8775-b6a7a394c097",
+      "contact": {
+        "sources": "https://github.com/i509VCB/",
+        "discord": "i509VCB#9778"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "MIT",
+  "icon": "assets/essentials/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "io.github.nyliummc.essentials.impl.EssentialsServerMod"
+    ],
+    "client": [
+      "io.github.nyliummc.essentials.impl.EssentialsClientMod"
+    ]
+  },
+  "mixins": [
+    "mixins.essentials.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.2",
+    "fabric": "*",
+    "playerabilitylib": ">=1.1.0"
+  },
+  "suggests": {
+  }
+}
