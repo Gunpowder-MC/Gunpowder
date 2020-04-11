@@ -84,6 +84,11 @@ allprojects {
     }
 
     dependencies {
+        // Ah yes the little hack so we don't need to manually declare accessors as a dependency
+        if (project.name != "essentials-accessors-impl") {
+            compile project(":essentials-accessors-impl")
+        }
+
         // Kotlin Magic, flesh this out.
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
@@ -95,7 +100,9 @@ allprojects {
         modCompile "net.fabricmc.fabric-api:fabric-api:$Dependencies.Required.fabricApiVersion"
 
         // Hard Dependencies
-        modImplementation "io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion"
+        modImplementation ("io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion") {
+            transitive = false
+        }
         include "io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion"
 
         // Libraries - To be debated

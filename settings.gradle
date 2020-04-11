@@ -11,6 +11,9 @@ pluginManagement {
 
 rootProject.name = "essentials"
 
+// Accessors
+include 'essentials-accessors-impl'
+
 // The base module
 include 'essentials-base'
 // All other modules should be below

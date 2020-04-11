@@ -35,6 +35,9 @@
       "io.github.nyliummc.essentials.impl.EssentialsClientMod"
     ]
   },
+  "mixins": [
+    "mixins.accessors.essentials.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.2",
     "fabric": "*",
