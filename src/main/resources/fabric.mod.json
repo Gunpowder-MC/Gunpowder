@@ -33,6 +33,9 @@
     ],
     "client": [
       "io.github.nyliummc.essentials.impl.EssentialsClientMod"
+    ],
+    "essentials:extensions": [
+      "io.github.nyliummc.essentials.extension.teleport.impl.TeleportationExtensionEntrypoint"
     ]
   },
   "mixins": [

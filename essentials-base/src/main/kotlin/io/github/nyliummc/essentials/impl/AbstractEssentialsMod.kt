@@ -5,10 +5,7 @@ import net.minecraft.server.MinecraftServer
 abstract class AbstractEssentialsMod() {
     protected abstract val server: MinecraftServer?
     fun initialize() {
-        EssentialsImpl.instance
-        // TODO: Testing
-        println("This works I guess")
-        // TODO: Testing
+        EssentialsImpl
     }
 
     companion object {

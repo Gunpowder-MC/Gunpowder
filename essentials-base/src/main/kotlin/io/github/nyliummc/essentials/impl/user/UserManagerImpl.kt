@@ -13,7 +13,7 @@ class UserManagerImpl : UserManager {
     /**
      * @apiNote values obtained by this map are dirty and should not be cached. Instead you should query the UserManager every time you need the user.
      */
-    private val onlineUsers: Map<UUID, PlayerBackedUser> = IdentityHashMap()
+    private val onlineUsers: Map<UUID, ServerUser> = IdentityHashMap()
     /**
      * @apiNote values obtained by this map are dirty and should not be cached. Values here are removed soon in the future.
      * TODO Implement this
@@ -38,7 +38,7 @@ class UserManagerImpl : UserManager {
     override fun get(uuid: UUID): Optional<CompletableFuture<User>> {
         val user = this.getOnline(uuid)
         return if (user.isPresent) {
-            user.map { u -> CompletableFuture.completedFuture(u)}
+            user.map { CompletableFuture.completedFuture(it) }
         } else Optional.empty()
         // TODO Implement offline checks
     }
@@ -46,7 +46,7 @@ class UserManagerImpl : UserManager {
     override fun get(username: String): Optional<CompletableFuture<User>> {
         val user = this.getOnline(username)
         return if (user.isPresent) {
-            user.map { u -> CompletableFuture.completedFuture(u)}
+            user.map { CompletableFuture.completedFuture(it) }
         } else Optional.empty()
         // TODO Implement offline checks
     }
@@ -55,7 +55,5 @@ class UserManagerImpl : UserManager {
         return AbstractEssentialsMod.currentServer
     }
 
-    private class OfflineUserEntry private constructor(private val user: OfflineUserImpl) {
-        private val added: Instant = Instant.now()
-    }
+    private class OfflineUserEntry private constructor(private val user: OfflineUser, private val added: Instant = Instant.now())
 }

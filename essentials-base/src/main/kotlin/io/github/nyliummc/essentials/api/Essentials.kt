@@ -5,7 +5,7 @@ import io.github.nyliummc.essentials.api.user.UserManager
 import java.util.*
 
 interface Essentials {
-    fun <T : EssentialsExtension?> getExtension(clazz: Class<T>?): Optional<T>
+    fun <T : EssentialsExtension> getExtension(clazz: Class<T>?): Optional<T>
     val userManager: UserManager
     val registry: EssentialsRegistry
 }
