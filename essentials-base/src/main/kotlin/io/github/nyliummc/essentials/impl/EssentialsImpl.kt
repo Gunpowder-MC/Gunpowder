@@ -4,9 +4,11 @@ import io.github.nyliummc.essentials.api.Essentials
 import io.github.nyliummc.essentials.api.extension.EssentialsExtension
 import io.github.nyliummc.essentials.api.extension.ExtensionEntrypoint
 import io.github.nyliummc.essentials.api.permission.VanillaPermissionEngine
+import io.github.nyliummc.essentials.commands.InfoCommand
 import io.github.nyliummc.essentials.impl.permission.VanillaPermissionEngineImpl
 import io.github.nyliummc.essentials.impl.registry.EssentialsRegistryImpl
 import io.github.nyliummc.essentials.impl.user.UserManagerImpl
+import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
 import java.util.*
 
@@ -34,5 +36,7 @@ object EssentialsImpl : Essentials {
             container.entrypoint.registerBuilders(registry)
             container.entrypoint.registerExtensions<EssentialsExtension>(this, registry)
         }
+
+        CommandRegistry.INSTANCE.register(false, InfoCommand::register)
     }
 }
