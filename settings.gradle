@@ -16,5 +16,9 @@ include 'essentials-accessors-impl'
 
 // The base module
 include 'essentials-base'
+
+// API
+include 'essentials-api'
+
 // All other modules should be below
 include 'essentials-teleport-helper'
