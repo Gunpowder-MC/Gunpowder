@@ -105,6 +105,14 @@ allprojects {
         }
         include "io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion"
 
+
+        // Database stuff
+        implementation 'org.jetbrains.exposed:exposed:0.10.1'
+
+        // Database drivers
+        implementation 'org.postgresql:postgresql:42.2.2'
+        implementation 'org.xerial:sqlite-jdbc:3.28.0'
+
         // Libraries - To be debated
         //compile 'me.lucko.configurate:configurate-hocon:3.5'
         //compile 'com.github.ben-manes.caffeine:caffeine:2.8.0'

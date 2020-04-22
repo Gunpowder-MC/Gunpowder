@@ -19,3 +19,4 @@ include 'essentials-base'
 // All other modules should be below
 include 'essentials-command-helper'
 include 'essentials-teleport-helper'
+include 'essentials-tp'

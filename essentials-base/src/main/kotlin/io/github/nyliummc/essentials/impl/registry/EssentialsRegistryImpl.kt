@@ -1,9 +1,13 @@
 package io.github.nyliummc.essentials.impl.registry
 
+import com.mojang.brigadier.CommandDispatcher
 import io.github.nyliummc.essentials.api.EssentialsRegistry
 import io.github.nyliummc.essentials.api.extension.EssentialsExtension
 import io.github.nyliummc.essentials.api.util.Builder
 import io.github.nyliummc.essentials.impl.EssentialsImpl
+import net.fabricmc.fabric.api.registry.CommandRegistry
+import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.ServerCommandSource
 import java.util.*
 import java.util.function.Supplier
 
@@ -25,5 +29,9 @@ class EssentialsRegistryImpl(private val essentials: EssentialsImpl) : Essential
 
     override fun <T : EssentialsExtension> registerExtension(extensionClass: Class<T>, instance: T) {
         essentials.register(extensionClass, instance)
+    }
+
+    override fun registerCommand(registerCallback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
+        CommandRegistry.INSTANCE.register(false, registerCallback)
     }
 }

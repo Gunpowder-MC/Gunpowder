@@ -1,0 +1,7 @@
+archivesBaseName = "essentials-tp"
+
+dependencies {
+//    implementation project(":essentials-api")
+    implementation project(":essentials-command-helper")
+    implementation project(":essentials-teleport-helper")
+}

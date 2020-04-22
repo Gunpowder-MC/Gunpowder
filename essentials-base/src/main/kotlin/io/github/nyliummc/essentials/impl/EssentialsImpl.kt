@@ -18,6 +18,7 @@ object EssentialsImpl : Essentials {
     private val vanillaPermissionsEngine: VanillaPermissionEngine = VanillaPermissionEngineImpl(this)
     override val userManager = UserManagerImpl()
     override val registry = EssentialsRegistryImpl(this)
+    override val MOD_ID = "essentials"
     override fun <T : EssentialsExtension> getExtension(clazz: Class<T>?): Optional<T> {
         @Suppress("UNCHECKED_CAST")
         return Optional.ofNullable(extensions[clazz!!] as T)
