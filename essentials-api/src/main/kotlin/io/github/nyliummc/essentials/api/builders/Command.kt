@@ -10,10 +10,13 @@ import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
 
 interface Command {
-    companion object fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Builder.() -> Unit) {
-        val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
-        builder.setDispatcher(dispatcher)
-        callback(builder)
+    companion object {
+        @JvmStatic
+        fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Builder.() -> Unit) {
+            val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
+            builder.setDispatcher(dispatcher)
+            callback(builder)
+        }
     }
 
     interface Builder {

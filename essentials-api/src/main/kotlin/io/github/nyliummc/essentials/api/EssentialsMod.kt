@@ -8,7 +8,6 @@ interface EssentialsMod {
 
     // TODO: Cleaner way to do this
     companion object {
-        @JvmField
-        val instance: EssentialsMod? = null
+        var instance: EssentialsMod? = null
     }
 }

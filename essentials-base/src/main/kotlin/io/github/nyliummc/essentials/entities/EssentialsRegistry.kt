@@ -14,9 +14,9 @@ import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.EssentialsRegistry as APIEssentialsRegistry
 
 object EssentialsRegistry : APIEssentialsRegistry {
-    private val builders = mutableMapOf<Class<*>, Supplier<Any>>()
+    private val builders = mutableMapOf<Class<*>, Supplier<*>>()
 
-    fun init() {
+    init {
         registerCommand(InfoCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { return@Supplier Command.Builder() }

@@ -12,10 +12,13 @@ interface TeleportRequest {
     val dimension: DimensionType
     val facing: Vec2f?
 
-    companion object fun builder(callback: Builder.() -> TeleportRequest): TeleportRequest {
-        val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
-        callback(builder)
-        return builder.build()
+    companion object {
+        @JvmStatic
+        fun builder(callback: Builder.() -> Unit): TeleportRequest {
+            val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
+            callback(builder)
+            return builder.build()
+        }
     }
 
     fun execute(seconds: Long) {

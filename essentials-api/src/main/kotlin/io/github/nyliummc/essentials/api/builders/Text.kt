@@ -8,10 +8,13 @@ import net.minecraft.text.Text as MCText
 
 
 interface Text {
-    companion object fun builder(callback: Builder.() -> MCText): MCText {
-        val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
-        callback(builder)
-        return builder.build()
+    companion object {
+        @JvmStatic
+        fun builder(callback: Builder.() -> Unit): MCText {
+            val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
+            callback(builder)
+            return builder.build()
+        }
     }
 
     interface Builder {

@@ -11,6 +11,8 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     override val registry = EssentialsRegistry
 
     fun initialize() {
+        EssentialsMod.instance = this
+
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
         entrypoints.forEach {
             // TODO: Dependency inject essentials field

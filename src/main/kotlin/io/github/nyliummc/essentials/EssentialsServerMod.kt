@@ -1,4 +1,4 @@
-package io.github.nyliummc.essentials.impl
+package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.AbstractEssentialsMod
 import net.fabricmc.api.DedicatedServerModInitializer

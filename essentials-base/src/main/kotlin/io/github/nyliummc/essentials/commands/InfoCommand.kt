@@ -8,7 +8,7 @@ import net.minecraft.text.LiteralText
 
 object InfoCommand {
     fun register(builder: Command, dispatcher: CommandDispatcher<ServerCommandSource>) {
-        builder.builder(dispatcher) {
+        Command.builder(dispatcher) {
             command("info") {
                 executes(::showInfo)
             }
@@ -16,7 +16,9 @@ object InfoCommand {
     }
 
     private fun showInfo(commandContext: CommandContext<ServerCommandSource>): Int {
-        commandContext.source.player.addChatMessage(LiteralText("Welcome to essentials! A better message coming soon."), false)
+        commandContext.source.sendFeedback(
+                LiteralText("Welcome to essentials! A better message coming soon."),
+                false)
         return 1
     }
 }

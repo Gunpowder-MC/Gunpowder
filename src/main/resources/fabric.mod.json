@@ -38,16 +38,17 @@
   "environment": "*",
   "entrypoints": {
     "server": [
-      "io.github.nyliummc.essentials.impl.EssentialsServerMod"
+      "io.github.nyliummc.essentials.EssentialsServerMod"
     ],
     "client": [
-      "io.github.nyliummc.essentials.impl.EssentialsClientMod"
+      "io.github.nyliummc.essentials.EssentialsClientMod"
     ],
-    "essentials:extensions": [
+    "essentials:modules": [
+      "io.github.nyliummc.essentials.EssentialsChatModule"
     ]
   },
   "mixins": [
-    "mixins.accessors.essentials.json"
+    "mixins.essentials.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.2",
