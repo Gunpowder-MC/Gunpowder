@@ -16,6 +16,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     /**
      * @reason lmao vanilla
+     * @author smart person
      */
     @Overwrite
     public Text method_14206() {
