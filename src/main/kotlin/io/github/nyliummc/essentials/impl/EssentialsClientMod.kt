@@ -1,5 +1,7 @@
 package io.github.nyliummc.essentials.impl
 
+import io.github.nyliummc.essentials.AbstractEssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsMod
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -13,7 +15,7 @@ import net.minecraft.server.MinecraftServer
 @Environment(EnvType.CLIENT)
 class EssentialsClientMod : AbstractEssentialsMod(), ClientModInitializer {
     private var client: MinecraftClient? = null
-    override val server: MinecraftServer?
+    override val server: MinecraftServer
         get() {
             if (client == null) {
                 client = FabricLoader.getInstance().gameInstance as MinecraftClient

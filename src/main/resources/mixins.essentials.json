@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "io.github",
+  "package": "io.github.nyliummc.essentials.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],

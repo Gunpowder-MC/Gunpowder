@@ -1,5 +1,5 @@
 archivesBaseName = "essentials-base"
 
 dependencies {
-    compile project(":essentials-command-helper")
+    compile project(":essentials-api")
 }
