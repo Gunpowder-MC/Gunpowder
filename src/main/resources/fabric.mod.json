@@ -18,6 +18,15 @@
         "sources": "https://github.com/i509VCB/",
         "discord": "i509VCB#9778"
       }
+    },
+    {
+      "name": "Martmists",
+      "minecraft": "96db0eee-5dcf-4e8b-a294-f9510d95fc4d",
+      "contact": {
+        "sources": "https://github.com/Martmists/",
+        "sources2": "https://dilaton.martmists.com/Martmists/",
+        "discord": "Martmists#3740"
+      }
     }
   ],
   "contact": {
@@ -35,7 +44,6 @@
       "io.github.nyliummc.essentials.impl.EssentialsClientMod"
     ],
     "essentials:extensions": [
-      "io.github.nyliummc.essentials.extension.teleport.impl.TeleportationExtensionEntrypoint"
     ]
   },
   "mixins": [

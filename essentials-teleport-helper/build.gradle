@@ -1,5 +1,0 @@
-archivesBaseName = "essentials-teleport-helper"
-
-dependencies {
-    compile project(path: ':essentials-base', configuration: 'dev')
-}
