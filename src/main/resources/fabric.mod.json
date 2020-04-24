@@ -44,7 +44,8 @@
       "io.github.nyliummc.essentials.EssentialsClientMod"
     ],
     "essentials:modules": [
-      "io.github.nyliummc.essentials.EssentialsChatModule"
+      "io.github.nyliummc.essentials.EssentialsChatModule",
+      "io.github.nyliummc.essentials.EssentialsCurrencyModule"
     ]
   },
   "mixins": [

@@ -2,6 +2,7 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import net.fabricmc.loader.api.FabricLoader
 
@@ -9,6 +10,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     val MODULE = "essentials:modules"
 
     override val registry = EssentialsRegistry
+    override val database = EssentialsDatabase
 
     fun initialize() {
         EssentialsMod.instance = this

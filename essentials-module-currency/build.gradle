@@ -1,0 +1,5 @@
+archivesBaseName = "essentials-module-currency"
+
+dependencies {
+    compile project(":essentials-api")
+}

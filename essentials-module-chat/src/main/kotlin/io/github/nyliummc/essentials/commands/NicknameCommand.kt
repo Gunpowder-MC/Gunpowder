@@ -3,14 +3,19 @@ package io.github.nyliummc.essentials.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.Text
+import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 
 object NicknameCommand {
     private val maxLength = 32
+    val handler by lazy {
+        EssentialsMod.instance!!.registry.getModelHandler(NicknameHandler::class.java)
+    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -32,6 +37,11 @@ object NicknameCommand {
                         PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME,
                         context.source.player))
 
+        handler.modifyUser(context.source.player.uuid) {
+            it.nickname = ""
+            it
+        }
+
         context.source.sendFeedback(LiteralText("Nickname reset."), false)
         return 1
     }
@@ -46,8 +56,13 @@ object NicknameCommand {
             }, false)
             return 0
         }
-        // TODO: Save to database
-        // ChatTools.setNick(context.source.player.gameProfile, requestedNickname)
+
+        // TODO: Reapply on user join
+        handler.modifyUser(context.source.player.uuid) {
+            it.nickname = requestedNickname
+            it
+        }
+
         context.source.player.customName = LiteralText(requestedNickname)
         context.source.player.isCustomNameVisible = true
         context.source.minecraftServer.playerManager.sendToAll(
