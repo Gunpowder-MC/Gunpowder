@@ -3,8 +3,6 @@
   "package": "io.github.nyliummc.essentials.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerEntityMixin",
-    "ServerPlayerEntityMixin"
   ],
   "client": [
   ],

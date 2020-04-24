@@ -22,23 +22,29 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mixin.chat;
 
-import com.mojang.brigadier.CommandDispatcher
-import io.github.nyliummc.essentials.api.builders.Command
-import net.minecraft.server.command.ServerCommandSource
-import org.jetbrains.exposed.sql.Table
-import java.util.function.Supplier
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-interface EssentialsRegistry {
-    fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
-    fun registerCommand(callback: (Command, CommandDispatcher<ServerCommandSource>) -> Unit)
+@Mixin(PlayerEntity.class)
+abstract class PlayerEntityMixin_Chat extends Entity {
+    protected PlayerEntityMixin_Chat() {
+        //noinspection ConstantConditions
+        super(null, null);
+    }
 
-    fun <T> getBuilder(clz: Class<T>): T
-    fun <T> getModelHandler(clz: Class<T>): T
-
-    fun <T> registerBuilder(clz: Class<T>, supplier: Supplier<T>)
-    fun <T> registerModelHandler(clz: Class<T>, supplier: Supplier<T>)
-
-    fun registerTable(tab: Table)
+    @Inject(method = "getDisplayName", at = @At("HEAD"), cancellable = true)
+    private void getDisplayName(CallbackInfoReturnable<Text> cir) {
+        if (this.isCustomNameVisible() && this.hasCustomName()) {
+            cir.setReturnValue(this.getCustomName());
+        }
+    }
 }

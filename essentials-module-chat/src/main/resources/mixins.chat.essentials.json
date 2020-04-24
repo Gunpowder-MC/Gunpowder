@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "io.github.nyliummc.essentials.mixin.chat",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "io.github.nyliummc.essentials.mixin.plugin.ChatModulePlugin",
+  "mixins": [
+    "PlayerEntityMixin_Chat",
+    "ServerPlayerEntityMixin_Chat"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
