@@ -14,19 +14,16 @@ import net.minecraft.server.MinecraftServer
  */
 @Environment(EnvType.CLIENT)
 class EssentialsClientMod : AbstractEssentialsMod(), ClientModInitializer {
-    private var client: MinecraftClient? = null
+    private val client by lazy {
+        FabricLoader.getInstance().gameInstance as MinecraftClient
+    }
+    override val isClient = true
     override val server: MinecraftServer
         get() {
-            if (client == null) {
-                client = FabricLoader.getInstance().gameInstance as MinecraftClient
-            }
-            if (client!!.server != null) {
-                return client!!.server!!
-            }
-            throw IllegalArgumentException("Server is not available.")
+            return client.server ?: throw IllegalArgumentException("Server is not available.")
         }
 
     override fun onInitializeClient() {
-        initialize()
+        this.initialize()
     }
 }

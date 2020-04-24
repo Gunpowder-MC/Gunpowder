@@ -9,10 +9,13 @@ import net.minecraft.server.MinecraftServer
  * An implementation of the mod for DedicatedServers.
  */
 class EssentialsServerMod : AbstractEssentialsMod(), DedicatedServerModInitializer {
-    override val server: MinecraftServer
-        get() = FabricLoader.getInstance().gameInstance as MinecraftServer
+    override val isClient = false
+
+    override val server by lazy {
+        FabricLoader.getInstance().gameInstance as MinecraftServer
+    }
 
     override fun onInitializeServer() {
-        initialize()
+        this.initialize()
     }
 }

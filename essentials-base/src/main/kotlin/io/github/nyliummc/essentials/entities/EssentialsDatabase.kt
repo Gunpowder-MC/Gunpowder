@@ -9,7 +9,7 @@ import java.sql.Connection
 
 object EssentialsDatabase : APIEssentialsDatabase {
     // TODO: Configurable
-    private val mode = "sqlite"
+    private var mode = "sqlite"
     private val host = "localhost"
     private val port = if (mode == "postgres") 5432 else 3306  // Default ports for postgres/mysql
     private val databaseUser = "db_user"
@@ -19,7 +19,9 @@ object EssentialsDatabase : APIEssentialsDatabase {
     private val databaseName = "essentials"
 
     override val db by lazy {
-        // TODO: Discuss whether to enforce sqlite for singleplayer to avoid having shared data across saves
+        if (EssentialsMod.instance!!.isClient) {
+            this.mode = "sqlite"
+        }
 
         when (mode) {
             "sqlite" -> {

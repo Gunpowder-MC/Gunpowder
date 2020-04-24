@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer
 
 interface EssentialsMod {
     val server: MinecraftServer
+    val isClient: Boolean
     val registry: EssentialsRegistry
     val database: EssentialsDatabase
 
