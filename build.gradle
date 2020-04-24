@@ -5,7 +5,7 @@ plugins {
     id 'net.minecrell.licenser' version '0.4.1'
     id 'fabric-loom' version '0.2.7-SNAPSHOT' apply false
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71' // THIS MUST MATCH KOTLIN VERSION EVERYWHERE ELSE OR BUILD WILL FAIL
     id 'com.github.johnrengelman.shadow' version '4.0.1'
 }
 
@@ -14,6 +14,7 @@ class Globals {
     static def minecraftVersion = "1.15.2"
     static def yarnBuild = "+build.15"
     static def loaderVersion = "0.8.2+build.194"
+    static def kotlinVersion = "1.3.71"
 }
 
 class Dependencies {
@@ -96,7 +97,7 @@ allprojects {
 
     dependencies {
         // Kotlin Magic, flesh this out.
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Globals.kotlinVersion}"
 
         minecraft "com.mojang:minecraft:$Globals.minecraftVersion"
         mappings "net.fabricmc:yarn:${Globals.minecraftVersion}${Globals.yarnBuild}:v2"

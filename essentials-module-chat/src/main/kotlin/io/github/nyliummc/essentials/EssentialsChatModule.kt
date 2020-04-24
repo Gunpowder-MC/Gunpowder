@@ -41,7 +41,7 @@ class EssentialsChatModule : EssentialsModule {
     override fun onInitialize() {
         essentials.registry.registerTable(NicknameTable)
 
-        essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler } )
+        essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler as APINicknameHandler })
 
         essentials.registry.registerCommand(NicknameCommand::register)
     }
