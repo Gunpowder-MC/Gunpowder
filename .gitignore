@@ -5,6 +5,10 @@ build/
 out/
 classes/
 
+# eclipse
+
+*.launch
+
 # idea
 
 .idea/
@@ -23,3 +27,22 @@ bin/
 # fabric
 
 run/
+# remappedSrc is for migrate mappings
+remappedSrc/
+logs/
+
+# Mac Os
+
+.DS_Store # Folder Info
+.Trashes # Files to be deleted
+.AppleDouble # File System Fork
+Icon? # Folder icon
+._* # Thumbnail fikes
+.Spotlight-V100 # File System Indexer
+.fseventsd # File System Info
+.TemperoryItems # Temperory Items
+Thumbs.db # Random generated file
+
+# VM Crash logs
+
+hs_err_pid*
