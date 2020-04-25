@@ -27,7 +27,6 @@ package io.github.nyliummc.essentials.entities.builders
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder as BrigadierArgumentBuilder
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
@@ -44,11 +43,12 @@ object Command : APICommand {
         override fun command(vararg names: String, builder: APICommand.CommandBuilder.() -> Unit) {
             val base = names.first()
             val aliases = names.filter { it != base }
-            val baseCommand = CommandManager.literal(base)
-            val command = baseCommand
-            val cbuilder = CommandBuilder(command)
-            builder(cbuilder)
-            val baseNode = dispatcher.register(baseCommand)
+
+            names.forEach {
+                val baseCommand = CommandManager.literal(it)
+                builder(CommandBuilder(baseCommand))
+                val baseNode = dispatcher.register(baseCommand)
+            }
 
             /*
             TODO: Use this instead of building for every alias once
