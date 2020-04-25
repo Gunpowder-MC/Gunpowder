@@ -34,14 +34,15 @@ import java.util.function.Supplier
 
 class EssentialsChatModule : EssentialsModule {
     override val name = "chat"
-    override val essentials: EssentialsMod
-        get() = EssentialsMod.instance!!
+    override val essentials by lazy {
+        EssentialsMod.instance!!
+    }
     override val toggleable = true
 
     override fun onInitialize() {
         essentials.registry.registerTable(NicknameTable)
 
-        essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler as APINicknameHandler })
+        essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler })
 
         essentials.registry.registerCommand(NicknameCommand::register)
     }

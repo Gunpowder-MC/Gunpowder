@@ -48,19 +48,13 @@ object EssentialsRegistry : APIEssentialsRegistry {
     init {
         registerCommand(InfoCommand::register)
 
-        builders[APICommand.Builder::class.java] = Supplier { return@Supplier Command.Builder() }
-        builders[APITeleportRequest.Builder::class.java] = Supplier { return@Supplier TeleportRequest.Builder() }
-        builders[APIText.Builder::class.java] = Supplier { return@Supplier Text.Builder() }
+        builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
+        builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
+        builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
         CommandRegistry.INSTANCE.register(false, callback)
-    }
-
-    override fun registerCommand(callback: (APICommand,  CommandDispatcher<ServerCommandSource>) -> Unit) {
-        CommandRegistry.INSTANCE.register(false) { dispatcher ->
-            callback(Command, dispatcher)
-        }
     }
 
     override fun registerTable(tab: Table) {
@@ -77,11 +71,11 @@ object EssentialsRegistry : APIEssentialsRegistry {
         return modelHandlers[clz]!!.get() as T
     }
 
-    override fun <T> registerBuilder(clz: Class<T>, supplier: Supplier<T>) {
+    override fun <O:T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>) {
         builders[clz] = supplier
     }
 
-    override fun <T> registerModelHandler(clz: Class<T>, supplier: Supplier<T>) {
+    override fun <O:T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>) {
         modelHandlers[clz] = supplier
     }
 }

@@ -31,7 +31,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 
 object InfoCommand {
-    fun register(builder: Command, dispatcher: CommandDispatcher<ServerCommandSource>) {
+    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
             command("info") {
                 executes(::showInfo)

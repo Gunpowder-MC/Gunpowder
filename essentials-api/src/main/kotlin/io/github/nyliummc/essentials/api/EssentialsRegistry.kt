@@ -32,13 +32,13 @@ import java.util.function.Supplier
 
 interface EssentialsRegistry {
     fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
-    fun registerCommand(callback: (Command, CommandDispatcher<ServerCommandSource>) -> Unit)
 
     fun <T> getBuilder(clz: Class<T>): T
     fun <T> getModelHandler(clz: Class<T>): T
 
-    fun <T> registerBuilder(clz: Class<T>, supplier: Supplier<T>)
-    fun <T> registerModelHandler(clz: Class<T>, supplier: Supplier<T>)
+    // O used to remove the need for casts on dev-end
+    fun <O:T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
+    fun <O:T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
 
     fun registerTable(tab: Table)
 }

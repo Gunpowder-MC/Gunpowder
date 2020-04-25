@@ -33,14 +33,15 @@ import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceH
 
 class EssentialsCurrencyModule : EssentialsModule {
     override val name = "currency"
-    override val essentials: EssentialsMod
-        get() = EssentialsMod.instance!!
+    override val essentials by lazy {
+        EssentialsMod.instance!!
+    }
     override val toggleable = true
 
     override fun onInitialize() {
         essentials.registry.registerTable(BalanceTable)
 
-        essentials.registry.registerModelHandler(APIBalanceHandler::class.java, Supplier { BalanceHandler as APIBalanceHandler })
+        essentials.registry.registerModelHandler(APIBalanceHandler::class.java, Supplier { BalanceHandler })
     }
 
 }
