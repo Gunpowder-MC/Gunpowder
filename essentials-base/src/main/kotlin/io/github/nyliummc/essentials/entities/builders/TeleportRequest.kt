@@ -28,17 +28,19 @@ import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.dimension.DimensionType
 import java.time.temporal.TemporalUnit
-import io.github.nyliummc.essentials.api.builders.TeleportRequest as ITeleportRequest
+import io.github.nyliummc.essentials.api.builders.TeleportRequest as APITeleportRequest
 
-class TeleportRequest(override val destination: Vec3d,
-                      override val dimension: DimensionType,
-                      override val facing: Vec2f?) : ITeleportRequest {
+class TeleportRequest private constructor(
+        override val destination: Vec3d,
+        override val dimension: DimensionType,
+        override val facing: Vec2f?
+) : APITeleportRequest {
 
     override fun execute(time: Long, unit: TemporalUnit) {
         // TODO
     }
 
-    class Builder : ITeleportRequest.Builder {
+    class Builder : APITeleportRequest.Builder {
         private var destination: Vec3d? = null
         private var dimension: DimensionType? = null
         private var facing: Vec2f? = null

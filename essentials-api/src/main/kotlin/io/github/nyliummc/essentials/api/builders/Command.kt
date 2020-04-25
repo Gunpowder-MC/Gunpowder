@@ -44,14 +44,20 @@ interface Command {
     }
 
     interface Builder {
-        fun command(vararg names: String, builder: () -> Unit)
-        fun requires(checkFunction: (ServerCommandSource) -> Boolean)
-        fun suggests(callback: (CommandContext<ServerCommandSource>, SuggestionsBuilder) -> CompletableFuture<Suggestions>)
-        fun argument(name: String, type: ArgumentType<*>, builder: () -> Unit)
-        fun argument(literal: String, builder: () -> Unit)
-        fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
+        fun command(vararg names: String, builder: CommandBuilder.() -> Unit)
 
         @Deprecated("Used internally, do not use.")
         fun setDispatcher(dispatcher: CommandDispatcher<ServerCommandSource>)
+    }
+
+    interface CommandBuilder {
+        fun requires(checkFunction: (ServerCommandSource) -> Boolean)
+        fun argument(name: String, type: ArgumentType<*>, builder: ArgumentBuilder.() -> Unit)
+        fun literal(literal: String, builder: ArgumentBuilder.() -> Unit)
+        fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
+    }
+
+    interface ArgumentBuilder : CommandBuilder {
+        fun suggests(callback: (CommandContext<ServerCommandSource>, SuggestionsBuilder) -> CompletableFuture<Suggestions>)
     }
 }
