@@ -37,7 +37,9 @@ class TeleportRequest private constructor(
 ) : APITeleportRequest {
 
     override fun execute(time: Long, unit: TemporalUnit) {
-        // TODO
+        // TODO:
+        // - Schedule to happen after X time
+        // - Cancel if the user leaves
     }
 
     class Builder : APITeleportRequest.Builder {
