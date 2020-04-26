@@ -211,4 +211,4 @@ artifacts {
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
-apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'

@@ -34,9 +34,11 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
 import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
+import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.NbtHelper
 import net.minecraft.network.packet.s2c.play.OpenContainerS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
@@ -52,6 +54,7 @@ object MarketCommand {
     val balanceHandler by lazy {
         EssentialsMod.instance!!.registry.getModelHandler(BalanceHandler::class.java)
     }
+    val maxEntriesPerUser = 5
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -78,7 +81,12 @@ object MarketCommand {
     private fun addMarket(context: CommandContext<ServerCommandSource>, amount: Int): Int {
         // TODO: Smart item selection
         //       Correct amount
-        val item = context.source.player.mainHandStack
+        if (marketHandler.getEntries().count { it.uuid == context.source.player.uuid } >= maxEntriesPerUser) {
+            context.source.sendError(LiteralText("You already have the maximum of $maxEntriesPerUser entries"))
+            return -1
+        }
+
+        val item = context.source.player.mainHandStack.copy()
 
         val entry = StoredMarketEntry(
                 context.source.player.uuid,
@@ -95,7 +103,7 @@ object MarketCommand {
 
     private fun viewMarket(context: CommandContext<ServerCommandSource>): Int {
         val entries = marketHandler.getEntries()
-        val maxPages = entries.size / 45 + (if (entries.size % 45 == 0) 0 else 1)
+        val maxPages = entries.size / 45
         try {
             openGui(context, entries, 0, maxPages)
         } catch (e: Exception) {
@@ -107,6 +115,7 @@ object MarketCommand {
 
     private fun openGui(context: CommandContext<ServerCommandSource>, entries: List<StoredMarketEntry>, page: Int, maxPage: Int) {
         val player = context.source.player
+        player.closeContainer()
 
         val gui = ChestGui.builder {
             player(context.source.player)
@@ -121,31 +130,34 @@ object MarketCommand {
             }
 
             // Navigation
-            button(0, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
-                val prevPage = if (page == 0) maxPage else page - 1
-                try {
-                    openGui(context, entries, prevPage, maxPage)
-                } catch (e: StackOverflowError) {
-                    player.closeContainer()
-                }
-            }
-
-            button(8, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
-                val nextPage = if (page == maxPage) 0 else page + 1
-                try {
-                    openGui(context, entries, nextPage, maxPage)
-                } catch (e: StackOverflowError) {
-                    player.closeContainer()
-                }
-            }
-
-            for (i in 1 until 7) {
+            for (i in 0 until 9) {
                 // Filler
                 button(i, 5, ItemStack(Items.GREEN_STAINED_GLASS_PANE)) { }
             }
+
+            if (maxPage != 0) {
+                button(0, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE).setCustomName(LiteralText("Previous page"))) {
+                    val prevPage = if (page == 0) maxPage else page - 1
+                    try {
+                        println("Navigating to $prevPage")
+                        openGui(context, entries, prevPage, maxPage)
+                    } catch (e: StackOverflowError) {
+                        player.closeContainer()
+                    }
+                }
+
+                button(8, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE).setCustomName(LiteralText("Next page"))) {
+                    val nextPage = if (page == maxPage) 0 else page + 1
+                    try {
+                        println("Navigating to $nextPage")
+                        openGui(context, entries, nextPage, maxPage)
+                    } catch (e: StackOverflowError) {
+                        player.closeContainer()
+                    }
+                }
+            }
         }
 
-        player.closeContainer()
         player.networkHandler.sendPacket(
                 OpenContainerS2CPacket(gui.syncId, gui.type, LiteralText("Market")))
         gui.addListener(player)
@@ -175,7 +187,7 @@ object MarketCommand {
                 val item = entry.item
                 val tag = item.tag!!
                 val display = tag.getCompound("display")
-                val lore = tag.get("Lore") as ListTag
+                val lore = display.getList("Lore", NbtType.STRING) as ListTag
 
                 lore.removeAt(3)
                 lore.removeAt(2)
@@ -196,7 +208,7 @@ object MarketCommand {
                         LiteralText("Successfully purchased item!"),
                         false)
                 player.server.playerManager.getPlayer(entry.uuid)?.addChatMessage(
-                        LiteralText("${player.name} purchased one of your items!"),
+                        LiteralText("${player.entityName} purchased one of your items!"),
                         false)
 
             } else {
