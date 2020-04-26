@@ -35,24 +35,21 @@ object EssentialsDatabase : APIEssentialsDatabase {
         TransactionManager.closeAndUnregister(db)
     }
 
-    private val config = EssentialsMod.instance!!.registry.getConfig(EssentialsConfig::class.java)
-
-    private var mode = config.database.mode
-    private val host = config.database.host
-    private val port = config.database.port
-    private val databaseUser = config.database.username
-    private val databasePassword = config.database.password
+    private val config by lazy { EssentialsMod.instance!!.registry.getConfig(EssentialsConfig::class.java) }
     override lateinit var db: Database
 
     // Not configurable
     private val databaseName = "essentials"
 
     fun loadDatabase() {
+        val dbc = config.database
+        var mode = dbc.mode
+
         if (EssentialsMod.instance!!.isClient) {
-            this.mode = "sqlite"
+            mode = "sqlite"
         }
 
-        when (this.mode) {
+        when (mode) {
             "sqlite" -> {
                 val path = EssentialsMod.instance!!.server.runDirectory.canonicalPath
 
@@ -65,17 +62,17 @@ object EssentialsDatabase : APIEssentialsDatabase {
             }
             "postgres" -> {
                 db = Database.connect(
-                        "jdbc:postgresql://$host:$port/$databaseName",
+                        "jdbc:postgresql://${dbc.host}:${dbc.port}/$databaseName",
                         "org.postgresql.Driver",
-                        databaseUser,
-                        databasePassword)
+                        dbc.username,
+                        dbc.password)
             }
             "mysql" -> {
                 db = Database.connect(
-                        "jdbc:mysql://$host:$port/$databaseName",
+                        "jdbc:mysql://${dbc.host}:${dbc.port}/$databaseName",
                         "com.mysql.jdbc.Driver",
-                        databaseUser,
-                        databasePassword)
+                        dbc.username,
+                        dbc.password)
             }
             else -> {
                 println("$mode invalid")
