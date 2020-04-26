@@ -125,6 +125,11 @@ allprojects {
         implementation "mysql:mysql-connector-java:5.1.46"
         implementation 'org.xerial:sqlite-jdbc:3.28.0'
 
+        // Configs
+        implementation 'com.fasterxml.jackson.core:jackson-core:2.9.0'
+        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
+        implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.0'
+
         // We use checker for annotations:
         compileOnly "org.checkerframework:checker-qual:$Dependencies.Optional.checker_version"
 

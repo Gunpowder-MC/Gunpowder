@@ -35,12 +35,13 @@ object EssentialsDatabase : APIEssentialsDatabase {
         TransactionManager.closeAndUnregister(db)
     }
 
-    // TODO: Configurable
-    private var mode = "sqlite"
-    private val host = "localhost"
-    private val port = if (mode == "postgres") 5432 else 3306  // Default ports for postgres/mysql
-    private val databaseUser = "db_user"
-    private val databasePassword = "db_password"
+    private val config = EssentialsMod.instance!!.registry.getConfig(EssentialsConfig::class.java)
+
+    private var mode = config.database.mode
+    private val host = config.database.host
+    private val port = config.database.port
+    private val databaseUser = config.database.username
+    private val databasePassword = config.database.password
     override lateinit var db: Database
 
     // Not configurable

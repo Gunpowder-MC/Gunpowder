@@ -33,10 +33,12 @@ interface EssentialsRegistry {
     fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
     fun registerTable(tab: Table)
 
+    fun <T> getConfig(clz: Class<T>): T
     fun <T> getBuilder(clz: Class<T>): T
     fun <T> getModelHandler(clz: Class<T>): T
 
     // O used to remove the need for casts on dev-end
     fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
     fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
+    fun <T> registerConfig(filename: String, cfg: Class<T>, default: T)
 }
