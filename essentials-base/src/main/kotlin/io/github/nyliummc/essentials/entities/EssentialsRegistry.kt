@@ -31,6 +31,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mojang.brigadier.CommandDispatcher
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.commands.InfoCommand
+import io.github.nyliummc.essentials.configs.EssentialsConfig
 import io.github.nyliummc.essentials.entities.builders.ChestGui
 import io.github.nyliummc.essentials.entities.builders.Command
 import io.github.nyliummc.essentials.entities.builders.TeleportRequest
@@ -62,7 +63,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
     }
 
     fun registerBuiltin() {
-        configs[EssentialsConfig::class.java] = Pair("essentials.yml", this::class.java.classLoader.getResourceAsStream("essentials.yml"))
+        configs[EssentialsConfig::class.java] = Pair("essentials.yaml", "essentials.yaml")
         registerCommand(InfoCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
@@ -76,7 +77,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
     }
 
 
-    override fun <T> registerConfig(filename: String, cfg: Class<T>, default: T) {
+    override fun registerConfig(filename: String, cfg: Class<*>, default: Any) {
         configs[cfg] = Pair(filename, default)
     }
 
@@ -94,9 +95,9 @@ object EssentialsRegistry : APIEssentialsRegistry {
         val f = File("${configDir}/${p.first}")
         if (!f.exists()) {
             f.createNewFile()
-            if (p.second is InputStream) {
+            if (p.second is String) {
                 // In case we want to have a template in assets
-                (p.second as InputStream).copyTo(f.outputStream())
+                this::class.java.classLoader.getResourceAsStream(p.second as String)!!.copyTo(f.outputStream())
             } else {
                 mapper.writeValue(f, p.second)
             }

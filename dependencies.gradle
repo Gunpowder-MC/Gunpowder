@@ -22,6 +22,11 @@ ext {
             mysql_connector_java: "mysql:mysql-connector-java:$project.mysql_connector_java",
             sqlite_jdbc: "org.xerial:sqlite-jdbc:$project.sqlite_jdbc",
 
+            // Configs
+            jackson_core: "com.fasterxml.jackson.core:jackson-core:$project.fasterxml_jackson_version",
+            jackson_kotlin: "com.fasterxml.jackson.module:jackson-module-kotlin:$project.fasterxml_jackson_version",
+            jackson_yaml: "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$project.fasterxml_jackson_version",
+
             // Annotations
             checker_qual: "org.checkerframework:checker-qual:$project.checker_qual",
 

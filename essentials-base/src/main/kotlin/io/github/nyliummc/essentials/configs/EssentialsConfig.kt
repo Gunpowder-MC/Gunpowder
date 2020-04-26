@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.entities
+package io.github.nyliummc.essentials.configs
 
 data class DatabaseConfig(
         val mode: String,

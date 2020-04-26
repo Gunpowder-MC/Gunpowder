@@ -40,5 +40,5 @@ interface EssentialsRegistry {
     // O used to remove the need for casts on dev-end
     fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
     fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
-    fun <T> registerConfig(filename: String, cfg: Class<T>, default: T)
+    fun registerConfig(filename: String, cfg: Class<*>, default: Any)
 }

@@ -24,7 +24,9 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.modules.currency.dataholders.StoredBalance
+import io.github.nyliummc.essentials.configs.CurrencyConfig
 import io.github.nyliummc.essentials.models.BalanceTable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.insert
@@ -37,7 +39,9 @@ import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceH
 object BalanceHandler : APIBalanceHandler {
     private val cache: MutableMap<UUID, StoredBalance> = mutableMapOf()
 
-    val startBalance = (100.00).toBigDecimal()
+    val startBalance by lazy {
+        EssentialsMod.instance!!.registry.getConfig(CurrencyConfig::class.java).startBalance.toBigDecimal()
+    }
 
     init {
         loadAllUsers()

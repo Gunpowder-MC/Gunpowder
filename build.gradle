@@ -107,9 +107,9 @@ allprojects {
         implementation libs.sqlite_jdbc
 
         // Configs
-        implementation 'com.fasterxml.jackson.core:jackson-core:2.9.0'
-        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0'
-        implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.0'
+        implementation libs.jackson_core
+        implementation libs.jackson_kotlin
+        implementation libs.jackson_yaml
 
         // We use checker for annotations:
         compileOnly libs.checker_qual

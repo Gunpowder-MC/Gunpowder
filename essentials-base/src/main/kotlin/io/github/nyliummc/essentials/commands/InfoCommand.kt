@@ -26,9 +26,13 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import io.github.nyliummc.essentials.AbstractEssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.api.builders.Text
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Formatting
 
 object InfoCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
@@ -41,7 +45,20 @@ object InfoCommand {
 
     private fun showInfo(commandContext: CommandContext<ServerCommandSource>): Int {
         commandContext.source.sendFeedback(
-                LiteralText("Welcome to essentials! A better message coming soon."),
+                Text.builder {
+                    text("Welcome to essentials!")
+                    text("\nModules loaded:")
+                    text("\n- ")
+                    text("base") {
+                        color(Formatting.GOLD)
+                    }
+                    (EssentialsMod.instance as AbstractEssentialsMod).entrypoints.forEach {
+                        text("\n- ")
+                        text(it.entrypoint.name) {
+                            color(Formatting.GOLD)
+                        }
+                    }
+                },
                 false)
         return 1
     }

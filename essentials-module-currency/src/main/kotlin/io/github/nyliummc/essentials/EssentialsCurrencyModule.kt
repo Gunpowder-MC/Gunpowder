@@ -28,6 +28,7 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.BalanceCommand
 import io.github.nyliummc.essentials.commands.PayCommand
+import io.github.nyliummc.essentials.configs.CurrencyConfig
 import io.github.nyliummc.essentials.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.models.BalanceTable
 import java.util.function.Supplier
@@ -46,6 +47,8 @@ class EssentialsCurrencyModule : EssentialsModule {
     }
 
     override fun onInitialize() {
+        essentials.registry.registerConfig("essentials-currency.yaml", CurrencyConfig::class.java, "essentials-currency.yaml")
+
         essentials.registry.registerTable(BalanceTable)
 
         essentials.registry.registerModelHandler(APIBalanceHandler::class.java, Supplier { BalanceHandler })

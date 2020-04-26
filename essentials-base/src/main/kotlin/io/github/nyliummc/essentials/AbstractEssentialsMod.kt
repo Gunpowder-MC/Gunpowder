@@ -31,6 +31,7 @@ import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 
 abstract class AbstractEssentialsMod : EssentialsMod {
     val MODULE = "essentials:modules"
@@ -38,10 +39,12 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     override val registry = EssentialsRegistry
     override val database = EssentialsDatabase
 
+    lateinit var entrypoints: List<EntrypointContainer<EssentialsModule>>
+
     fun initialize() {
         EssentialsMod.instance = this
         registry.registerBuiltin()
-        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
+        entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
 
         entrypoints.forEach {
             it.entrypoint.registerCommands()

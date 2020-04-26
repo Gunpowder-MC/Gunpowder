@@ -34,6 +34,7 @@ interface EssentialsMod {
 
     // TODO: Cleaner way to do this
     companion object {
+        @JvmStatic
         var instance: EssentialsMod? = null
     }
 }

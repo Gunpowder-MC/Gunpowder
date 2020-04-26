@@ -25,6 +25,7 @@
 package io.github.nyliummc.essentials.entities
 
 import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.configs.EssentialsConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
