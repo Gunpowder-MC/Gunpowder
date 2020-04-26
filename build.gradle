@@ -2,32 +2,30 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id 'java'
-    id 'net.minecrell.licenser' version '0.4.1'
-    id 'fabric-loom' version '0.2.7-SNAPSHOT' apply false
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.72' // THIS MUST MATCH KOTLIN VERSION EVERYWHERE ELSE OR BUILD WILL FAIL
-    id 'com.github.johnrengelman.shadow' version '4.0.1'
+    id 'net.minecrell.licenser' version "$licenser"
+    id 'fabric-loom' version "$fabric_loom" apply false
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin"
+    id 'com.github.johnrengelman.shadow' version "$shadow"
 }
 
-class Globals {
-    static def version = "0.1"
-    static def minecraftVersion = "1.15.2"
-    static def yarnBuild = "+build.15"
-    static def loaderVersion = "0.8.2+build.194"
-    static def kotlinVersion = "1.3.72"
-}
+apply from: "dependencies.gradle"
+// apply from: "https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle"
 
-class Dependencies {
-    class Optional {
-        static def modmenuVersion = "1.9.0+build.27"
-        static def checker_version = "3.0.1"
-    }
+logger.lifecycle("""
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+	Building Essentials
+	Version: $project.mod_version
+	Minecraft Version: $project.minecraft
+	Fabric-Loader Version: $project.fabric_loader
 
-    class Required {
-        static def fabricApiVersion = "0.5.1+build.294-1.15"
-        static def palVersion = "1.1.0"
-    }
-}
+	Using:
+	Fabric-API Version: $project.fabric_api
+	PlayerAbilityLib Version: $project.playerabilitylib
+	
+	Output files will be in /build/libs
+	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+""")
 
 configurations {
     shade
@@ -39,21 +37,7 @@ shadowJar {
     configurations = [project.configurations.shade]
 }
 
-version = Globals.version + "+" + Globals.minecraftVersion
-logger.lifecycle("""
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	Building Essentials
-	Version: $Globals.version
-	Minecraft Version: $Globals.minecraftVersion
-	Fabric-Loader Version: $Globals.loaderVersion
-
-	Using:
-	Fabric-API Version: $Dependencies.Required.fabricApiVersion
-	PlayerAbilityLib Version: $Dependencies.Required.palVersion
-	
-	Output files will be in /build/libs
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-""")
+version = project.mod_version + "+" + project.minecraft
 
 allprojects {
     apply plugin: 'fabric-loom'
@@ -65,8 +49,9 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     group = "io.github.nyliummc.essentials"
-    version = Globals.version + "+" + Globals.minecraftVersion
+    version = project.mod_version + "+" + project.minecraft
 
+    // TODO: Set Built artifacts to output to the proper place
     // setBuildDir(project.rootDir.absolutePath + "/build")
 
     configurations {
@@ -99,42 +84,31 @@ allprojects {
     }
 
     dependencies {
-        // Kotlin Magic, flesh this out.
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Globals.kotlinVersion}"
+        // Kotlin Stdlib
+        implementation libs.kotlin_stdlib
 
-        minecraft "com.mojang:minecraft:$Globals.minecraftVersion"
-        mappings "net.fabricmc:yarn:${Globals.minecraftVersion}${Globals.yarnBuild}:v2"
-        modCompile "net.fabricmc:fabric-loader:$Globals.loaderVersion"
-
-        // Fabric API. This is technically optional, but you probably want it anyway.
-        modCompile "net.fabricmc.fabric-api:fabric-api:$Dependencies.Required.fabricApiVersion"
+        minecraft libs.minecraft
+        mappings libs.yarn
+        modImplementation libs.fabric_loader
 
         // Hard Dependencies
-        modImplementation("io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion") {
-            transitive = false
-        }
-        include "io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion"
+        modImplementation libs.fabric_api
+        modImplementation(include(libs.playerabilitylib)) { transitive = false }
 
         // Database
-        implementation 'org.jetbrains.exposed:exposed-core:0.23.1'
-        implementation 'org.jetbrains.exposed:exposed-jdbc:0.23.1'
-        implementation 'org.jetbrains.exposed:exposed-java-time:0.23.1'
+        implementation libs.exposed_core
+        implementation libs.exposed_jdbc
+        implementation libs.exposed_java_time
 
         // Database drivers
-        implementation 'org.postgresql:postgresql:42.2.2'
-        implementation "mysql:mysql-connector-java:5.1.46"
-        implementation 'org.xerial:sqlite-jdbc:3.28.0'
+        implementation libs.postgresql
+        implementation libs.mysql_connector_java
+        implementation libs.sqlite_jdbc
 
         // We use checker for annotations:
-        compileOnly "org.checkerframework:checker-qual:$Dependencies.Optional.checker_version"
+        compileOnly libs.checker_qual
 
-        // Libraries - To be debated
-        //compile 'me.lucko.configurate:configurate-hocon:3.5'
-        //compile 'com.github.ben-manes.caffeine:caffeine:2.8.0'
-
-        // Soft Dependencies - Permissions (To be debated because of fabric api WIP: i509VCB)
-        //compile 'net.luckperms:api:5.0' // LuckPerms
-        // modCompileOnly 'ca.stellardrift.permissionsex:permissionsex-fabric:2.0-SNAPSHOT' // PEX
+        // TODO: Permissions
     }
 
     jar {
@@ -186,7 +160,7 @@ dependencies {
     }
 
     // Runtime Only Dependencies
-    modRuntime("io.github.prospector:modmenu:$Dependencies.Optional.modmenuVersion") {
+    modRuntime(libs.modmenu) {
         transitive = false // Naughty mods who JIJ fabric api
     }
 }
@@ -208,7 +182,3 @@ artifacts {
     archives remappedShadowJar
     shadow shadowJar
 }
-
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
-
-// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'

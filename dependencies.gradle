@@ -1,0 +1,31 @@
+ext {
+    libs = [
+            // Kotlin
+            kotlin_stdlib: "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$project.kotlin",
+
+            // Minecraft and Fabric
+            minecraft: "com.mojang:minecraft:$project.minecraft",
+            yarn: "net.fabricmc:yarn:$project.minecraft+build.$project.yarn_build:v2",
+            fabric_loader: "net.fabricmc:fabric-loader:$project.fabric_loader",
+
+            // Hard Dependencies
+            fabric_api: "net.fabricmc.fabric-api:fabric-api:$project.fabric_api",
+            playerabilitylib: "io.github.ladysnake:PlayerAbilityLib:$project.playerabilitylib",
+
+            // Database
+            exposed_core: "org.jetbrains.exposed:exposed-core:$project.exposed_core",
+            exposed_jdbc: "org.jetbrains.exposed:exposed-jdbc:$project.exposed_jdbc",
+            exposed_java_time: "org.jetbrains.exposed:exposed-java-time:$project.exposed_java_time",
+
+            // Database Drivers
+            postgresql: "org.postgresql:postgresql:$project.postgresql",
+            mysql_connector_java: "mysql:mysql-connector-java:$project.mysql_connector_java",
+            sqlite_jdbc: "org.xerial:sqlite-jdbc:$project.sqlite_jdbc",
+
+            // Annotations
+            checker_qual: "org.checkerframework:checker-qual:$project.checker_qual",
+
+            // Misc
+            modmenu: "io.github.prospector:modmenu:$project.modmenu"
+    ]
+}
