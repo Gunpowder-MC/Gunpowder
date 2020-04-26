@@ -24,26 +24,44 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
-import com.mojang.authlib.GameProfile
 import io.github.nyliummc.essentials.api.modules.currency.dataholders.StoredBalance
 import io.github.nyliummc.essentials.models.BalanceTable
-import net.minecraft.server.MinecraftServer
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
+import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 
 object BalanceHandler : APIBalanceHandler {
     private val cache: MutableMap<UUID, StoredBalance> = mutableMapOf()
 
+    val startBalance = (100.00).toBigDecimal()
+
+    init {
+        loadAllUsers()
+    }
+
+    private fun loadAllUsers() {
+        transaction {
+            val items = BalanceTable.selectAll().map {
+                it[BalanceTable.user] to StoredBalance(it[BalanceTable.user], it[BalanceTable.balance])
+            }.toMap()
+
+            cache.putAll(items)
+        }
+    }
+
     override fun getUser(user: UUID): StoredBalance {
         return cache[user] ?: transaction {
-            val userObj = BalanceTable.select { BalanceTable.user.eq(user) }.first()
+            val userObj = BalanceTable.insert {
+                it[BalanceTable.user] = user
+                it[BalanceTable.balance] = startBalance
+            }
             val balance = StoredBalance(
                     user,
-                    userObj[BalanceTable.balance])
+                    startBalance)
             cache[user] = balance
             balance
         }
@@ -62,7 +80,7 @@ object BalanceHandler : APIBalanceHandler {
 
     override fun getBalanceTop(): Array<StoredBalance> {
         return transaction {
-            val users = BalanceTable.selectAll().orderBy(BalanceTable.balance, false).limit(10)
+            val users = BalanceTable.selectAll().orderBy(BalanceTable.balance, SortOrder.DESC).limit(10)
             users.map {
                 StoredBalance(it[BalanceTable.user], it[BalanceTable.balance])
             }.toTypedArray()

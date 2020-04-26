@@ -45,7 +45,8 @@
     ],
     "essentials:modules": [
       "io.github.nyliummc.essentials.EssentialsChatModule",
-      "io.github.nyliummc.essentials.EssentialsCurrencyModule"
+      "io.github.nyliummc.essentials.EssentialsCurrencyModule",
+      "io.github.nyliummc.essentials.EssentialsMarketModule"
     ]
   },
   "mixins": [

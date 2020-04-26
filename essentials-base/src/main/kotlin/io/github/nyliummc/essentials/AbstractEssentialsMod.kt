@@ -28,6 +28,8 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
+import net.fabricmc.fabric.api.event.server.ServerStartCallback
+import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
 
 abstract class AbstractEssentialsMod : EssentialsMod {
@@ -38,13 +40,27 @@ abstract class AbstractEssentialsMod : EssentialsMod {
 
     fun initialize() {
         EssentialsMod.instance = this
-
+        registry.registerBuiltin()
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
-        entrypoints.forEach {
-            // TODO: Dependency inject essentials field
 
-            // Register stuff
-            it.entrypoint.onInitialize()
+        entrypoints.forEach {
+            it.entrypoint.registerCommands()
         }
+
+        ServerStartCallback.EVENT.register(ServerStartCallback { server ->
+            database.loadDatabase()
+
+            entrypoints.forEach {
+                // TODO: Dependency inject essentials field
+
+                // Register non-commands
+                it.entrypoint.onInitialize()
+            }
+        })
+
+        ServerStopCallback.EVENT.register(ServerStopCallback { server ->
+            // Disable DB, unregister everything except commands
+            database.disconnect()
+        })
     }
 }

@@ -28,5 +28,6 @@ interface EssentialsModule {
     val name: String
     val essentials: EssentialsMod
     val toggleable: Boolean
-    fun onInitialize()
+    fun registerCommands() {}
+    fun onInitialize() {}
 }

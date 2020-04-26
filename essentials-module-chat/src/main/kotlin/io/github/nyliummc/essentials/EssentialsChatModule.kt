@@ -26,11 +26,11 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler as APINicknameHandler
 import io.github.nyliummc.essentials.commands.NicknameCommand
 import io.github.nyliummc.essentials.modelhandlers.NicknameHandler
 import io.github.nyliummc.essentials.models.NicknameTable
 import java.util.function.Supplier
+import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler as APINicknameHandler
 
 class EssentialsChatModule : EssentialsModule {
     override val name = "chat"
@@ -39,12 +39,14 @@ class EssentialsChatModule : EssentialsModule {
     }
     override val toggleable = true
 
+    override fun registerCommands() {
+        essentials.registry.registerCommand(NicknameCommand::register)
+    }
+
     override fun onInitialize() {
         essentials.registry.registerTable(NicknameTable)
 
         essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler })
-
-        essentials.registry.registerCommand(NicknameCommand::register)
     }
 
 }

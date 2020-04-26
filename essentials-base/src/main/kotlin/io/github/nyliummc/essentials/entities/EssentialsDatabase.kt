@@ -24,53 +24,62 @@
 
 package io.github.nyliummc.essentials.entities
 
-import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsDatabase
 import io.github.nyliummc.essentials.api.EssentialsMod
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import java.lang.AssertionError
 import java.sql.Connection
+import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsDatabase
 
 object EssentialsDatabase : APIEssentialsDatabase {
+    fun disconnect() {
+        TransactionManager.closeAndUnregister(db)
+    }
+
     // TODO: Configurable
     private var mode = "sqlite"
     private val host = "localhost"
     private val port = if (mode == "postgres") 5432 else 3306  // Default ports for postgres/mysql
     private val databaseUser = "db_user"
     private val databasePassword = "db_password"
+    override lateinit var db: Database
 
     // Not configurable
     private val databaseName = "essentials"
 
-    override val db by lazy {
+    fun loadDatabase() {
         if (EssentialsMod.instance!!.isClient) {
             this.mode = "sqlite"
         }
 
-        when (mode) {
+        when (this.mode) {
             "sqlite" -> {
-                val path = EssentialsMod.instance!!.server.runDirectory.absolutePath
-                System.out.println(path)
-                TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
-                Database.connect(
+                val path = EssentialsMod.instance!!.server.runDirectory.canonicalPath
+
+                db = Database.connect(
                         "jdbc:sqlite:$path/essentials.db",
                         "org.sqlite.JDBC")
+
+                // Patch for SQLite
+                TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
             }
             "postgres" -> {
-                Database.connect(
+                db = Database.connect(
                         "jdbc:postgresql://$host:$port/$databaseName",
                         "org.postgresql.Driver",
                         databaseUser,
                         databasePassword)
             }
             "mysql" -> {
-                Database.connect(
+                db = Database.connect(
                         "jdbc:mysql://$host:$port/$databaseName",
                         "com.mysql.jdbc.Driver",
                         databaseUser,
                         databasePassword)
             }
-            else -> throw AssertionError("Invalid db type")
+            else -> {
+                println("$mode invalid")
+                throw AssertionError("Invalid db type")
+            }
         }
     }
 }

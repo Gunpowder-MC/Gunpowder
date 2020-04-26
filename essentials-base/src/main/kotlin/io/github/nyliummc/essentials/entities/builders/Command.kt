@@ -26,15 +26,15 @@ package io.github.nyliummc.essentials.entities.builders
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.builder.ArgumentBuilder as BrigadierArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import io.github.nyliummc.essentials.api.builders.Command as APICommand
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
+import com.mojang.brigadier.builder.ArgumentBuilder as BrigadierArgumentBuilder
+import io.github.nyliummc.essentials.api.builders.Command as APICommand
 
 object Command : APICommand {
     class Builder : APICommand.Builder {
@@ -82,9 +82,12 @@ object Command : APICommand {
             argumentNode(arg, builder)
         }
 
-        override fun literal(literal: String, builder: APICommand.ArgumentBuilder.() -> Unit) {
-            val arg = CommandManager.literal(literal)
-            argumentNode(arg, builder)
+        override fun literal(vararg literals: String, builder: APICommand.ArgumentBuilder.() -> Unit) {
+            literals.forEach {
+                val arg = CommandManager.literal(it)
+                argumentNode(arg, builder)
+            }
+            // TODO: switch to redirects if possible
         }
 
         override fun executes(callback: (CommandContext<ServerCommandSource>) -> Int) {

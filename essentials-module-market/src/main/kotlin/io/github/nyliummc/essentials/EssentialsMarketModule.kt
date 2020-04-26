@@ -22,21 +22,30 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials
 
-import com.mojang.brigadier.CommandDispatcher
-import net.minecraft.server.command.ServerCommandSource
-import org.jetbrains.exposed.sql.Table
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.MarketCommand
+import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
+import io.github.nyliummc.essentials.models.MarketEntryTable
 import java.util.function.Supplier
+import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
-interface EssentialsRegistry {
-    fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
-    fun registerTable(tab: Table)
+class EssentialsMarketModule : EssentialsModule {
+    override val name = "market"
+    override val essentials by lazy {
+        EssentialsMod.instance!!
+    }
+    override val toggleable = true
 
-    fun <T> getBuilder(clz: Class<T>): T
-    fun <T> getModelHandler(clz: Class<T>): T
+    override fun registerCommands() {
+        essentials.registry.registerCommand(MarketCommand::register)
+    }
 
-    // O used to remove the need for casts on dev-end
-    fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
-    fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
+    override fun onInitialize() {
+        essentials.registry.registerTable(MarketEntryTable)
+        essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler })
+    }
+
 }
