@@ -26,9 +26,9 @@ package io.github.nyliummc.essentials.entities.builders
 
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
-import io.github.nyliummc.essentials.api.builders.Text as APIText
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
+import io.github.nyliummc.essentials.api.builders.Text as APIText
 import net.minecraft.text.Text as MCText
 
 object Text : APIText {

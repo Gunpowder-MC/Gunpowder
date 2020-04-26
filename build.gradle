@@ -67,7 +67,7 @@ allprojects {
     group = "io.github.nyliummc.essentials"
     version = Globals.version + "+" + Globals.minecraftVersion
 
-    setBuildDir(project.rootDir.absolutePath + "/build")
+    // setBuildDir(project.rootDir.absolutePath + "/build")
 
     configurations {
         dev
@@ -83,6 +83,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             name = "Ladysnake Libs"
             url = "https://dl.bintray.com/ladysnake/libs"
@@ -109,13 +110,15 @@ allprojects {
         modCompile "net.fabricmc.fabric-api:fabric-api:$Dependencies.Required.fabricApiVersion"
 
         // Hard Dependencies
-        modImplementation ("io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion") {
+        modImplementation("io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion") {
             transitive = false
         }
         include "io.github.ladysnake:PlayerAbilityLib:$Dependencies.Required.palVersion"
 
         // Database
-        implementation 'org.jetbrains.exposed:exposed:0.10.1'
+        implementation 'org.jetbrains.exposed:exposed-core:0.23.1'
+        implementation 'org.jetbrains.exposed:exposed-jdbc:0.23.1'
+        implementation 'joda-time:joda-time:2.10.6'
 
         // Database drivers
         implementation 'org.postgresql:postgresql:42.2.2'

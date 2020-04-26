@@ -44,8 +44,8 @@ interface Text {
     interface Builder {
         fun text(text: String)
         fun text(text: MCText)
-        fun text(text: String, callback: StyleBuilder.()->Unit)
-        fun text(text: MCText, callback: StyleBuilder.()->Unit)
+        fun text(text: String, callback: StyleBuilder.() -> Unit)
+        fun text(text: MCText, callback: StyleBuilder.() -> Unit)
 
         @Deprecated("Used internally, do not use.")
         fun build(): MCText

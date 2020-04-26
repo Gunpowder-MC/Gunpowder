@@ -53,7 +53,7 @@ interface Command {
     interface CommandBuilder {
         fun requires(checkFunction: (ServerCommandSource) -> Boolean)
         fun argument(name: String, type: ArgumentType<*>, builder: ArgumentBuilder.() -> Unit)
-        fun literal(literal: String, builder: ArgumentBuilder.() -> Unit)
+        fun literal(vararg literals: String, builder: ArgumentBuilder.() -> Unit)
         fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
     }
 

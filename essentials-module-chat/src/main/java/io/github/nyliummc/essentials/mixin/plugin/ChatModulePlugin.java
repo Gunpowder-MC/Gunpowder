@@ -33,34 +33,34 @@ import java.util.List;
 import java.util.Set;
 
 public class ChatModulePlugin implements IMixinConfigPlugin {
-	@Override
-	public void onLoad(String mixinPackage) {
-	}
+    @Override
+    public void onLoad(String mixinPackage) {
+    }
 
-	@Override
-	public String getRefMapperConfig() {
-		return null;
-	}
+    @Override
+    public String getRefMapperConfig() {
+        return null;
+    }
 
-	@Override
-	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		return true; // TODO: Configuration
-	}
+    @Override
+    public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        return true; // TODO: Configuration
+    }
 
-	@Override
-	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
-	}
+    @Override
+    public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
+    }
 
-	@Override
-	public List<String> getMixins() {
-		return Collections.emptyList();
-	}
+    @Override
+    public List<String> getMixins() {
+        return Collections.emptyList();
+    }
 
-	@Override
-	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-	}
+    @Override
+    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    }
 
-	@Override
-	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-	}
+    @Override
+    public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    }
 }

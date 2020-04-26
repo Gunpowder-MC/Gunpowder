@@ -26,6 +26,8 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.BalanceCommand
+import io.github.nyliummc.essentials.commands.PayCommand
 import io.github.nyliummc.essentials.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.models.BalanceTable
 import java.util.function.Supplier
@@ -37,6 +39,11 @@ class EssentialsCurrencyModule : EssentialsModule {
         EssentialsMod.instance!!
     }
     override val toggleable = true
+
+    override fun registerCommands() {
+        essentials.registry.registerCommand(BalanceCommand::register)
+        essentials.registry.registerCommand(PayCommand::register)
+    }
 
     override fun onInitialize() {
         essentials.registry.registerTable(BalanceTable)

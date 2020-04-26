@@ -26,10 +26,8 @@ package io.github.nyliummc.essentials.entities
 
 import com.mojang.brigadier.CommandDispatcher
 import io.github.nyliummc.essentials.api.EssentialsMod
-import io.github.nyliummc.essentials.api.builders.Text as APIText
-import io.github.nyliummc.essentials.api.builders.Command as APICommand
-import io.github.nyliummc.essentials.api.builders.TeleportRequest as APITeleportRequest
 import io.github.nyliummc.essentials.commands.InfoCommand
+import io.github.nyliummc.essentials.entities.builders.ChestGui
 import io.github.nyliummc.essentials.entities.builders.Command
 import io.github.nyliummc.essentials.entities.builders.TeleportRequest
 import io.github.nyliummc.essentials.entities.builders.Text
@@ -40,17 +38,22 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.EssentialsRegistry as APIEssentialsRegistry
+import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
+import io.github.nyliummc.essentials.api.builders.Command as APICommand
+import io.github.nyliummc.essentials.api.builders.TeleportRequest as APITeleportRequest
+import io.github.nyliummc.essentials.api.builders.Text as APIText
 
 object EssentialsRegistry : APIEssentialsRegistry {
     private val builders = mutableMapOf<Class<*>, Supplier<*>>()
     private val modelHandlers = mutableMapOf<Class<*>, Supplier<*>>()
 
-    init {
+    fun registerBuiltin() {
         registerCommand(InfoCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
+        builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
@@ -71,11 +74,11 @@ object EssentialsRegistry : APIEssentialsRegistry {
         return modelHandlers[clz]!!.get() as T
     }
 
-    override fun <O:T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>) {
+    override fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>) {
         builders[clz] = supplier
     }
 
-    override fun <O:T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>) {
+    override fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>) {
         modelHandlers[clz] = supplier
     }
 }

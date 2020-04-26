@@ -1,0 +1,189 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) NyliumMC
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package io.github.nyliummc.essentials.commands
+
+import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.DoubleArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.mojang.brigadier.context.CommandContext
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.api.builders.ChestGui
+import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
+import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
+import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.network.packet.s2c.play.OpenContainerS2CPacket
+import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.LiteralText
+import net.minecraft.util.ItemScatterer
+import org.joda.time.DateTime
+import org.joda.time.Period
+
+object MarketCommand {
+    val marketHandler by lazy {
+        EssentialsMod.instance!!.registry.getModelHandler(MarketEntryHandler::class.java)
+    }
+    val balanceHandler by lazy {
+        EssentialsMod.instance!!.registry.getModelHandler(BalanceHandler::class.java)
+    }
+
+    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+        Command.builder(dispatcher) {
+            command("market", "m") {
+                executes(::viewMarket)
+
+                literal("add", "a") {
+                    argument("price", DoubleArgumentType.doubleArg(0.0)) {
+                        executes { addMarket(it, 0) }
+                    }
+
+                    argument("amount", IntegerArgumentType.integer(0, 64)) {
+                        executes(::addMarketAmount)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addMarketAmount(context: CommandContext<ServerCommandSource>): Int {
+        return addMarket(context, IntegerArgumentType.getInteger(context, "amount"))
+    }
+
+    private fun addMarket(context: CommandContext<ServerCommandSource>, amount: Int): Int {
+        // TODO: Smart item selection
+        //       Correct amount
+        //       Custom tooltip
+        val item = context.source.player.mainHandStack
+
+        val entry = StoredMarketEntry(
+                context.source.player.uuid,
+                item,
+                DoubleArgumentType.getDouble(context, "price").toBigDecimal(),
+                DateTime.now().plus(Period.days(7))
+        )
+
+        // Remove from user invstack
+        marketHandler.createEntry(entry)
+
+        return 1
+    }
+
+    private fun viewMarket(context: CommandContext<ServerCommandSource>): Int {
+        val entries = marketHandler.getEntries()
+        val maxPages = entries.size / 45 + (if (entries.size % 45 == 0) 0 else 1)
+        openGui(context, entries, 0, maxPages)
+        return 1
+    }
+
+    private fun openGui(context: CommandContext<ServerCommandSource>, entries: List<StoredMarketEntry>, page: Int, maxPage: Int) {
+        val player = context.source.player
+
+        val gui = ChestGui.builder {
+            player(context.source.player)
+            emptyIcon(ItemStack(Items.BLACK_STAINED_GLASS_PANE))
+
+            // Add all market buttons
+            val itemsOnDisplay = entries.subList(page * 45, (page+1)*45)
+            itemsOnDisplay.forEachIndexed { index, storedMarketEntry ->
+                button(index % 9, index / 9, storedMarketEntry.item) {
+                    buyItem(player, storedMarketEntry)
+                }
+            }
+
+            // Navigation
+            button(0, 0, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
+                val prevPage = if (page == 0) maxPage else page - 1
+                try {
+                    openGui(context, entries, prevPage, maxPage)
+                } catch (e: StackOverflowError) {
+                    player.closeContainer()
+                }
+            }
+
+            button(8, 0, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
+                val nextPage = if (page == maxPage) 0 else page + 1
+                try {
+                    openGui(context, entries, nextPage, maxPage)
+                } catch (e: StackOverflowError) {
+                    player.closeContainer()
+                }
+            }
+
+            for (i in 1 until 7) {
+                // Filler
+                button(0, 0, ItemStack(Items.GREEN_STAINED_GLASS_PANE)) { }
+            }
+        }
+
+        player.closeContainer()
+        player.networkHandler.sendPacket(
+                OpenContainerS2CPacket(gui.syncId, gui.type, LiteralText("Market")))
+        gui.addListener(player)
+        player.container = gui
+    }
+
+    private fun buyItem(player: ServerPlayerEntity, entry: StoredMarketEntry) {
+        val balance = balanceHandler.getUser(player.uuid).balance
+
+        // Check if user has enough money
+        if (balance < entry.price) {
+            player.addChatMessage(LiteralText("Not enough money!"), false)
+        } else {
+            // Check if still present
+            if (marketHandler.getEntries().contains(entry)) {
+                marketHandler.deleteEntry(entry)
+                balanceHandler.modifyUser(player.uuid) {
+                    it.balance -= entry.price
+                    it
+                }
+                balanceHandler.modifyUser(entry.uuid) {
+                    it.balance += entry.price
+                    it
+                }
+
+                // Remove listing data
+                val item = entry.item
+
+                if (player.giveItemStack(item)) {
+                    // Unable to insert
+                    ItemScatterer.spawn(player.world, player.x, player.y, player.z, item)
+                }
+
+                player.addChatMessage(
+                        LiteralText("Successfully purchased item!"),
+                        false)
+                player.server.playerManager.getPlayer(entry.uuid)?.addChatMessage(
+                        LiteralText("${player.name} purchased one of your items!"),
+                        false)
+
+            } else {
+                player.addChatMessage(LiteralText("Item no longer available"), false)
+            }
+        }
+    }
+}
