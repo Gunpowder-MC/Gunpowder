@@ -1,6 +1,7 @@
 package io.github.nyliummc.essentials.models
 
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.`java-time`.*
 
 object MarketEntryTable : Table() {
     val user = uuid("user")

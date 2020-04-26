@@ -36,13 +36,14 @@ import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarket
 import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.nbt.ListTag
 import net.minecraft.network.packet.s2c.play.OpenContainerS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.ItemScatterer
-import org.joda.time.DateTime
-import org.joda.time.Period
+import java.lang.Exception
+import java.time.LocalDateTime
 
 object MarketCommand {
     val marketHandler by lazy {
@@ -60,10 +61,10 @@ object MarketCommand {
                 literal("add", "a") {
                     argument("price", DoubleArgumentType.doubleArg(0.0)) {
                         executes { addMarket(it, 0) }
-                    }
 
-                    argument("amount", IntegerArgumentType.integer(0, 64)) {
-                        executes(::addMarketAmount)
+                        argument("amount", IntegerArgumentType.integer(0, 64)) {
+                            executes(::addMarketAmount)
+                        }
                     }
                 }
             }
@@ -77,14 +78,13 @@ object MarketCommand {
     private fun addMarket(context: CommandContext<ServerCommandSource>, amount: Int): Int {
         // TODO: Smart item selection
         //       Correct amount
-        //       Custom tooltip
         val item = context.source.player.mainHandStack
 
         val entry = StoredMarketEntry(
                 context.source.player.uuid,
                 item,
                 DoubleArgumentType.getDouble(context, "price").toBigDecimal(),
-                DateTime.now().plus(Period.days(7))
+                LocalDateTime.now().plusDays(7)
         )
 
         // Remove from user invstack
@@ -96,7 +96,12 @@ object MarketCommand {
     private fun viewMarket(context: CommandContext<ServerCommandSource>): Int {
         val entries = marketHandler.getEntries()
         val maxPages = entries.size / 45 + (if (entries.size % 45 == 0) 0 else 1)
-        openGui(context, entries, 0, maxPages)
+        try {
+            openGui(context, entries, 0, maxPages)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
         return 1
     }
 
@@ -108,7 +113,7 @@ object MarketCommand {
             emptyIcon(ItemStack(Items.BLACK_STAINED_GLASS_PANE))
 
             // Add all market buttons
-            val itemsOnDisplay = entries.subList(page * 45, (page+1)*45)
+            val itemsOnDisplay = entries.subList(page * 45, Integer.min((page+1)*45, entries.size))
             itemsOnDisplay.forEachIndexed { index, storedMarketEntry ->
                 button(index % 9, index / 9, storedMarketEntry.item) {
                     buyItem(player, storedMarketEntry)
@@ -116,7 +121,7 @@ object MarketCommand {
             }
 
             // Navigation
-            button(0, 0, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
+            button(0, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
                 val prevPage = if (page == 0) maxPage else page - 1
                 try {
                     openGui(context, entries, prevPage, maxPage)
@@ -125,7 +130,7 @@ object MarketCommand {
                 }
             }
 
-            button(8, 0, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
+            button(8, 5, ItemStack(Items.BLUE_STAINED_GLASS_PANE)) {
                 val nextPage = if (page == maxPage) 0 else page + 1
                 try {
                     openGui(context, entries, nextPage, maxPage)
@@ -136,7 +141,7 @@ object MarketCommand {
 
             for (i in 1 until 7) {
                 // Filler
-                button(0, 0, ItemStack(Items.GREEN_STAINED_GLASS_PANE)) { }
+                button(i, 5, ItemStack(Items.GREEN_STAINED_GLASS_PANE)) { }
             }
         }
 
@@ -168,7 +173,20 @@ object MarketCommand {
 
                 // Remove listing data
                 val item = entry.item
+                val tag = item.tag!!
+                val display = tag.getCompound("display")
+                val lore = tag.get("Lore") as ListTag
 
+                lore.removeAt(3)
+                lore.removeAt(2)
+                lore.removeAt(1)
+                lore.removeAt(0)
+
+                display.put("Lore", lore)
+                tag.put("display", display)
+                item.tag = tag
+
+                // Give item
                 if (player.giveItemStack(item)) {
                     // Unable to insert
                     ItemScatterer.spawn(player.world, player.x, player.y, player.z, item)

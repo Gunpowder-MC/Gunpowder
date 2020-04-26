@@ -118,7 +118,7 @@ allprojects {
         // Database
         implementation 'org.jetbrains.exposed:exposed-core:0.23.1'
         implementation 'org.jetbrains.exposed:exposed-jdbc:0.23.1'
-        implementation 'joda-time:joda-time:2.10.6'
+        implementation 'org.jetbrains.exposed:exposed-java-time:0.23.1'
 
         // Database drivers
         implementation 'org.postgresql:postgresql:42.2.2'
