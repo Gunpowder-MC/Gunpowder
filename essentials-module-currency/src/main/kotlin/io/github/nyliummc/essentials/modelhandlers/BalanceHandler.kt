@@ -26,8 +26,11 @@ package io.github.nyliummc.essentials.modelhandlers
 
 import io.github.nyliummc.essentials.api.modules.currency.dataholders.StoredBalance
 import io.github.nyliummc.essentials.models.BalanceTable
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.util.*
 import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 

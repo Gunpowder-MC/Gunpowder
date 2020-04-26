@@ -38,13 +38,11 @@ import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.ListTag
-import net.minecraft.nbt.NbtHelper
 import net.minecraft.network.packet.s2c.play.OpenContainerS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.ItemScatterer
-import java.lang.Exception
 import java.time.LocalDateTime
 
 object MarketCommand {
@@ -79,14 +77,20 @@ object MarketCommand {
     }
 
     private fun addMarket(context: CommandContext<ServerCommandSource>, amount: Int): Int {
-        // TODO: Smart item selection
-        //       Correct amount
         if (marketHandler.getEntries().count { it.uuid == context.source.player.uuid } >= maxEntriesPerUser) {
             context.source.sendError(LiteralText("You already have the maximum of $maxEntriesPerUser entries"))
             return -1
         }
 
         val item = context.source.player.mainHandStack.copy()
+
+        if (item.count < amount) {
+            context.source.sendError(LiteralText("Your hand doesn't contain $amount items!"))
+            return -1
+        }
+
+        context.source.player.mainHandStack.count = item.count - amount
+        item.count = amount
 
         val entry = StoredMarketEntry(
                 context.source.player.uuid,
@@ -122,7 +126,7 @@ object MarketCommand {
             emptyIcon(ItemStack(Items.BLACK_STAINED_GLASS_PANE))
 
             // Add all market buttons
-            val itemsOnDisplay = entries.subList(page * 45, Integer.min((page+1)*45, entries.size))
+            val itemsOnDisplay = entries.subList(page * 45, Integer.min((page + 1) * 45, entries.size))
             itemsOnDisplay.forEachIndexed { index, storedMarketEntry ->
                 button(index % 9, index / 9, storedMarketEntry.item) {
                     buyItem(player, storedMarketEntry)
@@ -194,9 +198,22 @@ object MarketCommand {
                 lore.removeAt(1)
                 lore.removeAt(0)
 
-                display.put("Lore", lore)
-                tag.put("display", display)
-                item.tag = tag
+                // Remove tags if nothing's left
+                if (lore.isEmpty()) {
+                    display.remove("Lore")
+                } else {
+                    display.put("Lore", lore)
+                }
+                if (display.isEmpty) {
+                    tag.remove("display")
+                } else {
+                    tag.put("display", display)
+                }
+                if (tag.isEmpty) {
+                    item.tag = null
+                } else {
+                    item.tag = tag
+                }
 
                 // Give item
                 if (player.giveItemStack(item)) {

@@ -1,11 +1,8 @@
 package io.github.nyliummc.essentials.modelhandlers
 
-import com.google.gson.annotations.Expose
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 import io.github.nyliummc.essentials.models.MarketEntryTable
-import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
@@ -19,7 +16,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.time.LocalDateTime
-import kotlin.time.toKotlinDuration
+import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
 object MarketEntryHandler : APIMarketEntryHandler {
     private val cache = mutableListOf<StoredMarketEntry>()
@@ -42,7 +39,7 @@ object MarketEntryHandler : APIMarketEntryHandler {
     }
 
     // TODO: Move these two to util funcs
-    private fun loadItemStack(blob: ExposedBlob) : ItemStack {
+    private fun loadItemStack(blob: ExposedBlob): ItemStack {
         val tag = NbtIo.readCompressed(blob.bytes.inputStream())
         return ItemStack.fromTag(tag)
     }
@@ -72,8 +69,8 @@ object MarketEntryHandler : APIMarketEntryHandler {
             it.forEach { entry ->
                 val seller = EssentialsMod.instance!!.server.userCache.getByUuid(entry.uuid)!!.name
                 val timeLeft = Duration.between(LocalDateTime.now(), entry.expire)
-                val timeString = "${timeLeft.toDays()} days, ${timeLeft.toHours() % 24} hours, " +
-                                 "${timeLeft.toMinutes() % 60} minutes and ${timeLeft.seconds % 60} seconds"
+                val timeString = "${timeLeft.toDays()}d ${timeLeft.toHours() % 24}h " +
+                        "${timeLeft.toMinutes() % 60}m ${timeLeft.seconds % 60}s"
 
                 // Add Lore
                 val tag = entry.item.tag ?: CompoundTag()
@@ -84,13 +81,13 @@ object MarketEntryHandler : APIMarketEntryHandler {
                 newLore.addAll(
                         // Add our stuff
                         listOf(
-                            StringTag.of("[{\"text\":\"\"}]"),  // Blank line
-                            // Seller
-                            StringTag.of("[{\"text\":\"Seller: \",\"color\":\"white\",\"italic\":false},{\"text\":\"$seller\",\"color\":\"yellow\",\"italic\":false}]"),
-                            // Price
-                            StringTag.of("[{\"text\":\"Price: \",\"color\":\"white\",\"italic\":false},{\"text\":\"${entry.price.toDouble()}\",\"color\":\"yellow\",\"italic\":false}]"),
-                            // Expire time
-                            StringTag.of("[{\"text\":\"Expires in: \",\"color\":\"white\",\"italic\":false},{\"text\":\"$timeString\",\"color\":\"yellow\",\"italic\":false}]")
+                                StringTag.of("[{\"text\":\"\"}]"),  // Blank line
+                                // Seller
+                                StringTag.of("[{\"text\":\"Seller: \",\"color\":\"white\",\"italic\":false},{\"text\":\"$seller\",\"color\":\"green\",\"italic\":false}]"),
+                                // Price
+                                StringTag.of("[{\"text\":\"Price: \",\"color\":\"white\",\"italic\":false},{\"text\":\"$${entry.price}\",\"color\":\"gold\",\"italic\":false}]"),
+                                // Expire time
+                                StringTag.of("[{\"text\":\"Expires in: \",\"color\":\"white\",\"italic\":false},{\"text\":\"$timeString\",\"color\":\"gray\",\"italic\":false}]")
                         )
                 )
 

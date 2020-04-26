@@ -45,7 +45,7 @@ class EssentialsMarketModule : EssentialsModule {
 
     override fun onInitialize() {
         essentials.registry.registerTable(MarketEntryTable)
-        essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler } )
+        essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler })
     }
 
 }
