@@ -37,6 +37,19 @@ shadowJar {
     configurations = [project.configurations.shade]
 }
 
+def urlFile = { url, name ->
+    File file = new File("$buildDir/download/${name}.jar")
+    file.parentFile.mkdirs()
+    if (!file.exists()) {
+        new URL(url).withInputStream { downloadStream ->
+            file.withOutputStream { fileOut ->
+                fileOut << downloadStream
+            }
+        }
+    }
+    files(file.absolutePath)
+}
+
 version = project.mod_version + "+" + project.minecraft
 
 allprojects {
@@ -52,7 +65,7 @@ allprojects {
     version = project.mod_version + "+" + project.minecraft
 
     // TODO: Set Built artifacts to output to the proper place
-    // setBuildDir(project.rootDir.absolutePath + "/build")
+    // setBuildDir(rootProject.buildDir)
 
     configurations {
         dev
@@ -110,6 +123,10 @@ allprojects {
         implementation libs.jackson_core
         implementation libs.jackson_kotlin
         implementation libs.jackson_yaml
+
+        // Dynmap
+        implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
+        implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
 
         // We use checker for annotations:
         compileOnly libs.checker_qual

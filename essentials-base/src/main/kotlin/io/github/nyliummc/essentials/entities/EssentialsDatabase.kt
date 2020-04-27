@@ -33,7 +33,11 @@ import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsData
 
 object EssentialsDatabase : APIEssentialsDatabase {
     fun disconnect() {
-        TransactionManager.closeAndUnregister(db)
+        try {
+            TransactionManager.closeAndUnregister(db)
+        } catch (e: UninitializedPropertyAccessException) {
+            // Ignore; Server closed before DB was created, no issues here
+        }
     }
 
     private val config by lazy { EssentialsMod.instance!!.registry.getConfig(EssentialsConfig::class.java) }

@@ -36,7 +36,6 @@ import net.minecraft.util.registry.Registry
 import org.dynmap.DynmapCore
 import org.dynmap.common.BiomeMap
 import org.dynmap.renderer.DynmapBlockState
-import sun.tools.java.Identifier
 import java.io.File
 
 
@@ -65,7 +64,7 @@ class EssentialsDynmapModule : EssentialsModule {
         core.setMinecraftVersion(minecraftServer.version)
         core.setPluginVersion(
                 // Get essentials version
-                FabricLoader.getInstance().getModContainer("essentials").get().metadata.version.friendlyString,
+                FabricLoader.getInstance().getModContainer("essentials-mod").get().metadata.version.friendlyString,
                 "Fabric Essentials Module Dynmap")
         BiomeMap.loadWellKnownByVersion(core.dynmapPluginPlatformVersion)
         val success = core.enableCore()

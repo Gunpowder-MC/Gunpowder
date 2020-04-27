@@ -52,7 +52,8 @@
   },
   "mixins": [
     "mixins.essentials.json",
-    "mixins.chat.essentials.json"
+    "mixins.chat.essentials.json",
+    "mixins.dynmap.essentials.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.2",
