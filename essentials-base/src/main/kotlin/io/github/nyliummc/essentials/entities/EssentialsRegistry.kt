@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mojang.brigadier.CommandDispatcher
 import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.commands.FlightCommand
 import io.github.nyliummc.essentials.commands.InfoCommand
 import io.github.nyliummc.essentials.configs.EssentialsConfig
 import io.github.nyliummc.essentials.entities.builders.ChestGui
@@ -65,6 +66,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
     fun registerBuiltin() {
         configs[EssentialsConfig::class.java] = Pair("essentials.yaml", "essentials.yaml")
         registerCommand(InfoCommand::register)
+        registerCommand(FlightCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
