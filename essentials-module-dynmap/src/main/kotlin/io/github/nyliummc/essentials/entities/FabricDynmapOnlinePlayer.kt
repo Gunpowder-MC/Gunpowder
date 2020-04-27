@@ -6,6 +6,7 @@ import org.dynmap.DynmapLocation
 import org.dynmap.common.DynmapPlayer
 import java.net.InetSocketAddress
 import java.net.SocketAddress
+import java.util.*
 
 
 class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapPlayer {
@@ -95,6 +96,14 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     override fun hasPermissionNode(node: String): Boolean {
         // TODO
         return isOp
+    }
+
+    override fun getSkinURL(): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getUUID(): UUID? {
+        return player.uuid
     }
 
 }

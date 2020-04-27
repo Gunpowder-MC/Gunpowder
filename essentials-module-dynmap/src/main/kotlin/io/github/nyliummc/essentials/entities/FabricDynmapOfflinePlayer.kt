@@ -4,13 +4,13 @@ import org.dynmap.DynmapLocation
 import org.dynmap.common.DynmapPlayer
 import java.net.InetSocketAddress
 
-class FabricDynmapOfflinePlayer : DynmapPlayer {
+class FabricDynmapOfflinePlayer(private val name: String) : DynmapPlayer {
     override fun isSneaking(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun getName(): String {
-        TODO("Not yet implemented")
+        return name
     }
 
     override fun isOp(): Boolean {
@@ -18,7 +18,7 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
     }
 
     override fun isConnected(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun getFirstLoginTime(): Long {
@@ -34,7 +34,7 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
     }
 
     override fun getHealth(): Double {
-        TODO("Not yet implemented")
+        return 20.0
     }
 
     override fun hasPermissionNode(p0: String?): Boolean {
@@ -42,7 +42,7 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
     }
 
     override fun getArmorPoints(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun getWorld(): String {
@@ -50,7 +50,7 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
     }
 
     override fun isOnline(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun sendMessage(p0: String?) {
@@ -58,19 +58,19 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
     }
 
     override fun isInvisible(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun getLocation(): DynmapLocation {
         TODO("Not yet implemented")
     }
 
-    override fun getBedSpawnLocation(): DynmapLocation {
-        TODO("Not yet implemented")
+    override fun getBedSpawnLocation(): DynmapLocation? {
+        return null
     }
 
     override fun getDisplayName(): String {
-        TODO("Not yet implemented")
+        return name
     }
 
     override fun getSortWeight(): Int {
@@ -81,7 +81,7 @@ class FabricDynmapOfflinePlayer : DynmapPlayer {
         TODO("Not yet implemented")
     }
 
-    override fun getAddress(): InetSocketAddress {
-        TODO("Not yet implemented")
+    override fun getAddress(): InetSocketAddress? {
+        return null
     }
 }
