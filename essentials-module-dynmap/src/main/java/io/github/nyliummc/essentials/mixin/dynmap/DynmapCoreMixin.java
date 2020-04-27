@@ -46,7 +46,6 @@ class DynmapCoreMixin {
             InputStream in = this.getClass().getClassLoader().getResourceAsStream("essentials-dynmap.yaml");
             OutputStream out = new FileOutputStream(f);
             IOUtils.copy(in, out);
-            System.out.println(f);
         }
         return f;
     }

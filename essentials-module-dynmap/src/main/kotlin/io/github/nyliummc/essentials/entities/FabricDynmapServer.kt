@@ -44,12 +44,11 @@ import java.util.concurrent.Future
 
 class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapServerInterface() {
     override fun scheduleServerTask(run: Runnable?, delay: Long) {
-        System.out.printf("Task requested with delay %d%n", delay)
+        TODO("Not yet implemented")
     }
 
     override fun <T> callSyncMethod(task: Callable<T>?): Future<T>? {
-        println("Sync method requested")
-        return null
+        TODO("Not yet implemented")
     }
 
     override fun getOnlinePlayers(): Array<DynmapPlayer?>? {
