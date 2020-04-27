@@ -1,0 +1,20 @@
+archivesBaseName = "essentials-module-dynmap"
+
+def urlFile = { url, name ->
+    File file = new File("$buildDir/download/${name}.jar")
+    file.parentFile.mkdirs()
+    if (!file.exists()) {
+        new URL(url).withInputStream { downloadStream ->
+            file.withOutputStream { fileOut ->
+                fileOut << downloadStream
+            }
+        }
+    }
+    files(file.absolutePath)
+}
+
+dependencies {
+    compile project(":essentials-api")
+    implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
+    implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
+}

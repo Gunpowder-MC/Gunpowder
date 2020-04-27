@@ -46,6 +46,12 @@ abstract class AbstractEssentialsMod : EssentialsMod {
         registry.registerBuiltin()
         entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
 
+        // Register events before registering commands
+        // in case of a RegisterCommandEvent or something
+        entrypoints.forEach {
+            it.entrypoint.registerEvents()
+        }
+
         entrypoints.forEach {
             it.entrypoint.registerCommands()
         }

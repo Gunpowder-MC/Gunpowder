@@ -18,4 +18,5 @@ include 'essentials-base'
 // Modules
 include 'essentials-module-chat'
 include 'essentials-module-currency'
+include 'essentials-module-dynmap'
 include 'essentials-module-market'
