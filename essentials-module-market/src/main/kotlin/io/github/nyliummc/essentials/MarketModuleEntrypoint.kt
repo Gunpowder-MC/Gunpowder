@@ -24,21 +24,12 @@
 
 package io.github.nyliummc.essentials
 
-import net.fabricmc.api.DedicatedServerModInitializer
-import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.server.MinecraftServer
+import com.google.inject.Injector
+import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.api.module.ModuleEntrypoint
 
-/**
- * An implementation of the mod for DedicatedServers.
- */
-class EssentialsServerMod : AbstractEssentialsMod(), DedicatedServerModInitializer {
-    override val isClient = false
-
-    override val server by lazy {
-        FabricLoader.getInstance().gameInstance as MinecraftServer
-    }
-
-    override fun onInitializeServer() {
-        this.initialize()
+class MarketModuleEntrypoint : ModuleEntrypoint {
+    override fun createModule(injector: Injector): EssentialsModule {
+        return injector.getInstance(EssentialsMarketModule::class.java)
     }
 }

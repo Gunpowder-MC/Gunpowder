@@ -38,15 +38,15 @@
   "environment": "*",
   "entrypoints": {
     "server": [
-      "io.github.nyliummc.essentials.EssentialsServerMod"
+      "io.github.nyliummc.essentials.mod.server.EssentialsServerMod"
     ],
     "client": [
-      "io.github.nyliummc.essentials.EssentialsClientMod"
+      "io.github.nyliummc.essentials.mod.client.EssentialsClientMod"
     ],
     "essentials:modules": [
-      "io.github.nyliummc.essentials.EssentialsChatModule",
-      "io.github.nyliummc.essentials.EssentialsCurrencyModule",
-      "io.github.nyliummc.essentials.EssentialsMarketModule"
+      "io.github.nyliummc.essentials.ChatModuleEntrypoint",
+      "io.github.nyliummc.essentials.CurrencyModuleEntrypoint",
+      "io.github.nyliummc.essentials.MarketModuleEntrypoint"
     ]
   },
   "mixins": [

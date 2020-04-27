@@ -48,13 +48,13 @@ import java.time.LocalDateTime
 
 object MarketCommand {
     val marketHandler by lazy {
-        EssentialsMod.instance!!.registry.getModelHandler(MarketEntryHandler::class.java)
+        EssentialsMod.getInstance().registry.getModelHandler(MarketEntryHandler::class.java)
     }
     val balanceHandler by lazy {
-        EssentialsMod.instance!!.registry.getModelHandler(BalanceHandler::class.java)
+        EssentialsMod.getInstance().registry.getModelHandler(BalanceHandler::class.java)
     }
     val maxEntriesPerUser by lazy {
-        EssentialsMod.instance!!.registry.getConfig(MarketConfig::class.java).maxMarketsPerUser
+        EssentialsMod.getInstance().registry.getConfig(MarketConfig::class.java).maxMarketsPerUser
     }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {

@@ -40,7 +40,7 @@ object BalanceHandler : APIBalanceHandler {
     private val cache: MutableMap<UUID, StoredBalance> = mutableMapOf()
 
     val startBalance by lazy {
-        EssentialsMod.instance!!.registry.getConfig(CurrencyConfig::class.java).startBalance.toBigDecimal()
+        EssentialsMod.getInstance().registry.getConfig(CurrencyConfig::class.java).startBalance.toBigDecimal()
     }
 
     init {

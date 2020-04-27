@@ -58,7 +58,6 @@ allprojects {
         dev
     }
 
-
     license {
         header = rootProject.file('LICENSE')
         include '**/*.java'
@@ -111,7 +110,10 @@ allprojects {
         implementation libs.jackson_kotlin
         implementation libs.jackson_yaml
 
-        // We use checker for annotations:
+        // Dependency Injection
+        implementation libs.guice
+
+        // We use checker for annotations
         compileOnly libs.checker_qual
 
         // TODO: Permissions

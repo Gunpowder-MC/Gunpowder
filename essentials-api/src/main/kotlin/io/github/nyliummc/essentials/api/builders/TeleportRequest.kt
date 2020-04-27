@@ -39,7 +39,7 @@ interface TeleportRequest {
     companion object {
         @JvmStatic
         fun builder(callback: Builder.() -> Unit): TeleportRequest {
-            val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
+            val builder = EssentialsMod.getInstance().registry.getBuilder(Builder::class.java)
             callback(builder)
             return builder.build()
         }

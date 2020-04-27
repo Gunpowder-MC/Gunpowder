@@ -22,25 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mod.server
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
-import java.lang.IllegalArgumentException
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
+import io.github.nyliummc.essentials.injection.AbstractModule
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
-
-    companion object {
-        @field:Inject
-        private var instance: EssentialsMod? = null
-
-        @JvmStatic
-        fun getInstance() : EssentialsMod {
-            return instance?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-        }
+class ServerModule(private val mod: EssentialsServerMod): AbstractModule() {
+    override fun configure() {
+        super.configure()
+        bind(AbstractEssentialsMod::class.java).toInstance(this.mod)
     }
 }

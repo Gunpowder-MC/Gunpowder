@@ -29,5 +29,6 @@ interface EssentialsModule {
     val essentials: EssentialsMod
     val toggleable: Boolean
     fun registerCommands() {}
+    fun registerConfigs() {}
     fun onInitialize() {}
 }

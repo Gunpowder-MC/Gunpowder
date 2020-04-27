@@ -22,25 +22,28 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mod.server
 
-import com.google.inject.Inject
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
+import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
-import java.lang.IllegalArgumentException
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
+/**
+ * An implementation of the mod for dedicated servers.
+ */
+class EssentialsServerMod : AbstractEssentialsMod(), DedicatedServerModInitializer {
+    override val isClient = false
 
-    companion object {
-        @field:Inject
-        private var instance: EssentialsMod? = null
+    override val server by lazy {
+        FabricLoader.getInstance().gameInstance as MinecraftServer
+    }
 
-        @JvmStatic
-        fun getInstance() : EssentialsMod {
-            return instance?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-        }
+    override fun onInitializeServer() {
+        this.initialize()
+    }
+
+    override fun createModule(): ServerModule {
+        return ServerModule(this)
     }
 }

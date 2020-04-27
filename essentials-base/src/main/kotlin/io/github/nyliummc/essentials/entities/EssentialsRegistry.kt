@@ -43,7 +43,6 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
-import java.io.InputStream
 import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.EssentialsRegistry as APIEssentialsRegistry
 import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
@@ -82,7 +81,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
     }
 
     override fun registerTable(tab: Table) {
-        transaction(EssentialsMod.instance!!.database.db) {
+        transaction(EssentialsMod.getInstance().database.db) {
             SchemaUtils.createMissingTablesAndColumns(tab)
         }
     }

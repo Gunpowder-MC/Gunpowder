@@ -37,7 +37,7 @@ interface Command {
     companion object {
         @JvmStatic
         fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Builder.() -> Unit) {
-            val builder = EssentialsMod.instance!!.registry.getBuilder(Builder::class.java)
+            val builder = EssentialsMod.getInstance().registry.getBuilder(Builder::class.java)
             builder.setDispatcher(dispatcher)
             callback(builder)
         }

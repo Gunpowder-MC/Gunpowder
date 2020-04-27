@@ -22,42 +22,64 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials
+package io.github.nyliummc.essentials.mod
 
+import com.google.inject.Guice
+import com.google.inject.Injector
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.api.module.ModuleEntrypoint
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
+import io.github.nyliummc.essentials.injection.AbstractModule
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer
+import org.apache.logging.log4j.LogManager
 
 abstract class AbstractEssentialsMod : EssentialsMod {
-    val MODULE = "essentials:modules"
+    val module = "essentials:modules"
+    val logger = LogManager.getLogger(EssentialsMod::class.java)
 
     override val registry = EssentialsRegistry
     override val database = EssentialsDatabase
+    val injector: Injector
 
-    lateinit var entrypoints: List<EntrypointContainer<EssentialsModule>>
+    init {
+        injector = Guice.createInjector(this.createModule())
+    }
+
+    var modules: MutableList<EssentialsModule> = mutableListOf()
 
     fun initialize() {
-        EssentialsMod.instance = this
+        logger.info("Starting Essentials")
         registry.registerBuiltin()
-        entrypoints = FabricLoader.getInstance().getEntrypointContainers(MODULE, EssentialsModule::class.java)
+        logger.info("Loading modules")
+
+        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, ModuleEntrypoint::class.java)
 
         entrypoints.forEach {
-            it.entrypoint.registerCommands()
+            val module = it.entrypoint.createModule(this.injector)
+            modules.add(module)
+            logger.info("Loaded module ${module.name}, provided by ${it.provider.metadata.id}")
+            // We need to register configs as early as possible. The actual reloading of configs to handle per world settings can be done after the server has stopped for singleplayer
+            // This is due to LiteralTextMixin_Chat accessing the config during a Resource reload.
+            // Thereby accessing the essentials instance BEFORE the server start callbacks have been fired
+            // TODO fixme: Module magic and crap since J9 no likey Guice injections, this will require switching back to JVM 11 runtime to test
+            module.registerConfigs()
+            module.registerCommands()
         }
 
+        // TODO: Look into cleanup so we can turn this into internal method references
         ServerStartCallback.EVENT.register(ServerStartCallback { server ->
             database.loadDatabase()
 
-            entrypoints.forEach {
-                // TODO: Dependency inject essentials field
+            modules.forEach {
+                // TODO: Dependency inject essentials field onto the modules
 
                 // Register non-commands
-                it.entrypoint.onInitialize()
+                it.onInitialize()
             }
         })
 
@@ -66,4 +88,6 @@ abstract class AbstractEssentialsMod : EssentialsMod {
             database.disconnect()
         })
     }
+
+    abstract fun createModule(): AbstractModule
 }
