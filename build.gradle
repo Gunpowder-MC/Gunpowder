@@ -58,6 +58,7 @@ allprojects {
         dev
     }
 
+
     license {
         header = rootProject.file('LICENSE')
         include '**/*.java'
@@ -104,6 +105,11 @@ allprojects {
         implementation libs.postgresql
         implementation libs.mysql_connector_java
         implementation libs.sqlite_jdbc
+
+        // Configs
+        implementation libs.jackson_core
+        implementation libs.jackson_kotlin
+        implementation libs.jackson_yaml
 
         // We use checker for annotations:
         compileOnly libs.checker_qual

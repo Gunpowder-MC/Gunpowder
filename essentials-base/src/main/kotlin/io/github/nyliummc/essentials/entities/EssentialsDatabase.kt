@@ -25,6 +25,7 @@
 package io.github.nyliummc.essentials.entities
 
 import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.configs.EssentialsConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
@@ -35,23 +36,21 @@ object EssentialsDatabase : APIEssentialsDatabase {
         TransactionManager.closeAndUnregister(db)
     }
 
-    // TODO: Configurable
-    private var mode = "sqlite"
-    private val host = "localhost"
-    private val port = if (mode == "postgres") 5432 else 3306  // Default ports for postgres/mysql
-    private val databaseUser = "db_user"
-    private val databasePassword = "db_password"
+    private val config by lazy { EssentialsMod.instance!!.registry.getConfig(EssentialsConfig::class.java) }
     override lateinit var db: Database
 
     // Not configurable
     private val databaseName = "essentials"
 
     fun loadDatabase() {
+        val dbc = config.database
+        var mode = dbc.mode
+
         if (EssentialsMod.instance!!.isClient) {
-            this.mode = "sqlite"
+            mode = "sqlite"
         }
 
-        when (this.mode) {
+        when (mode) {
             "sqlite" -> {
                 val path = EssentialsMod.instance!!.server.runDirectory.canonicalPath
 
@@ -64,17 +63,17 @@ object EssentialsDatabase : APIEssentialsDatabase {
             }
             "postgres" -> {
                 db = Database.connect(
-                        "jdbc:postgresql://$host:$port/$databaseName",
+                        "jdbc:postgresql://${dbc.host}:${dbc.port}/$databaseName",
                         "org.postgresql.Driver",
-                        databaseUser,
-                        databasePassword)
+                        dbc.username,
+                        dbc.password)
             }
             "mysql" -> {
                 db = Database.connect(
-                        "jdbc:mysql://$host:$port/$databaseName",
+                        "jdbc:mysql://${dbc.host}:${dbc.port}/$databaseName",
                         "com.mysql.jdbc.Driver",
-                        databaseUser,
-                        databasePassword)
+                        dbc.username,
+                        dbc.password)
             }
             else -> {
                 println("$mode invalid")

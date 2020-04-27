@@ -27,6 +27,7 @@ package io.github.nyliummc.essentials
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.MarketCommand
+import io.github.nyliummc.essentials.configs.MarketConfig
 import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.models.MarketEntryTable
 import java.util.function.Supplier
@@ -44,6 +45,8 @@ class EssentialsMarketModule : EssentialsModule {
     }
 
     override fun onInitialize() {
+        essentials.registry.registerConfig("essentials-market.yaml", MarketConfig::class.java, "essentials-market.yaml")
+
         essentials.registry.registerTable(MarketEntryTable)
         essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler })
     }

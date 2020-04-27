@@ -27,6 +27,7 @@ package io.github.nyliummc.essentials
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.NicknameCommand
+import io.github.nyliummc.essentials.configs.ChatConfig
 import io.github.nyliummc.essentials.modelhandlers.NicknameHandler
 import io.github.nyliummc.essentials.models.NicknameTable
 import java.util.function.Supplier
@@ -44,6 +45,8 @@ class EssentialsChatModule : EssentialsModule {
     }
 
     override fun onInitialize() {
+        essentials.registry.registerConfig("essentials-chat.yaml", ChatConfig::class.java, "essentials-chat.yaml")
+
         essentials.registry.registerTable(NicknameTable)
 
         essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler })

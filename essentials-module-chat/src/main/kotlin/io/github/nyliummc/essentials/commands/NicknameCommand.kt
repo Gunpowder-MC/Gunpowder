@@ -31,12 +31,15 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.Text
 import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler
+import io.github.nyliummc.essentials.configs.ChatConfig
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 
 object NicknameCommand {
-    private val maxLength = 32
+    val config by lazy {
+        EssentialsMod.instance!!.registry.getConfig(ChatConfig::class.java)
+    }
     val handler by lazy {
         EssentialsMod.instance!!.registry.getModelHandler(NicknameHandler::class.java)
     }
@@ -71,15 +74,17 @@ object NicknameCommand {
     }
 
     private fun setNickname(context: CommandContext<ServerCommandSource>): Int {
-        val requestedNickname = StringArgumentType.getString(context, "nickname")
-        if (requestedNickname.length > maxLength) {
+        var requestedNickname = StringArgumentType.getString(context, "nickname")
+        if (requestedNickname.length > config.maxNicknameLength) {
             context.source.sendFeedback(Text.builder {
                 text("Nickname too long") {
-                    onHoverText("Limit set to $maxLength")
+                    onHoverText("Limit set to ${config.maxNicknameLength}")
                 }
             }, false)
             return 0
         }
+
+        requestedNickname += "§r"
 
         // TODO: Reapply on user join
         handler.modifyUser(context.source.player.uuid) {

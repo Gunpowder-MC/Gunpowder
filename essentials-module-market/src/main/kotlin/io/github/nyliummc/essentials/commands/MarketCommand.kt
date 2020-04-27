@@ -34,6 +34,7 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
 import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
+import io.github.nyliummc.essentials.configs.MarketConfig
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -52,7 +53,9 @@ object MarketCommand {
     val balanceHandler by lazy {
         EssentialsMod.instance!!.registry.getModelHandler(BalanceHandler::class.java)
     }
-    val maxEntriesPerUser = 5
+    val maxEntriesPerUser by lazy {
+        EssentialsMod.instance!!.registry.getConfig(MarketConfig::class.java).maxMarketsPerUser
+    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -61,7 +64,7 @@ object MarketCommand {
 
                 literal("add", "a") {
                     argument("price", DoubleArgumentType.doubleArg(0.0)) {
-                        executes { addMarket(it, 0) }
+                        executes(::addMarketOne)
 
                         argument("amount", IntegerArgumentType.integer(0, 64)) {
                             executes(::addMarketAmount)
@@ -70,6 +73,10 @@ object MarketCommand {
                 }
             }
         }
+    }
+
+    private fun addMarketOne(context: CommandContext<ServerCommandSource>): Int {
+        return addMarket(context, 1)
     }
 
     private fun addMarketAmount(context: CommandContext<ServerCommandSource>): Int {
@@ -86,6 +93,11 @@ object MarketCommand {
 
         if (item.count < amount) {
             context.source.sendError(LiteralText("Your hand doesn't contain $amount items!"))
+            return -1
+        }
+
+        if (item.item == Items.AIR) {
+            context.source.sendError(LiteralText("You are not holding anything!"))
             return -1
         }
 

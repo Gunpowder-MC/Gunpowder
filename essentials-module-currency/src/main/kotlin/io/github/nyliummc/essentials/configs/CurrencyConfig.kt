@@ -22,19 +22,8 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.configs
 
-import net.minecraft.server.MinecraftServer
-
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
-
-    // TODO: Cleaner way to do this
-    companion object {
-        @JvmStatic
-        var instance: EssentialsMod? = null
-    }
-}
+data class CurrencyConfig(
+        val startBalance: Double
+)
