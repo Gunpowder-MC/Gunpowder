@@ -110,9 +110,8 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun getWorldByName(wname: String?): DynmapWorld? {
-        return FabricDynmapWorld(
-                minecraftServer.getWorld(
-                        DimensionType.byId(Identifier.tryParse(wname))))
+        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
+        return FabricDynmapWorld(minecraftServer.getWorld(dtype))
     }
 
     override fun checkPlayerPermissions(player: String?, perms: Set<String?>?): Set<String?>? {
@@ -136,13 +135,13 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun getBlockIDAt(wname: String?, x: Int, y: Int, z: Int): Int {
-        // TODO: Verify that wname is a valid identifier
-        return Registry.BLOCK.getRawId(minecraftServer.getWorld(DimensionType.byId(Identifier(wname))).getBlockState(BlockPos(x, y, z)).block)
+        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
+        return Registry.BLOCK.getRawId(minecraftServer.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block)
     }
 
     override fun isSignAt(wname: String?, x: Int, y: Int, z: Int): Int {
-        // TODO: Verify that wname is a valid identifier
-        return if(minecraftServer.getWorld(DimensionType.byId(Identifier(wname))).getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
+        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
+        return if(minecraftServer.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
     }
 
     override fun getServerTPS(): Double {
