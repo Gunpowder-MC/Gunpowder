@@ -39,16 +39,21 @@ import org.dynmap.common.DynmapServerInterface
 import org.dynmap.utils.MapChunkCache
 import java.util.HashSet
 import java.util.concurrent.Callable
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
+import java.util.function.Supplier
 
 
 class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapServerInterface() {
     override fun scheduleServerTask(run: Runnable?, delay: Long) {
-        TODO("Not yet implemented")
+        Thread {
+            Thread.sleep(delay)
+            minecraftServer.submitAndJoin(run)
+        }.start()
     }
 
-    override fun <T> callSyncMethod(task: Callable<T>?): Future<T>? {
-        TODO("Not yet implemented")
+    override fun <T> callSyncMethod(task: Callable<T>): Future<T> {
+        return CompletableFuture.supplyAsync(Supplier { task.call() }, minecraftServer)
     }
 
     override fun getOnlinePlayers(): Array<DynmapPlayer?>? {
@@ -85,7 +90,8 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun requestEventNotification(type: DynmapListenerManager.EventType?): Boolean {
-        TODO("Not yet implemented")
+        // TODO Not yet implemented
+        return true
     }
 
     override fun sendWebChatEvent(source: String?, name: String?, msg: String?): Boolean {

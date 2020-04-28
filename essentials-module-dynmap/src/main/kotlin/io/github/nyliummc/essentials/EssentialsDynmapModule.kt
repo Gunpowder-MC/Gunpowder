@@ -41,9 +41,6 @@ import java.io.File
 
 class EssentialsDynmapModule : EssentialsModule {
     override val name = "dynmap"
-    override val essentials by lazy {
-        EssentialsMod.instance!!
-    }
     override val toggleable = true
 
     val core = DynmapCore()
@@ -59,7 +56,7 @@ class EssentialsDynmapModule : EssentialsModule {
 
         // Using codeSource allows it to be used in both modular and fatjar impls
         core.pluginJarFile = File(this::class.java.protectionDomain.codeSource.location.toURI())
-        core.dataFolder = File(essentials.server.runDirectory.canonicalPath + "/dynmap")
+        core.dataFolder = File(EssentialsMod.instance.server.runDirectory.canonicalPath + "/dynmap")
         core.dataFolder.mkdirs()
         core.setMinecraftVersion(minecraftServer.version)
         core.setPluginVersion(
