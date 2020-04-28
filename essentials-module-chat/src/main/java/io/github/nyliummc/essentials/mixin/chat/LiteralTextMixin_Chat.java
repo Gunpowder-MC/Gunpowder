@@ -49,7 +49,7 @@ public abstract class LiteralTextMixin_Chat extends BaseText {
 
         try {
             EssentialsMod.getInstance();
-        } catch (Throwable ignored) {
+        } catch (IllegalArgumentException ignored) {
             // TODO: Please, this is a nightmare since there is text constructed before essentials is even started. We simply cannot handle mixins into LiteralText.
             // Why? Well the server does construct some literal text before an essentials instance is injected into EssentialsProvider.
             return;

@@ -47,6 +47,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     val injector: Injector
 
     init {
+        EssentialsMod.instance
         injector = Guice.createInjector(this.createModule())
     }
 

@@ -36,11 +36,10 @@ interface EssentialsMod {
 
     companion object {
         @field:Inject
-        private var instance: EssentialsMod? = null
+        private var implementation: EssentialsMod? = null
 
         @JvmStatic
-        fun getInstance() : EssentialsMod {
-            return instance ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-        }
+        val instance: EssentialsMod
+            get () = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
     }
 }
