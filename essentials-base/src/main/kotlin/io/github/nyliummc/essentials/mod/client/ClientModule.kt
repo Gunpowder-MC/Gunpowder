@@ -26,7 +26,10 @@ package io.github.nyliummc.essentials.mod.client
 
 import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
 import io.github.nyliummc.essentials.injection.AbstractModule
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 
+@Environment(EnvType.CLIENT)
 class ClientModule(private val mod: EssentialsClientMod): AbstractModule() {
     override fun configure() {
         super.configure()

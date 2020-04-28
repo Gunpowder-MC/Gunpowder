@@ -44,9 +44,9 @@
       "io.github.nyliummc.essentials.mod.client.EssentialsClientMod"
     ],
     "essentials:modules": [
-      "io.github.nyliummc.essentials.ChatModuleEntrypoint",
-      "io.github.nyliummc.essentials.CurrencyModuleEntrypoint",
-      "io.github.nyliummc.essentials.MarketModuleEntrypoint"
+      "io.github.nyliummc.essentials.EssentialsChatModule",
+      "io.github.nyliummc.essentials.EssentialsCurrencyModule",
+      "io.github.nyliummc.essentials.EssentialsMarketModule"
     ]
   },
   "mixins": [

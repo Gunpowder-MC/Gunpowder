@@ -47,7 +47,6 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     val injector: Injector
 
     init {
-        EssentialsMod.instance
         injector = Guice.createInjector(this.createModule())
     }
 
@@ -58,16 +57,15 @@ abstract class AbstractEssentialsMod : EssentialsMod {
         registry.registerBuiltin()
         logger.info("Loading modules")
 
-        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, ModuleEntrypoint::class.java)
+        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, EssentialsModule::class.java)
 
         entrypoints.forEach {
-            val module = it.entrypoint.createModule(this.injector)
+            val module = it.entrypoint
             modules.add(module)
             logger.info("Loaded module ${module.name}, provided by ${it.provider.metadata.id}")
             // We need to register configs as early as possible. The actual reloading of configs to handle per world settings can be done after the server has stopped for singleplayer
             // This is due to LiteralTextMixin_Chat accessing the config during a Resource reload.
             // Thereby accessing the essentials instance BEFORE the server start callbacks have been fired
-            // TODO fixme: Module magic and crap since J9 no likey Guice injections, this will require switching back to JVM 11 runtime to test
             module.registerConfigs()
             module.registerCommands()
         }
@@ -77,8 +75,6 @@ abstract class AbstractEssentialsMod : EssentialsMod {
             database.loadDatabase()
 
             modules.forEach {
-                // TODO: Dependency inject essentials field onto the modules
-
                 // Register non-commands
                 it.onInitialize()
             }

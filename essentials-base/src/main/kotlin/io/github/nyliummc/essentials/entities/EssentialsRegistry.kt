@@ -81,7 +81,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
     }
 
     override fun registerTable(tab: Table) {
-        transaction(EssentialsMod.getInstance().database.db) {
+        transaction(EssentialsMod.instance.database.db) {
             SchemaUtils.createMissingTablesAndColumns(tab)
         }
     }

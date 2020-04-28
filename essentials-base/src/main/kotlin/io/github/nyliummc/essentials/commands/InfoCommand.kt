@@ -51,7 +51,7 @@ object InfoCommand {
                     text("base") {
                         color(Formatting.GOLD)
                     }
-                    (EssentialsMod.getInstance() as AbstractEssentialsMod).modules.forEach {
+                    (EssentialsMod.instance as AbstractEssentialsMod).modules.forEach {
                         text("\n- ")
                         text(it.name) {
                             color(Formatting.GOLD)

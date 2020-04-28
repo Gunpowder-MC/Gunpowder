@@ -35,9 +35,10 @@ import io.github.nyliummc.essentials.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.models.BalanceTable
 import java.util.function.Supplier
 
-class EssentialsCurrencyModule @Inject constructor(override val essentials: EssentialsMod) : EssentialsModule {
+class EssentialsCurrencyModule : EssentialsModule {
     override val name = "currency"
     override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
         essentials.registry.registerCommand(BalanceCommand::register)

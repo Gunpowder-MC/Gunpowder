@@ -34,9 +34,10 @@ import io.github.nyliummc.essentials.models.NicknameTable
 import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler as APINicknameHandler
 
-class EssentialsChatModule @Inject constructor(override val essentials: EssentialsMod) : EssentialsModule {
+class EssentialsChatModule : EssentialsModule {
     override val name = "chat"
     override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
         essentials.registry.registerCommand(NicknameCommand::register)

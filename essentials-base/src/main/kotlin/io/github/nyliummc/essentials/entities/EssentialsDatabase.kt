@@ -36,7 +36,7 @@ object EssentialsDatabase : APIEssentialsDatabase {
         TransactionManager.closeAndUnregister(db)
     }
 
-    private val config by lazy { EssentialsMod.getInstance().registry.getConfig(EssentialsConfig::class.java) }
+    private val config by lazy { EssentialsMod.instance.registry.getConfig(EssentialsConfig::class.java) }
     override lateinit var db: Database
 
     // Not configurable
@@ -46,13 +46,13 @@ object EssentialsDatabase : APIEssentialsDatabase {
         val dbc = config.database
         var mode = dbc.mode
 
-        if (EssentialsMod.getInstance().isClient) {
+        if (EssentialsMod.instance.isClient) {
             mode = "sqlite"
         }
 
         when (mode) {
             "sqlite" -> {
-                val path = EssentialsMod.getInstance().server.runDirectory.canonicalPath
+                val path = EssentialsMod.instance.server.runDirectory.canonicalPath
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/essentials.db",

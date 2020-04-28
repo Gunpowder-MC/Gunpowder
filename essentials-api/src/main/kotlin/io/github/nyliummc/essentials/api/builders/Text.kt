@@ -35,7 +35,7 @@ interface Text {
     companion object {
         @JvmStatic
         fun builder(callback: Builder.() -> Unit): MCText {
-            val builder = EssentialsMod.getInstance().registry.getBuilder(Builder::class.java)
+            val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
             return builder.build()
         }

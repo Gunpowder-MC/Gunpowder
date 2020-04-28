@@ -34,9 +34,10 @@ import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.models.MarketEntryTable
 import java.util.function.Supplier
 
-class EssentialsMarketModule @Inject constructor(override val essentials: EssentialsMod) : EssentialsModule {
+class EssentialsMarketModule : EssentialsModule {
     override val name = "market"
     override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
         essentials.registry.registerCommand(MarketCommand::register)

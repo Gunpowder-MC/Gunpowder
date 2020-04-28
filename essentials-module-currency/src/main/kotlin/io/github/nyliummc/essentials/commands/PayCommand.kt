@@ -37,7 +37,7 @@ import kotlin.math.roundToInt
 
 object PayCommand {
     val handler by lazy { // TODO: Dependency Injection
-        EssentialsMod.getInstance().registry.getModelHandler(BalanceHandler::class.java)
+        EssentialsMod.instance.registry.getModelHandler(BalanceHandler::class.java)
     }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
