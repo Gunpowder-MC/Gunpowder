@@ -40,7 +40,7 @@ interface EssentialsMod {
 
         @JvmStatic
         fun getInstance() : EssentialsMod {
-            return instance?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
+            return instance ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
         }
     }
 }
