@@ -26,12 +26,11 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
-import io.github.nyliummc.essentials.AbstractEssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.Text
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 
 object InfoCommand {
@@ -52,9 +51,9 @@ object InfoCommand {
                     text("base") {
                         color(Formatting.GOLD)
                     }
-                    (EssentialsMod.instance as AbstractEssentialsMod).entrypoints.forEach {
+                    (EssentialsMod.instance as AbstractEssentialsMod).modules.forEach {
                         text("\n- ")
-                        text(it.entrypoint.name) {
+                        text(it.name) {
                             color(Formatting.GOLD)
                         }
                     }

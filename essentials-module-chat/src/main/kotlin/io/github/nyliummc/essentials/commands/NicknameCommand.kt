@@ -37,11 +37,12 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 
 object NicknameCommand {
+    private val maxLength = 32
     val config by lazy {
-        EssentialsMod.instance!!.registry.getConfig(ChatConfig::class.java)
+        EssentialsMod.instance.registry.getConfig(ChatConfig::class.java)
     }
-    val handler by lazy {
-        EssentialsMod.instance!!.registry.getModelHandler(NicknameHandler::class.java)
+    val handler by lazy { // TODO: Dependency Injection
+        EssentialsMod.instance.registry.getModelHandler(NicknameHandler::class.java)
     }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {

@@ -91,7 +91,7 @@ object MarketEntryHandler : APIMarketEntryHandler {
     override fun getEntries(): List<StoredMarketEntry> {
         return cache.toList().sortedBy { it.expire }.also {
             it.forEach { entry ->
-                val seller = EssentialsMod.instance!!.server.userCache.getByUuid(entry.uuid)!!.name
+                val seller = EssentialsMod.instance.server.userCache.getByUuid(entry.uuid)!!.name
                 val timeLeft = Duration.between(LocalDateTime.now(), entry.expire)
                 val timeString = "${timeLeft.toDays()}d ${timeLeft.toHours() % 24}h " +
                         "${timeLeft.toMinutes() % 60}m ${timeLeft.seconds % 60}s"

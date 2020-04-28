@@ -24,29 +24,30 @@
 
 package io.github.nyliummc.essentials
 
+import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 import io.github.nyliummc.essentials.commands.MarketCommand
 import io.github.nyliummc.essentials.configs.MarketConfig
 import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.models.MarketEntryTable
 import java.util.function.Supplier
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
 class EssentialsMarketModule : EssentialsModule {
     override val name = "market"
-    override val essentials by lazy {
-        EssentialsMod.instance!!
-    }
     override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
         essentials.registry.registerCommand(MarketCommand::register)
     }
 
-    override fun onInitialize() {
+    override fun registerConfigs() {
         essentials.registry.registerConfig("essentials-market.yaml", MarketConfig::class.java, "essentials-market.yaml")
+    }
 
+    override fun onInitialize() {
         essentials.registry.registerTable(MarketEntryTable)
         essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler })
     }
