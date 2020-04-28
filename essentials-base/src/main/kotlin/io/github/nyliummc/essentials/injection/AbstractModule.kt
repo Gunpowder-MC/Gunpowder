@@ -22,30 +22,15 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials
+package io.github.nyliummc.essentials.injection
 
-import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
-import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.MinecraftClient
-import net.minecraft.server.MinecraftServer
+import com.google.inject.AbstractModule as GuiceAbstractModule
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
 
-/**
- * An implementation of the mod for clients which run an IntegratedServer.
- */
-@Environment(EnvType.CLIENT)
-class EssentialsClientMod : AbstractEssentialsMod(), ClientModInitializer {
-    private val client by lazy {
-        FabricLoader.getInstance().gameInstance as MinecraftClient
-    }
-    override val isClient = true
-    override val server: MinecraftServer
-        get() {
-            return client.server ?: throw IllegalArgumentException("Server is not available.")
-        }
-
-    override fun onInitializeClient() {
-        this.initialize()
+abstract class AbstractModule: GuiceAbstractModule() {
+    override fun configure() {
+        bind(EssentialsMod::class.java).to(AbstractEssentialsMod::class.java)
+        requestStaticInjection(EssentialsMod.Companion::class.java)
     }
 }

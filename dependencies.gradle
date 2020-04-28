@@ -27,6 +27,9 @@ ext {
             jackson_kotlin: "com.fasterxml.jackson.module:jackson-module-kotlin:$project.fasterxml_jackson_version",
             jackson_yaml: "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$project.fasterxml_jackson_version",
 
+            // Dependency Injection
+            guice: "com.google.inject:guice:$project.guice",
+
             // Annotations
             checker_qual: "org.checkerframework:checker-qual:$project.checker_qual",
 

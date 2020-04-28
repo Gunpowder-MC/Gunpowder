@@ -22,24 +22,36 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mod.client
 
-import com.google.inject.Inject
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
+import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
+import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.server.MinecraftServer
-import java.lang.IllegalArgumentException
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
+/**
+ * An implementation of the mod for clients which run on an integrated server.
+ */
+@Environment(EnvType.CLIENT)
+class EssentialsClientMod : AbstractEssentialsMod(), ClientModInitializer {
+    private val client by lazy {
+        FabricLoader.getInstance().gameInstance as MinecraftClient
+    }
+    override val isClient = true
 
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
+    override val server: MinecraftServer
+        get() {
+            return client.server ?: throw IllegalArgumentException("Server is not available.")
+        }
 
-        @JvmStatic
-        val instance: EssentialsMod
-            get () = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
+    override fun onInitializeClient() {
+        this.initialize()
+    }
+
+    override fun createModule(): ClientModule {
+        return ClientModule(this)
     }
 }

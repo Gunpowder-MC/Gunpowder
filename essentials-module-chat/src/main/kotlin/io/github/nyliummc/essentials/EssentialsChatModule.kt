@@ -24,6 +24,7 @@
 
 package io.github.nyliummc.essentials
 
+import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.NicknameCommand
@@ -35,18 +36,18 @@ import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHand
 
 class EssentialsChatModule : EssentialsModule {
     override val name = "chat"
-    override val essentials by lazy {
-        EssentialsMod.instance!!
-    }
     override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
         essentials.registry.registerCommand(NicknameCommand::register)
     }
 
-    override fun onInitialize() {
+    override fun registerConfigs() {
         essentials.registry.registerConfig("essentials-chat.yaml", ChatConfig::class.java, "essentials-chat.yaml")
+    }
 
+    override fun onInitialize() {
         essentials.registry.registerTable(NicknameTable)
 
         essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler })

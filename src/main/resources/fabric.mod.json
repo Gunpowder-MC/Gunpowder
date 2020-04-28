@@ -38,10 +38,10 @@
   "environment": "*",
   "entrypoints": {
     "server": [
-      "io.github.nyliummc.essentials.EssentialsServerMod"
+      "io.github.nyliummc.essentials.mod.server.EssentialsServerMod"
     ],
     "client": [
-      "io.github.nyliummc.essentials.EssentialsClientMod"
+      "io.github.nyliummc.essentials.mod.client.EssentialsClientMod"
     ],
     "essentials:modules": [
       "io.github.nyliummc.essentials.EssentialsChatModule",

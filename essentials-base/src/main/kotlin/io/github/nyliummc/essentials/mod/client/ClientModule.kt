@@ -22,23 +22,17 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials
+package io.github.nyliummc.essentials.mod.client
 
-import net.fabricmc.api.DedicatedServerModInitializer
-import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.server.MinecraftServer
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
+import io.github.nyliummc.essentials.injection.AbstractModule
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 
-/**
- * An implementation of the mod for DedicatedServers.
- */
-class EssentialsServerMod : AbstractEssentialsMod(), DedicatedServerModInitializer {
-    override val isClient = false
-
-    override val server by lazy {
-        FabricLoader.getInstance().gameInstance as MinecraftServer
-    }
-
-    override fun onInitializeServer() {
-        this.initialize()
+@Environment(EnvType.CLIENT)
+class ClientModule(private val mod: EssentialsClientMod): AbstractModule() {
+    override fun configure() {
+        super.configure()
+        bind(AbstractEssentialsMod::class.java).toInstance(this.mod)
     }
 }

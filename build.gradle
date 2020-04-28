@@ -71,7 +71,6 @@ allprojects {
         dev
     }
 
-
     license {
         header = rootProject.file('LICENSE')
         include '**/*.java'
@@ -128,7 +127,10 @@ allprojects {
         implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
         implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
 
-        // We use checker for annotations:
+        // Dependency Injection
+        implementation libs.guice
+
+        // We use checker for annotations
         compileOnly libs.checker_qual
 
         // TODO: Permissions
