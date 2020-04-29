@@ -65,7 +65,6 @@ object EssentialsRegistry : APIEssentialsRegistry {
     fun registerBuiltin() {
         configs[EssentialsConfig::class.java] = Pair("essentials.yaml", "essentials.yaml")
         registerCommand(InfoCommand::register)
-        registerCommand(FlightCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }

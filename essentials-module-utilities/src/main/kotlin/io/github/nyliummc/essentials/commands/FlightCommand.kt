@@ -26,11 +26,9 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
-import io.github.ladysnake.pal.AbilitySource
 import io.github.ladysnake.pal.Pal
 import io.github.ladysnake.pal.VanillaAbilities
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.builders.Text
 import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
@@ -45,11 +43,11 @@ object FlightCommand {
             command("flight", "fly") {
                 requires { it.hasPermissionLevel(4) }
 
-                executes (::toggleFlightSelf)
+                executes (FlightCommand::toggleFlightSelf)
                 argument("player", EntityArgumentType.player()) {
                     requires { it.hasPermissionLevel(4) }
 
-                    executes (::toggleFlightOther)
+                    executes (FlightCommand::toggleFlightOther)
                 }
             }
         }
