@@ -30,6 +30,7 @@ import io.github.nyliummc.essentials.entities.FabricDynmapServer
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.api.ModContainer
 import net.minecraft.block.Block
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.registry.Registry
@@ -45,6 +46,10 @@ class EssentialsDynmapModule : EssentialsModule {
 
     val core = DynmapCore()
 
+    init {
+        instance = this
+    }
+
     override fun registerEvents() {
         ServerStartCallback.EVENT.register(ServerStartCallback(::startServer))
         ServerStopCallback.EVENT.register(ServerStopCallback(::stopServer))
@@ -55,7 +60,9 @@ class EssentialsDynmapModule : EssentialsModule {
         core.server = FabricDynmapServer(minecraftServer)
 
         // Using codeSource allows it to be used in both modular and fatjar impls
-        core.pluginJarFile = File(this::class.java.protectionDomain.codeSource.location.toURI())
+        val path = this::class.java.classLoader.getResource(".")!!.path
+        println(path)
+        core.pluginJarFile = File(path)
         core.dataFolder = File(EssentialsMod.instance.server.runDirectory.canonicalPath + "/dynmap")
         core.dataFolder.mkdirs()
         core.setMinecraftVersion(minecraftServer.version)
@@ -84,5 +91,9 @@ class EssentialsDynmapModule : EssentialsModule {
                 last = DynmapBlockState(null, rawId, Registry.BLOCK.getId(block).toString(), state.toString(), state.material.toString(), id++)
             }
         }
+    }
+
+    companion object {
+        var instance: EssentialsDynmapModule? = null
     }
 }

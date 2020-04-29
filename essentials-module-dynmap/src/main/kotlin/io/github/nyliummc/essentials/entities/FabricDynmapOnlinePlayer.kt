@@ -25,6 +25,7 @@
 package io.github.nyliummc.essentials.entities
 
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.LiteralText
 import net.minecraft.world.dimension.DimensionType
 import org.dynmap.DynmapLocation
 import org.dynmap.common.DynmapPlayer
@@ -34,6 +35,8 @@ import java.util.*
 
 
 class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapPlayer {
+    private var weight = 0
+
     override fun getName(): String {
         return player.name.string
     }
@@ -81,11 +84,13 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun getLastLoginTime(): Long {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
+        return 0
     }
 
     override fun getFirstLoginTime(): Long {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
+        return 0
     }
 
     override fun isInvisible(): Boolean {
@@ -93,11 +98,12 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun getSortWeight(): Int {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
+        return weight
     }
 
     override fun setSortWeight(wt: Int) {
-        TODO("Not yet implemented")
+        weight = wt
     }
 
     override fun hasPrivilege(privid: String): Boolean {
@@ -106,7 +112,7 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun sendMessage(msg: String) {
-        TODO("Not yet implemented")
+        player.addChatMessage(LiteralText(msg), false)
     }
 
     override fun isConnected(): Boolean {
@@ -123,7 +129,8 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun getSkinURL(): String? {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
+        return null
     }
 
     override fun getUUID(): UUID? {

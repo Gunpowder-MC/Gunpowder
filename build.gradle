@@ -125,7 +125,9 @@ allprojects {
 
         // Dynmap
         implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
+        include urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
         implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
+        include urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
 
         // Dependency Injection
         implementation libs.guice
