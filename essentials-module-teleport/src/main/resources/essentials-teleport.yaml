@@ -1,0 +1,4 @@
+# Essentials Market Config
+
+# Maximum number of entries a user can have at once
+maxMarketsPerUser: 10

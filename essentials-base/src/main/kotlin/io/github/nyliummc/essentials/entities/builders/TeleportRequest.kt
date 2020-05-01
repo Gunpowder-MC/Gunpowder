@@ -24,7 +24,10 @@
 
 package io.github.nyliummc.essentials.entities.builders
 
+import io.github.nyliummc.essentials.events.PlayerPreTeleportCallback
+import io.github.nyliummc.essentials.events.PlayerTeleportCallback
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.dimension.DimensionType
@@ -50,12 +53,17 @@ class TeleportRequest private constructor(
 
             // Verify they're still online
             if (server.playerManager.playerList.contains(player)) {
-                player.teleport(server.getWorld(dimension),
-                        destination.x, destination.y, destination.z,
-                        facing?.x ?: player.pitch, facing?.y ?: player.yaw)
+                val res = PlayerPreTeleportCallback.EVENT.invoker().trigger(player, this)
+                if (res != ActionResult.FAIL) {
+                    PlayerTeleportCallback.EVENT.invoker().trigger(player, this)
+                    player.teleport(server.getWorld(dimension),
+                            destination.x, destination.y, destination.z,
+                            facing?.x ?: player.pitch, facing?.y ?: player.yaw)
 
-                callback?.invoke()
+                    callback?.invoke()
+                }
             }
+
         }
     }
 
