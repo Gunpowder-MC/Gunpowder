@@ -31,7 +31,6 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
@@ -44,6 +43,7 @@ object BackCommand {
             val dimension: DimensionType,
             val facing: Vec2f
     )
+
     val lastPosition = mutableMapOf<UUID, LastPosition>()
 
     val teleportDelay by lazy {

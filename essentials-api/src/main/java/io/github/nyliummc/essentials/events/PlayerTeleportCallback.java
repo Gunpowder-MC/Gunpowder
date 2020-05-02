@@ -28,11 +28,10 @@ import io.github.nyliummc.essentials.api.builders.TeleportRequest;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
 
 /**
  * Called before a teleport request is executed and was not cancelled by PlayerPreTeleportCallback.
- *
+ * <p>
  * TODO: Support vanilla commands (maybe others too?)
  */
 public interface PlayerTeleportCallback {

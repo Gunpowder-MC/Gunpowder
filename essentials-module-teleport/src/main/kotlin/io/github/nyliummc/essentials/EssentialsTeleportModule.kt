@@ -24,14 +24,11 @@
 
 package io.github.nyliummc.essentials
 
-import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.events.PlayerTeleportCallback
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
-import java.util.function.Supplier
 
 class EssentialsTeleportModule : EssentialsModule {
     override val name = "teleport"

@@ -29,7 +29,10 @@ import io.github.nyliummc.essentials.events.PlayerTeleportCallback
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ChunkTicketType
 import net.minecraft.util.ActionResult
-import net.minecraft.util.math.*
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.math.Vec2f
+import net.minecraft.util.math.Vec3d
 import net.minecraft.world.dimension.DimensionType
 import java.time.Duration
 import java.time.LocalDateTime

@@ -31,7 +31,6 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import net.minecraft.world.dimension.DimensionType
 

@@ -26,7 +26,6 @@ package io.github.nyliummc.essentials.api
 
 import com.google.inject.Inject
 import net.minecraft.server.MinecraftServer
-import java.lang.IllegalArgumentException
 
 interface EssentialsMod {
     val server: MinecraftServer
@@ -40,6 +39,6 @@ interface EssentialsMod {
 
         @JvmStatic
         val instance: EssentialsMod
-            get () = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
+            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
     }
 }

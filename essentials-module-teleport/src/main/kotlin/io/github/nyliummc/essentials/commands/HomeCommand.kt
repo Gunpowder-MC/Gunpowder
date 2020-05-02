@@ -40,7 +40,6 @@ import net.minecraft.server.command.CommandSource
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
 import net.minecraft.world.dimension.DimensionType
 import java.util.concurrent.CompletableFuture

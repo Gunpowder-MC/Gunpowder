@@ -44,9 +44,9 @@ object WarpHandler : APIWarpHandler {
         transaction {
             cache.putAll(WarpTable.selectAll().map {
                 it[WarpTable.name] to StoredWarp(
-                    it[WarpTable.name],
-                    Vec3i(it[WarpTable.x], it[WarpTable.y], it[WarpTable.z]),
-                    it[WarpTable.dimension])
+                        it[WarpTable.name],
+                        Vec3i(it[WarpTable.x], it[WarpTable.y], it[WarpTable.z]),
+                        it[WarpTable.dimension])
             }.toMap())
         }
     }

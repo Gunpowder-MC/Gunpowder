@@ -33,7 +33,6 @@ import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import net.minecraft.util.math.Vec3i
 import net.minecraft.world.dimension.DimensionType
 
 object RTPCommand {

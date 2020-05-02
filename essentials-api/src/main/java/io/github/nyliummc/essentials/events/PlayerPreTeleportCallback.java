@@ -33,7 +33,7 @@ import net.minecraft.util.ActionResult;
 /**
  * Called before a teleport request is queued; Allows cancelling.
  * All callbacks are always called, but cannot force execution if another returned ActionResult.FAIL.
- *
+ * <p>
  * TODO: Support vanilla commands (maybe others too?)
  */
 public interface PlayerPreTeleportCallback {

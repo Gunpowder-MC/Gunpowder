@@ -63,6 +63,7 @@ interface TeleportRequest {
         fun destination(destination: Vec3i) {
             destination(Vec3d(destination))
         }
+
         fun onComplete(callback: () -> Unit)
 
         @Deprecated("Used internally, do not use.")
