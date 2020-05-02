@@ -28,14 +28,12 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.api.module.ModuleEntrypoint
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import io.github.nyliummc.essentials.injection.AbstractModule
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import org.apache.logging.log4j.LogManager
 
 abstract class AbstractEssentialsMod : EssentialsMod {

@@ -57,13 +57,12 @@ public abstract class TranslatableTextMixin_Chat extends BaseText {
         this.key = key;
         this.args = args;
 
-        for(int i = 0; i < args.length; ++i) {
+        for (int i = 0; i < args.length; ++i) {
             Object object = args[i];
-            if(object instanceof String){
+            if (object instanceof String) {
                 this.args[i] = new LiteralText((String) object);
-            }
-            else if (object instanceof Text) {
-                Text text = ((Text)object).deepCopy();
+            } else if (object instanceof Text) {
+                Text text = ((Text) object).deepCopy();
                 this.args[i] = text;
                 text.getStyle().setParent(this.getStyle());
             } else if (object == null) {

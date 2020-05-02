@@ -24,11 +24,11 @@
 
 package io.github.nyliummc.essentials.injection
 
-import com.google.inject.AbstractModule as GuiceAbstractModule
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
+import com.google.inject.AbstractModule as GuiceAbstractModule
 
-abstract class AbstractModule: GuiceAbstractModule() {
+abstract class AbstractModule : GuiceAbstractModule() {
     override fun configure() {
         bind(EssentialsMod::class.java).to(AbstractEssentialsMod::class.java)
         requestStaticInjection(EssentialsMod.Companion::class.java)

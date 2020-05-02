@@ -1,0 +1,6 @@
+# Essentials Utilities Config
+
+# Percentage of people that need to sleep to skip the night
+# Supports any number between 0 and 1
+# 1 = 100% | 0.5 = 50% | 0.1 = 10% | 0.01 = 1%
+sleepPercentage: 0.3

@@ -24,11 +24,8 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
-import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.modules.chat.dataholders.StoredNickname
 import io.github.nyliummc.essentials.models.NicknameTable
-import net.minecraft.entity.LivingEntity
-import net.minecraft.world.dimension.DimensionType
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction

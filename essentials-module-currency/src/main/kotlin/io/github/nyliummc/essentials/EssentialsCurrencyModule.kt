@@ -24,16 +24,15 @@
 
 package io.github.nyliummc.essentials
 
-import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 import io.github.nyliummc.essentials.commands.BalanceCommand
 import io.github.nyliummc.essentials.commands.PayCommand
 import io.github.nyliummc.essentials.configs.CurrencyConfig
 import io.github.nyliummc.essentials.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.models.BalanceTable
 import java.util.function.Supplier
+import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 
 class EssentialsCurrencyModule : EssentialsModule {
     override val name = "currency"

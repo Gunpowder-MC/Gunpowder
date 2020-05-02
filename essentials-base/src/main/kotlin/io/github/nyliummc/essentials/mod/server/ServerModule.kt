@@ -24,10 +24,10 @@
 
 package io.github.nyliummc.essentials.mod.server
 
-import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
 import io.github.nyliummc.essentials.injection.AbstractModule
+import io.github.nyliummc.essentials.mod.AbstractEssentialsMod
 
-class ServerModule(private val mod: EssentialsServerMod): AbstractModule() {
+class ServerModule(private val mod: EssentialsServerMod) : AbstractModule() {
     override fun configure() {
         super.configure()
         bind(AbstractEssentialsMod::class.java).toInstance(this.mod)

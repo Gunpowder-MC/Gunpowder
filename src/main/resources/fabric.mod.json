@@ -27,6 +27,14 @@
         "sources2": "https://dilaton.martmists.com/Martmists/",
         "discord": "Martmists#3740"
       }
+    },
+    {
+      "name": "MCrafterzz",
+      "minecraft": "ef00cf03-ed99-4fb4-ab34-a784c130d606",
+      "contact": {
+        "sources": "https://github.com/MCrafterzz/",
+        "discord": "MCrafterzz#5993"
+      }
     }
   ],
   "contact": {
@@ -47,13 +55,15 @@
       "io.github.nyliummc.essentials.EssentialsChatModule",
       "io.github.nyliummc.essentials.EssentialsCurrencyModule",
       "io.github.nyliummc.essentials.EssentialsDynmapModule",
-      "io.github.nyliummc.essentials.EssentialsMarketModule"
+      "io.github.nyliummc.essentials.EssentialsMarketModule",
+      "io.github.nyliummc.essentials.EssentialsUtilitiesModule"
     ]
   },
   "mixins": [
     "mixins.essentials.json",
     "mixins.chat.essentials.json",
-    "mixins.dynmap.essentials.json"
+    "mixins.dynmap.essentials.json",
+    "mixins.utilities.essentials.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.2",
