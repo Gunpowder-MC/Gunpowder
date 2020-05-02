@@ -42,11 +42,11 @@ object FlightCommand {
             command("flight", "fly") {
                 requires { it.hasPermissionLevel(4) }
 
-                executes (FlightCommand::toggleFlightSelf)
+                executes (::toggleFlightSelf)
                 argument("player", EntityArgumentType.player()) {
                     requires { it.hasPermissionLevel(4) }
 
-                    executes (FlightCommand::toggleFlightOther)
+                    executes (::toggleFlightOther)
                 }
             }
         }

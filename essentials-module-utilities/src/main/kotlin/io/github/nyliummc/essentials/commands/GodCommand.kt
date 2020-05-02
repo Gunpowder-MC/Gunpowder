@@ -58,7 +58,7 @@ object GodCommand {
 
         // Send feedback
         context.source.sendFeedback(
-                LiteralText("Successfully toggled flight"),
+                LiteralText("Successfully toggled godmode"),
                 false)
 
         return 1
@@ -73,7 +73,7 @@ object GodCommand {
 
         // Send feedback
         context.source.sendFeedback(
-                LiteralText("Successfully toggled flight for ${player.displayName.asString()}"),
+                LiteralText("Successfully toggled godmode for ${player.displayName.asString()}"),
                 false)
 
         return 1
