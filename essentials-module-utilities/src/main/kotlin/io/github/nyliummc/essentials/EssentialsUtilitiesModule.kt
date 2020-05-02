@@ -27,7 +27,9 @@ package io.github.nyliummc.essentials
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.FlightCommand
+import io.github.nyliummc.essentials.commands.GodCommand
 import io.github.nyliummc.essentials.commands.HatCommand
+import io.github.nyliummc.essentials.commands.TPSCommand
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
 import io.github.nyliummc.essentials.entities.SleepSetter
 import io.github.nyliummc.essentials.entities.TPSTracker
@@ -51,7 +53,9 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
     override fun registerCommands() {
         essentials.registry.registerCommand(FlightCommand::register)
+        essentials.registry.registerCommand(GodCommand::register)
         essentials.registry.registerCommand(HatCommand::register)
+        essentials.registry.registerCommand(TPSCommand::register)
     }
 
     override fun registerConfigs() {
