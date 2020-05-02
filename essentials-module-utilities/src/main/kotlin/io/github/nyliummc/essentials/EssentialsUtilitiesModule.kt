@@ -27,8 +27,11 @@ package io.github.nyliummc.essentials
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.FlightCommand
+import io.github.nyliummc.essentials.commands.HatCommand
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
 import io.github.nyliummc.essentials.entities.SleepSetter
+import io.github.nyliummc.essentials.entities.TPSTracker
+import io.github.nyliummc.essentials.ext.precision
 import net.fabricmc.fabric.api.event.world.WorldTickCallback
 
 import net.minecraft.entity.player.PlayerEntity
@@ -36,8 +39,6 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 
 import net.minecraft.world.dimension.DimensionType
-
-
 
 
 class EssentialsUtilitiesModule : EssentialsModule {
@@ -50,6 +51,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
     override fun registerCommands() {
         essentials.registry.registerCommand(FlightCommand::register)
+        essentials.registry.registerCommand(HatCommand::register)
     }
 
     override fun registerConfigs() {
@@ -71,10 +73,10 @@ class EssentialsUtilitiesModule : EssentialsModule {
                 return@WorldTickCallback
             }
 
-            val total = players.size.toFloat()
+            val total = players.size.toDouble()
             val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }
 
-            val sleepingAmount = sleepingPlayers.count().toFloat()
+            val sleepingAmount = sleepingPlayers.count().toDouble()
             val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage
             val percentage = total / sleepingAmount
             val shouldSkip = percentage >= treshold
@@ -82,7 +84,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
                 sleeping.add(it)
                 world.server.playerManager.sendToAll(
-                        LiteralText("${it.displayName.asString()} is now sleeping. (${"%.2f".format(percentage)}, ${"%.2f".format(treshold)} needed)"))
+                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"))
             }
 
             (world as SleepSetter).setSleeping(shouldSkip)
@@ -91,6 +93,20 @@ class EssentialsUtilitiesModule : EssentialsModule {
                 sleeping.clear()
             }
         })
+    }
+
+    companion object {
+        val tpsTrackers = mutableMapOf<String, TPSTracker>()
+
+        @JvmStatic
+        fun getTracker(name: String): TPSTracker {
+            var c = tpsTrackers[name]
+            if (c == null) {
+                c = TPSTracker(name)
+                tpsTrackers[name] = c
+            }
+            return c
+        }
     }
 
 }

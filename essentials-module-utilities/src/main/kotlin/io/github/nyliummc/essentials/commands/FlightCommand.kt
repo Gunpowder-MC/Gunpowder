@@ -35,8 +35,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 
 object FlightCommand {
-
-    private val abilitySource = Pal.getAbilitySource("essentials", "flight");
+    val ESSENTIALS_ABILITY_FLY = Pal.getAbilitySource("essentials", "flight");
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -74,19 +73,20 @@ object FlightCommand {
 
         // Send feedback
         commandContext.source.sendFeedback(
-                LiteralText("Successfully toggled flight for \${player.name.asString()}"),
+                LiteralText("Successfully toggled flight for ${player.displayName.asString()}"),
                 false)
 
         return 1
     }
 
     private fun toggleFlight (player: ServerPlayerEntity) {
-        if (abilitySource.grants(player, VanillaAbilities.FLYING)) {
-            abilitySource.revokeFrom(player, VanillaAbilities.ALLOW_FLYING)
-            abilitySource.revokeFrom(player, VanillaAbilities.FLYING)
+        if (ESSENTIALS_ABILITY_FLY.grants(player, VanillaAbilities.FLYING)) {
+            ESSENTIALS_ABILITY_FLY.revokeFrom(player, VanillaAbilities.ALLOW_FLYING)
+            ESSENTIALS_ABILITY_FLY.revokeFrom(player, VanillaAbilities.FLYING)
         } else {
-            abilitySource.grantTo(player, VanillaAbilities.ALLOW_FLYING)
-            abilitySource.grantTo(player, VanillaAbilities.FLYING)
+            ESSENTIALS_ABILITY_FLY.grantTo(player, VanillaAbilities.ALLOW_FLYING)
+            ESSENTIALS_ABILITY_FLY.grantTo(player, VanillaAbilities.FLYING)
         }
+        player.sendAbilitiesUpdate()
     }
 }
