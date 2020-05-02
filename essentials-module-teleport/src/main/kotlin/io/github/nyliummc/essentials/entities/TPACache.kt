@@ -1,5 +1,7 @@
 package io.github.nyliummc.essentials.entities
 
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.network.ServerPlayerEntity
 import java.util.*
 
@@ -22,7 +24,9 @@ object TPACache {
         }
     }
 
-    val timeoutSeconds = 120
+    val timeoutSeconds by lazy {
+        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).tpaTimeout
+    }
     val cache = mutableListOf<TPARequest>()
 
     fun requestTpa(requester: ServerPlayerEntity, target: ServerPlayerEntity, callback: () -> Unit): Boolean {

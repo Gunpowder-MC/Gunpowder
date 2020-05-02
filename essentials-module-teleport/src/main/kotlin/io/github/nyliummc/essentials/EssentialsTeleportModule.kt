@@ -27,7 +27,8 @@ package io.github.nyliummc.essentials
 import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.commands.BackCommand
+import io.github.nyliummc.essentials.commands.*
+import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.events.PlayerTeleportCallback
 import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 import java.util.function.Supplier
@@ -39,10 +40,14 @@ class EssentialsTeleportModule : EssentialsModule {
 
     override fun registerCommands() {
         essentials.registry.registerCommand(BackCommand::register)
+        essentials.registry.registerCommand(HomeCommand::register)
+        essentials.registry.registerCommand(RTPCommand::register)
+        essentials.registry.registerCommand(SpawnCommand::register)
+        essentials.registry.registerCommand(TPACommand::register)
     }
 
     override fun registerConfigs() {
-        // essentials.registry.registerConfig("essentials-teleport.yaml", MarketConfig::class.java, "essentials-teleport.yaml")
+        essentials.registry.registerConfig("essentials-teleport.yaml", TeleportConfig::class.java, "essentials-teleport.yaml")
     }
 
     override fun onInitialize() {

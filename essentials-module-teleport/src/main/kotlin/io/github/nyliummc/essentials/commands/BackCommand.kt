@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
+import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
@@ -20,6 +21,10 @@ object BackCommand {
             val facing: Vec2f
     )
     val lastPosition = mutableMapOf<UUID, LastPosition>()
+
+    val teleportDelay by lazy {
+        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).teleportDelay
+    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -44,7 +49,7 @@ object BackCommand {
                 dimension(p.dimension)
             }
 
-            request.execute(1)
+            request.execute(teleportDelay.toLong())
 
             return 1
         }

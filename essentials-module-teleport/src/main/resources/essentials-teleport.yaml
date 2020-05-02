@@ -1,4 +1,13 @@
-# Essentials Market Config
+# Essentials Teleport Config
 
-# Maximum number of entries a user can have at once
-maxMarketsPerUser: 10
+# Max number of homes per user
+maxHomes: 5
+
+# Delay between command and teleportation in seconds
+teleportDelay: 5
+
+# Seconds until /tpa expires
+tpaTimeout: 120
+
+# Distance for /rtp
+rtpDistance: 10000

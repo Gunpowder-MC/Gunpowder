@@ -2,8 +2,10 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
+import io.github.nyliummc.essentials.configs.TeleportConfig
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -11,7 +13,9 @@ import net.minecraft.util.math.Vec3i
 import net.minecraft.world.dimension.DimensionType
 
 object RTPCommand {
-    val rtpDistance = 10000
+    val config by lazy {
+        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java)
+    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
@@ -22,7 +26,7 @@ object RTPCommand {
     }
 
     fun execute(context: CommandContext<ServerCommandSource>): Int {
-        val distance = rtpDistance
+        val distance = config.rtpDistance
         val player = context.source.player
         val world = context.source.minecraftServer.getWorld(DimensionType.OVERWORLD)
         val deltaX = distance * player.random.nextGaussian() + 1
@@ -47,7 +51,7 @@ object RTPCommand {
             destination(Vec3d(newX, i.toDouble(), newZ))
             dimension(DimensionType.OVERWORLD)
             facing(player.rotationClient)
-        }.execute(0)
+        }.execute(config.teleportDelay.toLong())
 
         return 1
     }

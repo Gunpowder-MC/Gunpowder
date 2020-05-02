@@ -4,9 +4,11 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
 import io.github.nyliummc.essentials.api.builders.Text
+import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.entities.TPACache
 import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.server.command.ServerCommandSource
@@ -15,6 +17,10 @@ import net.minecraft.util.Formatting
 import java.util.concurrent.CompletableFuture
 
 object TPACommand {
+    val config by lazy {
+        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java)
+    }
+
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
             command("tpa") {
@@ -55,8 +61,6 @@ object TPACommand {
         }
     }
 
-    val timeout = 120
-
     fun executeTpa(context: CommandContext<ServerCommandSource>): Int {
         val player = context.source.player
         val target = EntityArgumentType.getPlayer(context, "user")
@@ -85,7 +89,7 @@ object TPACommand {
                 onClickCommand("/tpdeny ${player.displayName.asString()}")
                 onHoverText("/tpdeny ${player.displayName.asString()}")
             }
-            text(". This request will time out in $timeout seconds.")
+            text(". This request will time out in ${config.tpaTimeout} seconds.")
         }, false)
         return 1
     }
@@ -116,7 +120,7 @@ object TPACommand {
                 onClickCommand("/tpdeny ${player.displayName.asString()}")
                 onHoverText("/tpdeny ${player.displayName.asString()}")
             }
-            text(". This request will time out in $timeout seconds.")
+            text(". This request will time out in ${config.tpaTimeout} seconds.")
         }, false)
         return 1
     }
@@ -136,7 +140,7 @@ object TPACommand {
                 player(it.requester())
                 destination(it.targetLocationEntity.pos)
                 dimension(it.targetLocationEntity.dimension)
-            }.execute(0)
+            }.execute(config.teleportDelay.toLong())
             it.requester().addChatMessage(LiteralText("TPA accepted"), false)
         }
         return 1
