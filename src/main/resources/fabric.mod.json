@@ -54,12 +54,14 @@
     "essentials:modules": [
       "io.github.nyliummc.essentials.EssentialsChatModule",
       "io.github.nyliummc.essentials.EssentialsCurrencyModule",
-      "io.github.nyliummc.essentials.EssentialsMarketModule"
+      "io.github.nyliummc.essentials.EssentialsMarketModule",
+      "io.github.nyliummc.essentials.EssentialsUtilitiesModule"
     ]
   },
   "mixins": [
     "mixins.essentials.json",
-    "mixins.chat.essentials.json"
+    "mixins.chat.essentials.json",
+    "mixins.utilities.essentials.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.2",

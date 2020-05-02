@@ -29,64 +29,63 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.ladysnake.pal.Pal
 import io.github.ladysnake.pal.VanillaAbilities
 import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.commands.FlightCommand.ESSENTIALS_ABILITY_FLY
 import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 
-object FlightCommand {
-
-    private val abilitySource = Pal.getAbilitySource("essentials", "flight");
+object GodCommand {
+    val ESSENTIALS_ABILITY_GOD = Pal.getAbilitySource("essentials", "godmode")
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("flight", "fly") {
+            command("god") {
                 requires { it.hasPermissionLevel(4) }
 
-                executes(::toggleFlightSelf)
+                executes(::toggleGodSelf)
                 argument("player", EntityArgumentType.player()) {
                     requires { it.hasPermissionLevel(4) }
-
-                    executes(::toggleFlightOther)
+                    executes(::toggleGodOther)
                 }
             }
         }
     }
 
-    private fun toggleFlightSelf(commandContext: CommandContext<ServerCommandSource>): Int {
-        // Set flight
-        toggleFlight(commandContext.source.player)
+    private fun toggleGodSelf(context: CommandContext<ServerCommandSource>): Int {
+        // Set god
+        this.toggleGod(context.source.player)
 
         // Send feedback
-        commandContext.source.sendFeedback(
-                LiteralText("Successfully toggled flight"),
+        context.source.sendFeedback(
+                LiteralText("Successfully toggled godmode"),
                 false)
 
         return 1
     }
 
-    private fun toggleFlightOther(commandContext: CommandContext<ServerCommandSource>): Int {
+    private fun toggleGodOther(context: CommandContext<ServerCommandSource>): Int {
         // Get player
-        val player = EntityArgumentType.getPlayer(commandContext, "player")
+        val player = EntityArgumentType.getPlayer(context, "player")
 
-        // Set flight
-        toggleFlight(player)
+        // Set god
+        this.toggleGod(player)
 
         // Send feedback
-        commandContext.source.sendFeedback(
-                LiteralText("Successfully toggled flight for \${player.name.asString()}"),
+        context.source.sendFeedback(
+                LiteralText("Successfully toggled godmode for ${player.displayName.asString()}"),
                 false)
 
         return 1
     }
 
-    private fun toggleFlight(player: ServerPlayerEntity) {
-        if (abilitySource.grants(player, VanillaAbilities.FLYING)) {
-            abilitySource.revokeFrom(player, VanillaAbilities.ALLOW_FLYING)
-            abilitySource.revokeFrom(player, VanillaAbilities.FLYING)
+    private fun toggleGod (player: ServerPlayerEntity) {
+        if (ESSENTIALS_ABILITY_GOD.grants(player, VanillaAbilities.INVULNERABLE)) {
+            ESSENTIALS_ABILITY_GOD.revokeFrom(player, VanillaAbilities.INVULNERABLE)
         } else {
-            abilitySource.grantTo(player, VanillaAbilities.ALLOW_FLYING)
-            abilitySource.grantTo(player, VanillaAbilities.FLYING)
+            ESSENTIALS_ABILITY_GOD.grantTo(player, VanillaAbilities.INVULNERABLE)
+            ESSENTIALS_ABILITY_FLY.grantTo(player, VanillaAbilities.ALLOW_FLYING)
         }
+        player.sendAbilitiesUpdate()
     }
 }
