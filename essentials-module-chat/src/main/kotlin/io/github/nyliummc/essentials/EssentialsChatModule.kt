@@ -24,7 +24,6 @@
 
 package io.github.nyliummc.essentials
 
-import com.google.inject.Inject
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.NicknameCommand

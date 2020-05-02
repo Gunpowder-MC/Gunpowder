@@ -22,23 +22,24 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.events;
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
+import io.github.nyliummc.essentials.api.builders.TeleportRequest;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
+/**
+ * Called before a teleport request is executed and was not cancelled by PlayerPreTeleportCallback.
+ * <p>
+ * TODO: Support vanilla commands (maybe others too?)
+ */
+public interface PlayerTeleportCallback {
+    Event<PlayerTeleportCallback> EVENT = EventFactory.createArrayBacked(PlayerTeleportCallback.class, (listeners) -> (player, request) -> {
+        for (PlayerTeleportCallback l : listeners) {
+            l.trigger(player, request);
+        }
+    });
 
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
-
-        @JvmStatic
-        val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-    }
+    void trigger(ServerPlayerEntity player, TeleportRequest request);
 }

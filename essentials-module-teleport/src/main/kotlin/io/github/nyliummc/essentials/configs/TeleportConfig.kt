@@ -22,23 +22,11 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.configs
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
-
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
-
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
-
-        @JvmStatic
-        val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-    }
-}
+data class TeleportConfig(
+        val maxHomes: Int,
+        val teleportDelay: Int,
+        val tpaTimeout: Int,
+        val rtpDistance: Int
+)

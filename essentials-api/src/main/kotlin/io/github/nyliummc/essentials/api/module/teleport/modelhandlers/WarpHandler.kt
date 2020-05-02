@@ -22,23 +22,16 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.api.module.teleport.modelhandlers
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
+import io.github.nyliummc.essentials.api.module.teleport.dataholders.StoredWarp
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
+interface WarpHandler {
+    fun getWarp(name: String): StoredWarp?
 
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
+    fun newWarp(home: StoredWarp): Boolean
 
-        @JvmStatic
-        val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-    }
+    fun getWarps(): Map<String, StoredWarp>
+
+    fun delWarp(home: String): Boolean
 }

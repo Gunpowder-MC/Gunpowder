@@ -22,51 +22,41 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.builders
+package io.github.nyliummc.essentials.commands
 
+import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.math.Vec2f
-import net.minecraft.util.math.Vec3d
+import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.api.builders.TeleportRequest
+import io.github.nyliummc.essentials.configs.TeleportConfig
+import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.math.Vec3i
 import net.minecraft.world.dimension.DimensionType
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
-interface TeleportRequest {
-    val player: ServerPlayerEntity
-    val destination: Vec3d
-    val dimension: DimensionType
-    val facing: Vec2f?
-    val callback: (() -> Unit)?
+object SpawnCommand {
+    val teleportDelay by lazy {
+        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).teleportDelay
+    }
 
-    companion object {
-        @JvmStatic
-        fun builder(callback: Builder.() -> Unit): TeleportRequest {
-            val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
-            callback(builder)
-            return builder.build()
+    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+        Command.builder(dispatcher) {
+            command("spawn") {
+                executes(::execute)
+            }
         }
     }
 
-    fun execute(seconds: Long) {
-        execute(seconds, ChronoUnit.SECONDS)
-    }
+    fun execute(context: CommandContext<ServerCommandSource>): Int {
+        val player = context.source.player
+        val props = context.source.world.levelProperties
 
-    fun execute(time: Long, unit: TemporalUnit)
+        TeleportRequest.builder {
+            player(player)
+            dimension(DimensionType.OVERWORLD)
+            destination(Vec3i(props.spawnX, props.spawnY, props.spawnZ))
+        }.execute(teleportDelay.toLong())
 
-    interface Builder {
-        fun player(player: ServerPlayerEntity)
-        fun facing(facing: Vec2f)
-        fun dimension(dimension: DimensionType)
-        fun destination(destination: Vec3d)
-        fun destination(destination: Vec3i) {
-            destination(Vec3d(destination))
-        }
-
-        fun onComplete(callback: () -> Unit)
-
-        @Deprecated("Used internally, do not use.")
-        fun build(): TeleportRequest
+        return 1
     }
 }
