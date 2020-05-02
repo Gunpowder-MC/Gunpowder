@@ -41,6 +41,7 @@ class EssentialsTeleportModule : EssentialsModule {
         essentials.registry.registerCommand(RTPCommand::register)
         essentials.registry.registerCommand(SpawnCommand::register)
         essentials.registry.registerCommand(TPACommand::register)
+        essentials.registry.registerCommand(WarpCommand::register)
     }
 
     override fun registerConfigs() {
