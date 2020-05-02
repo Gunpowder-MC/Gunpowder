@@ -22,23 +22,15 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.models
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
+import org.jetbrains.exposed.sql.Table
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
-
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
-
-        @JvmStatic
-        val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-    }
+object HomeTable : Table() {
+    val owner = uuid("owner")
+    val name = text("homeName")
+    val x = integer("x")
+    val y = integer("y")
+    val z = integer("z")
+    val dimension = integer("dimension")
 }

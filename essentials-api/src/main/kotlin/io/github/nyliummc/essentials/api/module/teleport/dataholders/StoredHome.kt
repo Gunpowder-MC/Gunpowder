@@ -22,23 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.api.module.teleport.dataholders
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
+import net.minecraft.util.math.Vec3i
+import java.util.*
 
-interface EssentialsMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: EssentialsRegistry
-    val database: EssentialsDatabase
-
-    companion object {
-        @field:Inject
-        private var implementation: EssentialsMod? = null
-
-        @JvmStatic
-        val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
-    }
-}
+data class StoredHome(
+        val user: UUID,
+        val name: String,
+        val location: Vec3i,
+        val dimension: Int
+)

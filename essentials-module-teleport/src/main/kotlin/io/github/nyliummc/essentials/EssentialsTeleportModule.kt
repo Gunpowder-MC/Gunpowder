@@ -26,29 +26,31 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.commands.MarketCommand
-import io.github.nyliummc.essentials.configs.MarketConfig
-import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
-import io.github.nyliummc.essentials.models.MarketEntryTable
-import java.util.function.Supplier
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
+import io.github.nyliummc.essentials.commands.*
+import io.github.nyliummc.essentials.configs.TeleportConfig
+import io.github.nyliummc.essentials.events.PlayerTeleportCallback
 
-class EssentialsMarketModule : EssentialsModule {
-    override val name = "market"
+class EssentialsTeleportModule : EssentialsModule {
+    override val name = "teleport"
     override val toggleable = true
     val essentials: EssentialsMod = EssentialsMod.instance
 
     override fun registerCommands() {
-        essentials.registry.registerCommand(MarketCommand::register)
+        essentials.registry.registerCommand(BackCommand::register)
+        essentials.registry.registerCommand(HomeCommand::register)
+        essentials.registry.registerCommand(RTPCommand::register)
+        essentials.registry.registerCommand(SpawnCommand::register)
+        essentials.registry.registerCommand(TPACommand::register)
+        essentials.registry.registerCommand(WarpCommand::register)
     }
 
     override fun registerConfigs() {
-        essentials.registry.registerConfig("essentials-market.yaml", MarketConfig::class.java, "essentials-market.yaml")
+        essentials.registry.registerConfig("essentials-teleport.yaml", TeleportConfig::class.java, "essentials-teleport.yaml")
     }
 
     override fun onInitialize() {
-        essentials.registry.registerTable(MarketEntryTable)
-        essentials.registry.registerModelHandler(APIMarketEntryHandler::class.java, Supplier { MarketEntryHandler })
+        PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
+            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.dimension, player.rotationClient)
+        })
     }
-
 }
