@@ -30,6 +30,7 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
 import io.github.nyliummc.essentials.configs.TeleportConfig
+import net.minecraft.block.Blocks
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
@@ -59,7 +60,8 @@ object RTPCommand {
         var newY = 0.0
         var i = world.seaLevel
 
-        while (!world.isAir(BlockPos(newX, i++.toDouble(), newZ)) && newY + world.seaLevel < world.height) {
+        val pos = BlockPos(newX, i++.toDouble(), newZ)
+        while ((!world.isAir(pos) || world.getBlockState(pos).block == Blocks.CAVE_AIR) && newY + world.seaLevel < world.height) {
             newY++
         }
 
