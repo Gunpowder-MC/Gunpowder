@@ -31,12 +31,12 @@ import java.util.*
 
 object TPACache {
     data class TPARequest(val teleportingEntity: ServerPlayerEntity, val targetLocationEntity: ServerPlayerEntity, val isTpaHere: Boolean) {
-        fun byPlayer(q: ServerPlayerEntity): Boolean {
-            return (q == requester())
+        fun byPlayer(p: ServerPlayerEntity): Boolean {
+            return (p == requester())
         }
 
-        fun toPlayer(q: ServerPlayerEntity): Boolean {
-            return (q == requested())
+        fun toPlayer(p: ServerPlayerEntity): Boolean {
+            return (p == requested())
         }
 
         fun requester(): ServerPlayerEntity {
