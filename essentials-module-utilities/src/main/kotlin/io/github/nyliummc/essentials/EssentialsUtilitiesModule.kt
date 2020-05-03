@@ -53,7 +53,6 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(GodCommand::register)
         essentials.registry.registerCommand(HatCommand::register)
         essentials.registry.registerCommand(TPSCommand::register)
-        essentials.registry.registerCommand(ClearChatCommand::register)
     }
 
     override fun registerConfigs() {

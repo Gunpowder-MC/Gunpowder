@@ -28,21 +28,20 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.builders.Command
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
+import net.minecraft.stat.Stats
+import net.minecraft.util.Hand
 
-object ClearChatCommand {
+object CraftCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("clearchat") {
+            command("craft") {
                 executes(::execute)
             }
         }
     }
 
     private fun execute(context: CommandContext<ServerCommandSource>): Int {
-        for (i in 1..100) {
-            context.source.player.addChatMessage(LiteralText(" "), false)
-        }
+        context.source.player.increaseStat(Stats.INTERACT_WITH_CRAFTING_TABLE, 1);
         return 1
     }
 }

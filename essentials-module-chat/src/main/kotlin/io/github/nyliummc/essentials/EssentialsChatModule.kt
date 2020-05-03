@@ -26,6 +26,7 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.ClearChatCommand
 import io.github.nyliummc.essentials.commands.NicknameCommand
 import io.github.nyliummc.essentials.configs.ChatConfig
 import io.github.nyliummc.essentials.modelhandlers.NicknameHandler
@@ -40,6 +41,7 @@ class EssentialsChatModule : EssentialsModule {
 
     override fun registerCommands() {
         essentials.registry.registerCommand(NicknameCommand::register)
+        essentials.registry.registerCommand(ClearChatCommand::register)
     }
 
     override fun registerConfigs() {

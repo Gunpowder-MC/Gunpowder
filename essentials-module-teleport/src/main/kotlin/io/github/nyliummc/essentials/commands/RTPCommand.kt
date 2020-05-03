@@ -60,9 +60,10 @@ object RTPCommand {
         var newY = 0.0
         var i = world.seaLevel
 
-        val pos = BlockPos(newX, i++.toDouble(), newZ)
+        var pos = BlockPos(newX, i++.toDouble(), newZ)
         while ((!world.isAir(pos) || world.getBlockState(pos).block == Blocks.CAVE_AIR) && newY + world.seaLevel < world.height) {
             newY++
+            pos = BlockPos(newX, i++.toDouble(), newZ)
         }
 
         if (world.isWater(BlockPos(newX, (i - 2).toDouble(), newZ))) {
