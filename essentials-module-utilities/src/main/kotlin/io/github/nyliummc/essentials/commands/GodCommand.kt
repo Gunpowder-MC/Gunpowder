@@ -29,7 +29,7 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.ladysnake.pal.Pal
 import io.github.ladysnake.pal.VanillaAbilities
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.commands.FlightCommand.ESSENTIALS_ABILITY_FLY
+import io.github.nyliummc.essentials.commands.SpeedCommand.ESSENTIALS_ABILITY_SPEED
 import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
@@ -84,7 +84,7 @@ object GodCommand {
             ESSENTIALS_ABILITY_GOD.revokeFrom(player, VanillaAbilities.INVULNERABLE)
         } else {
             ESSENTIALS_ABILITY_GOD.grantTo(player, VanillaAbilities.INVULNERABLE)
-            ESSENTIALS_ABILITY_FLY.grantTo(player, VanillaAbilities.ALLOW_FLYING)
+            ESSENTIALS_ABILITY_SPEED.grantTo(player, VanillaAbilities.ALLOW_FLYING)
         }
         player.sendAbilitiesUpdate()
     }
