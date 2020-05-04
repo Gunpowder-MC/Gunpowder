@@ -25,67 +25,59 @@
 package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import io.github.ladysnake.pal.Pal
-import io.github.ladysnake.pal.VanillaAbilities
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.commands.SpeedCommand.ESSENTIALS_ABILITY_SPEED
 import net.minecraft.command.arguments.EntityArgumentType
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
+import net.minecraft.util.ItemScatterer
 
-object GodCommand {
-    val ESSENTIALS_ABILITY_GOD = Pal.getAbilitySource("essentials", "godmode")
 
+object HeadCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("god") {
-                requires { it.hasPermissionLevel(4) }
-
-                executes(::toggleGodSelf)
-                argument("player", EntityArgumentType.player()) {
+            command("head") {
+                argument("player", StringArgumentType.string()) {
                     requires { it.hasPermissionLevel(4) }
-                    executes(::toggleGodOther)
+                    executes(::getSkull)
+
+                    argument("amount", IntegerArgumentType.integer(1, 64)) {
+                        requires { it.hasPermissionLevel(4) }
+                        executes(::getSkullAmount)
+                    }
                 }
             }
         }
     }
 
-    private fun toggleGodSelf(context: CommandContext<ServerCommandSource>): Int {
-        // Set god
-        this.toggleGod(context.source.player)
+    private fun getSkullAmount(context: CommandContext<ServerCommandSource>): Int {
+        val player = StringArgumentType.getString(context, "player")
+        val amount = IntegerArgumentType.getInteger(context, "amount")
+        giveHead(context.source.player, player, amount)
+        return 1
 
-        // Send feedback
-        context.source.sendFeedback(
-                LiteralText("Successfully toggled godmode"),
-                false)
+    }
 
+    private fun getSkull(context: CommandContext<ServerCommandSource>): Int {
+        val player = StringArgumentType.getString(context, "player")
+        giveHead(context.source.player, player, 0)
         return 1
     }
 
-    private fun toggleGodOther(context: CommandContext<ServerCommandSource>): Int {
-        // Get player
-        val player = EntityArgumentType.getPlayer(context, "player")
+    private fun giveHead(player: ServerPlayerEntity, targetPlayer: String, amount: Int) {
+        val stack = ItemStack(Items.PLAYER_HEAD, amount)
+        val compound = stack.orCreateTag
+        compound.putString("SkullOwner", targetPlayer)
+        stack.tag = compound
 
-        // Set god
-        this.toggleGod(player)
-
-        // Send feedback
-        context.source.sendFeedback(
-                LiteralText("Successfully toggled godmode for ${player.displayName.asString()}"),
-                false)
-
-        return 1
-    }
-
-    private fun toggleGod (player: ServerPlayerEntity) {
-        if (ESSENTIALS_ABILITY_GOD.grants(player, VanillaAbilities.INVULNERABLE)) {
-            ESSENTIALS_ABILITY_GOD.revokeFrom(player, VanillaAbilities.INVULNERABLE)
-        } else {
-            ESSENTIALS_ABILITY_GOD.grantTo(player, VanillaAbilities.INVULNERABLE)
-            ESSENTIALS_ABILITY_SPEED.grantTo(player, VanillaAbilities.ALLOW_FLYING)
+        if (player.giveItemStack(stack)) {
+            // Unable to insert
+            ItemScatterer.spawn(player.world, player.x, player.y, player.z, stack)
         }
-        player.sendAbilitiesUpdate()
     }
 }
