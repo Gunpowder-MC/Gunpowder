@@ -38,8 +38,7 @@ allprojects {
     group = "io.github.nyliummc.essentials"
     version = project.mod_version + "+" + project.minecraft
 
-    // TODO: Set Built artifacts to output to the proper place
-    // setBuildDir(project.rootDir.absolutePath + "/build")
+    setBuildDir(rootProject.getBuildDir())
 
     configurations {
         dev
