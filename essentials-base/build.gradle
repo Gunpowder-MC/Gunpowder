@@ -2,4 +2,23 @@ archivesBaseName = "essentials-base"
 
 dependencies {
     compile project(":essentials-api")
+
+    include libs.exposed_core
+    include libs.exposed_jdbc
+    include libs.exposed_java_time
+
+    // Database drivers
+    include libs.postgresql
+    include libs.mysql_connector_java
+    include libs.sqlite_jdbc
+
+    // Configs
+    include libs.jackson_core
+    include libs.jackson_kotlin
+    include libs.jackson_yaml
+
+    // Dependency Injection
+    include libs.guice
+
+    include libs.playerabilitylib
 }

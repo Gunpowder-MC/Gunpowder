@@ -1,12 +1,9 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
     id 'java'
     id 'maven-publish'
     id 'net.minecrell.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
-    id 'com.github.johnrengelman.shadow' version "$shadow"
 }
 
 apply from: "dependencies.gradle"
@@ -27,29 +24,6 @@ logger.lifecycle("""
 	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 """)
 
-configurations {
-    shade
-    compile.extendsFrom shade
-}
-
-shadowJar {
-    archiveFileName = 'essentials-dev.jar'
-    configurations = [project.configurations.shade]
-}
-
-def urlFile = { url, name ->
-    File file = new File("$buildDir/download/${name}.jar")
-    file.parentFile.mkdirs()
-    if (!file.exists()) {
-        new URL(url).withInputStream { downloadStream ->
-            file.withOutputStream { fileOut ->
-                fileOut << downloadStream
-            }
-        }
-    }
-    files(file.absolutePath)
-}
-
 version = project.mod_version + "+" + project.minecraft
 
 allprojects {
@@ -64,8 +38,7 @@ allprojects {
     group = "io.github.nyliummc.essentials"
     version = project.mod_version + "+" + project.minecraft
 
-    // TODO: Set Built artifacts to output to the proper place
-    // setBuildDir(rootProject.buildDir)
+    setBuildDir(rootProject.getBuildDir())
 
     configurations {
         dev
@@ -86,14 +59,6 @@ allprojects {
             name = "Ladysnake Libs"
             url = "https://dl.bintray.com/ladysnake/libs"
         }
-        maven {
-            name = "pex-repo"
-            url = "https://repo.glaremasters.me/repository/permissionsex/"
-        }
-        maven {
-            name = "Sponge Repo"
-            url = "https://repo.spongepowered.org/maven"
-        }
     }
 
     dependencies {
@@ -106,7 +71,8 @@ allprojects {
 
         // Hard Dependencies
         modImplementation libs.fabric_api
-        modImplementation(include(libs.playerabilitylib)) { transitive = false }
+        modImplementation libs.fabric_language_kotlin
+        modImplementation(libs.playerabilitylib) { transitive = false }
 
         // Database
         implementation libs.exposed_core
@@ -122,12 +88,6 @@ allprojects {
         implementation libs.jackson_core
         implementation libs.jackson_kotlin
         implementation libs.jackson_yaml
-
-        // Dynmap
-        implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
-        include urlFile("https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar", "DynmapCore")
-        implementation urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
-        include urlFile("https://dynmap.us/builds/dynmap/DynmapCoreAPI-${project.dynmap_version}.jar", "DynmapCoreAPI")
 
         // Dependency Injection
         implementation libs.guice
@@ -182,7 +142,8 @@ subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 dependencies {
     afterEvaluate {
         subprojects.each {
-            shade project(path: ":${it.name}", configuration: "dev")
+            compile project(path: ":${it.name}", configuration: "dev")
+            include project("${it.name}:")
         }
     }
 
@@ -194,18 +155,4 @@ dependencies {
 
 jar {
     from "LICENSE"
-}
-
-task remappedShadowJar(type: RemapJarTask) {
-    dependsOn tasks.shadowJar
-    input = tasks.shadowJar.archivePath
-    addNestedDependencies = true
-    archiveName = "essentials-${project.version}.jar"
-}
-
-tasks.assemble.dependsOn tasks.remappedShadowJar
-
-artifacts {
-    archives remappedShadowJar
-    shadow shadowJar
 }

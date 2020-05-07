@@ -30,7 +30,9 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.TeleportRequest
 import io.github.nyliummc.essentials.configs.TeleportConfig
+import net.minecraft.block.Blocks
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.dimension.DimensionType
@@ -59,15 +61,19 @@ object RTPCommand {
         var newY = 0.0
         var i = world.seaLevel
 
-        while (!world.isAir(BlockPos(newX, i++.toDouble(), newZ)) && newY + world.seaLevel < world.height) {
-            newY++
+        if (world.getBlockState(BlockPos(newX, world.seaLevel.toDouble(), newZ)).block == Blocks.VOID_AIR) {
+            // Void world, cancel teleport
+            player.addChatMessage(LiteralText("Void world detected, cancelling..."), false)
+            return -1
         }
 
-        if (world.isWater(BlockPos(newX, (i - 2).toDouble(), newZ))) {
+        if (world.isWater(BlockPos(newX, world.seaLevel.toDouble(), newZ))) {
             return execute(context)
         }
 
-        BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.dimension, player.rotationClient)
+        while (world.getBlockState(BlockPos(newX, i++.toDouble(), newZ)).block != Blocks.AIR && newY + world.seaLevel < world.height) {
+            newY++
+        }
 
         TeleportRequest.builder {
             player(player)

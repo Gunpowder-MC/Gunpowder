@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "essentials-module-teleport",
+  "version": "${version}",
+  "name": "Essentials Teleport",
+  "description": "The teleport module for Essentials",
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/essentials/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "essentials:modules": [
+      "io.github.nyliummc.essentials.EssentialsTeleportModule"
+    ]
+  },
+  "depends": {
+    "essentials-base": "${version}",
+    "fabricloader": ">=0.7.2",
+    "fabric": "*"
+  }
+}
