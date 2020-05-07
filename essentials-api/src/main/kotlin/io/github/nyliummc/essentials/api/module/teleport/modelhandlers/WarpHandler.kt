@@ -29,9 +29,9 @@ import io.github.nyliummc.essentials.api.module.teleport.dataholders.StoredWarp
 interface WarpHandler {
     fun getWarp(name: String): StoredWarp?
 
-    fun newWarp(home: StoredWarp): Boolean
+    fun newWarp(warp: StoredWarp): Boolean
 
     fun getWarps(): Map<String, StoredWarp>
 
-    fun delWarp(home: String): Boolean
+    fun delWarp(warp: String): Boolean
 }

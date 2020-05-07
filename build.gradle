@@ -4,6 +4,7 @@ plugins {
     id 'net.minecrell.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 apply from: "dependencies.gradle"
@@ -31,6 +32,7 @@ allprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'net.minecrell.licenser'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -42,6 +44,8 @@ allprojects {
 
     configurations {
         dev
+        compile.extendsFrom shade
+        modCompile.extendsFrom modShade
     }
 
     license {
@@ -56,6 +60,10 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
+        maven {
             name = "Ladysnake Libs"
             url = "https://dl.bintray.com/ladysnake/libs"
         }
@@ -63,34 +71,36 @@ allprojects {
 
     dependencies {
         // Kotlin Stdlib
-        implementation libs.kotlin_stdlib
+        compileOnly libs.kotlin_stdlib
 
-        minecraft libs.minecraft
+        minecraft(libs.minecraft) {
+            transitive = false
+        }
         mappings libs.yarn
-        modImplementation libs.fabric_loader
+        modCompileOnly libs.fabric_loader
 
         // Hard Dependencies
-        modImplementation libs.fabric_api
-        modImplementation libs.fabric_language_kotlin
-        modImplementation(libs.playerabilitylib) { transitive = false }
+        modCompileOnly libs.fabric_api
+        modCompileOnly libs.fabric_language_kotlin
+        modCompileOnly(libs.playerabilitylib) { transitive = false }
 
         // Database
-        implementation libs.exposed_core
-        implementation libs.exposed_jdbc
-        implementation libs.exposed_java_time
+        compileOnly libs.exposed_core
+        compileOnly libs.exposed_jdbc
+        compileOnly libs.exposed_java_time
 
         // Database drivers
-        implementation libs.postgresql
-        implementation libs.mysql_connector_java
-        implementation libs.sqlite_jdbc
+        compileOnly libs.postgresql
+        compileOnly libs.mysql_connector_java
+        compileOnly libs.sqlite_jdbc
 
         // Configs
-        implementation libs.jackson_core
-        implementation libs.jackson_kotlin
-        implementation libs.jackson_yaml
+        compileOnly libs.jackson_core
+        compileOnly libs.jackson_kotlin
+        compileOnly libs.jackson_yaml
 
         // Dependency Injection
-        implementation libs.guice
+        compileOnly libs.guice
 
         // We use checker for annotations
         compileOnly libs.checker_qual
@@ -98,51 +108,92 @@ allprojects {
         // TODO: Permissions
     }
 
-    jar {
-        classifier = "dev"
-        from "LICENSE"
-    }
+    // Jars
 
-    afterEvaluate {
-        remapJar {
-            input = file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-            archiveName = "${archivesBaseName}-${project.version}.jar"
+    if (project.name.contains("-api")) {
+        shadowJar {
+            enabled = false
         }
 
-        artifacts {
-            dev file: file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar"), type: "jar", builtBy: jar
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'dev'
+            from project.sourceSets.main.allSource
         }
 
-        processResources {
-            inputs.property "version", project.version
+    } else {
+        jar {
+            enabled = false
+        }
 
-            from(sourceSets.main.resources.srcDirs) {
-                include "fabric.mod.json"
-                expand "version": project.version
-            }
+        shadowJar {
+            // Only shadow implementation/modImplementation
+            configurations = [project.configurations.shade, project.configurations.modShade]
+            classifier = "dev"
+            minimize()
+        }
 
-            from(sourceSets.main.resources.srcDirs) {
-                exclude "fabric.mod.json"
-            }
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from project.sourceSets.main.allSource
+        }
+
+        sourcesJar.dependsOn(shadowJar)
+    }
+
+    remapJar {
+        input = file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
+        archiveName = "${archivesBaseName}-${project.version}.jar"
+    }
+
+    remapJar.dependsOn(sourcesJar)
+
+    // Artifacts? Not sure why this is needed
+
+    artifacts {
+        dev file: file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar"), type: "jar", builtBy: jar
+    }
+
+    // Set version in fabric.mod.json
+    processResources {
+        inputs.property "version", project.version
+
+        from(sourceSets.main.resources.srcDirs) {
+            include "fabric.mod.json"
+            expand "version": project.version
+        }
+
+        from(sourceSets.main.resources.srcDirs) {
+            exclude "fabric.mod.json"
         }
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
+    // Fix some kotlin warnings
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
 }
 
 task licenseFormatAll
 subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
-subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
+
+subprojects {
+    runClient {
+        enabled = false
+    }
+    runServer {
+        enabled = false
+    }
+}
+
+subprojects.each {
+    if (!it.name.contains("-api")) {
+        remapJar.dependsOn("${it.path}:remapJar")
+    }
+}
+
 
 dependencies {
     afterEvaluate {
         subprojects.each {
-            compile project(path: ":${it.name}", configuration: "dev")
+            shade project(path: ":${it.name}", configuration: 'shadow')
             include project("${it.name}:")
         }
     }
@@ -154,5 +205,14 @@ dependencies {
 }
 
 jar {
-    from "LICENSE"
+    enabled = false
 }
+
+shadowJar {
+    // Only shadow implementation/modImplementation
+    configurations = [project.configurations.shade, project.configurations.modShade]
+    classifier = "dev"
+    minimize()
+}
+
+remapJar.dependsOn(shadowJar)

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "essentials-module-dynmap",
+  "version": "${version}",
+  "name": "Essentials Dynmap",
+  "description": "The dynmap module for Essentials",
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/essentials/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "essentials:modules": [
+      "io.github.nyliummc.essentials.EssentialsDynmapModule"
+    ]
+  },
+  "depends": {
+    "essentials-base": "${version}",
+    "fabricloader": ">=0.7.2",
+    "fabric": "*"
+  }
+}

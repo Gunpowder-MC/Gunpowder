@@ -59,14 +59,14 @@ object WarpHandler : APIWarpHandler {
         return cache.toMap()
     }
 
-    override fun delWarp(name: String): Boolean {
-        if (cache.containsKey(name)) {
+    override fun delWarp(warp: String): Boolean {
+        if (cache.containsKey(warp)) {
             transaction {
                 WarpTable.deleteWhere {
-                    WarpTable.name.eq(name)
+                    WarpTable.name.eq(warp)
                 }
             }
-            cache.remove(name)
+            cache.remove(warp)
             return true
         }
         return false
