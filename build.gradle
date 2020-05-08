@@ -5,6 +5,7 @@ plugins {
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
 apply from: "dependencies.gradle"
@@ -215,9 +216,47 @@ shadowJar {
     // Only shadow implementation/modImplementation
     configurations = [project.configurations.shade]
     classifier = "dev"
-
-    // TODO: Override the one in the fatjar with this one
     append "src/main/resources/fabric.mod.json"
 }
 
 remapJar.dependsOn(shadowJar)
+
+curseforge {
+    apply from: 'curseforge.gradle'
+    apiKey = project.apiKey
+    project {
+        id = "350123"
+        releaseType = "beta"
+        changelogType = "markdown"
+        changelog = "Testing auto-upload from gradle"
+        addGameVersion project.minecraft
+        addGameVersion "Fabric"
+        addGameVersion "Java 8"
+
+        afterEvaluate {
+            // Main jar as main artifact
+            mainArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}.jar")
+
+            // Other files as sub-artifacts maybe?
+            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
+            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
+            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
+
+            subprojects.each { sub ->
+                // Add built modules
+                // TODO: Not being called somehow?
+                System.out.println("Adding file '${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar'")
+                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+
+                // Maybe add dev and sources?
+                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
+                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
+                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
+            }
+            uploadTask.dependsOn(remapJar)
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+    }
+}
