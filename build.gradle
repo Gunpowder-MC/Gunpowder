@@ -77,33 +77,33 @@ allprojects { currentProject ->
             transitive = false
         }
         mappings libs.yarn
-        modCompileOnly libs.fabric_loader
+        modImplementation libs.fabric_loader
 
         // Hard Dependencies
-        modCompileOnly libs.fabric_api
-        modCompileOnly libs.fabric_language_kotlin
-        modCompileOnly(libs.playerabilitylib) { transitive = false }
+        modImplementation libs.fabric_api
+        modImplementation libs.fabric_language_kotlin
+        modImplementation(libs.playerabilitylib) { transitive = false }
 
         // Database
-        compileOnly libs.exposed_core
-        compileOnly libs.exposed_jdbc
-        compileOnly libs.exposed_java_time
+        implementation libs.exposed_core
+        implementation libs.exposed_jdbc
+        implementation libs.exposed_java_time
 
         // Database drivers
-        compileOnly libs.postgresql
-        compileOnly libs.mysql_connector_java
-        compileOnly libs.sqlite_jdbc
+        implementation libs.postgresql
+        implementation libs.mysql_connector_java
+        implementation libs.sqlite_jdbc
 
         // Configs
-        compileOnly libs.jackson_core
-        compileOnly libs.jackson_kotlin
-        compileOnly libs.jackson_yaml
+        implementation libs.jackson_core
+        implementation libs.jackson_kotlin
+        implementation libs.jackson_yaml
 
         // Dependency Injection
-        compileOnly libs.guice
+        implementation libs.guice
 
         // We use checker for annotations
-        compileOnly libs.checker_qual
+        implementation libs.checker_qual
 
         // TODO: Permissions
     }
@@ -140,7 +140,6 @@ allprojects { currentProject ->
             // Only shadow implementation/modImplementation
             configurations = [project.configurations.shade]
             classifier = "dev"
-            minimize()
         }
 
         task sourcesJar(type: Jar, dependsOn: classes) {
@@ -222,7 +221,9 @@ shadowJar {
     // Only shadow implementation/modImplementation
     configurations = [project.configurations.shade]
     classifier = "dev"
-    minimize()
+
+    // TODO: Override the one in the fatjar with this one
+    append "src/main/resources/fabric.mod.json"
 }
 
 remapJar.dependsOn(shadowJar)
