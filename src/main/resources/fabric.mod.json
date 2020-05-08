@@ -4,6 +4,7 @@
   "version": "${version}",
   "name": "Essentials",
   "description": "A server sided mod providing essential functions for server users and administrators",
+
   "authors": [
     {
       "name": "NyliumMC",
@@ -37,10 +38,34 @@
       }
     }
   ],
+
   "contact": {
     "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/Nyliummc/Essentials"
   },
+
+  "entrypoints": {
+    "server": [
+      "io.github.nyliummc.essentials.mod.server.EssentialsServerMod"
+    ],
+    "client": [
+      "io.github.nyliummc.essentials.mod.client.EssentialsClientMod"
+    ],
+    "essentials:modules": [
+      "io.github.nyliummc.essentials.EssentialsChatModule",
+      "io.github.nyliummc.essentials.EssentialsCurrencyModule",
+      "io.github.nyliummc.essentials.EssentialsDynmapModule",
+      "io.github.nyliummc.essentials.EssentialsMarketModule",
+      "io.github.nyliummc.essentials.EssentialsTeleportModule",
+      "io.github.nyliummc.essentials.EssentialsUtilitiesModule"
+    ]
+  },
+  "mixins": [
+    "mixins.chat.essentials.json",
+    "mixins.dynmap.essentials.json",
+    "mixins.utilities.essentials.json"
+  ],
+
   "license": "MIT",
   "icon": "assets/essentials/icon.png",
   "environment": "*",

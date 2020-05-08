@@ -16,5 +16,5 @@ def urlFile = { url, name ->
 dependencies {
     compile project(":essentials-api")
     // implementation 'com.github.webbukkit.dynmap:DynmapCoreAPI:3.0-beta-10'
-    shade urlFile("https://dynmap.us/builds/dynmap/DynmapCore-3.0-beta-10.jar", "DynmapCore")
+    shade urlFile(libs.dynmap, "DynmapCore")
 }

@@ -16,6 +16,9 @@
       "io.github.nyliummc.essentials.EssentialsDynmapModule"
     ]
   },
+  "mixins": [
+    "mixins.dynmap.essentials.json"
+  ],
   "depends": {
     "essentials-base": "${version}",
     "fabricloader": ">=0.7.2",
