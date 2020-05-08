@@ -110,14 +110,6 @@ allprojects { currentProject ->
 
     // Jars
 
-    // TODO: Clear `build/resources` before each jar task
-    // This task below is only able to clear it before each full run
-    task clearResources(type: Delete) {
-        delete fileTree('build/resources') {
-            include '**/*'
-        }
-    }
-
     if (currentProject.name.contains("-api")) {
         shadowJar {
             enabled = false
@@ -127,14 +119,10 @@ allprojects { currentProject ->
             classifier = 'dev'
             from currentProject.sourceSets.main.allSource.srcDirs
         }
-
-        sourcesJar.dependsOn(clearResources)
     } else {
         jar {
             enabled = false
         }
-
-        shadowJar.dependsOn(clearResources)
 
         shadowJar {
             // Only shadow implementation/modImplementation
@@ -165,6 +153,12 @@ allprojects { currentProject ->
 
     // Set version in fabric.mod.json
     processResources {
+        doFirst {
+            delete fileTree('build/resources') {
+                include '**/*'
+            }
+        }
+
         inputs.property "version", project.version
 
         from(currentProject.sourceSets.main.resources.srcDirs) {
