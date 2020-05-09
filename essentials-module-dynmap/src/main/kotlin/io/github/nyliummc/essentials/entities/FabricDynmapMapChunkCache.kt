@@ -24,47 +24,216 @@
 
 package io.github.nyliummc.essentials.entities
 
+import com.mojang.datafixers.util.Either
+import net.minecraft.server.world.ChunkHolder.Unloaded
+import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.registry.Registry
+import net.minecraft.world.LightType
+import net.minecraft.world.chunk.Chunk
+import net.minecraft.world.chunk.ChunkStatus
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapWorld
+import org.dynmap.common.BiomeMap
+import org.dynmap.renderer.DynmapBlockState
+import org.dynmap.renderer.RenderPatchFactory
+import org.dynmap.utils.BlockStep
 import org.dynmap.utils.MapChunkCache
 import org.dynmap.utils.MapIterator
 import org.dynmap.utils.VisibilityLimit
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 
-class FabricDynmapMapChunkCache(
-        private val world: FabricDynmapWorld,
-        private val chunks: List<DynmapChunk>) : MapChunkCache() {
+class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
+                                private val world: ServerWorld, chunks: List<DynmapChunk>): MapChunkCache() {
+    private val chunkManager = world.chunkManager
+    private val chunksToLoad = LinkedList<ChunkPos>()
+    private val chunkFutures = arrayListOf<CompletableFuture<Either<Chunk, Unloaded>>>()
+    private val chunks = hashMapOf<ChunkPos, Chunk>()
+    private var requiredStatus = ChunkStatus.FULL
+
+    init {
+        for (c in chunks) {
+            chunksToLoad.add(ChunkPos(c.x, c.z))
+        }
+    }
+
     override fun setChunkDataTypes(blockdata: Boolean, biome: Boolean, highestblocky: Boolean, rawbiome: Boolean): Boolean {
-        // TODO("Not yet implemented")
-        return false
+        requiredStatus = ChunkStatus.FEATURES
+
+        if (highestblocky) {
+            requiredStatus = ChunkStatus.FULL
+        }
+
+        return true
     }
 
     override fun loadChunks(maxToLoad: Int): Int {
-        // TODO("Not yet implemented")
-        return 0
+        val maxToLoad = chunksToLoad.size.coerceAtMost(maxToLoad)
+        for (i in 0 until maxToLoad) {
+            val pos = chunksToLoad.remove()
+            chunkFutures.add(chunkManager.getChunkFutureSyncOnMainThread(pos.x, pos.z, requiredStatus, false))
+        }
+
+        return chunks.size + maxToLoad
     }
 
     override fun isDoneLoading(): Boolean {
-        // TODO("Not yet implemented")
-        return false
+        val futureIterator = chunkFutures.iterator()
+        while (futureIterator.hasNext()) {
+            val future = futureIterator.next()
+            if (future.isDone) {
+                futureIterator.remove()
+                try {
+                    future.get().ifLeft { c: Chunk -> chunks[c.pos] = c }
+                } catch (e: Exception) {
+                    throw RuntimeException(e)
+                }
+            }
+        }
+
+        return chunkFutures.isEmpty()
     }
 
     override fun isEmpty(): Boolean {
-        // TODO("Not yet implemented")
-        return false
+        return chunks.isEmpty();
     }
 
     override fun unloadChunks() {
-        // TODO("Not yet implemented")
+        chunkFutures.clear();
+        chunks.clear();
     }
     override fun isEmptySection(sx: Int, sy: Int, sz: Int): Boolean {
-        // TODO("Not yet implemented")
-        return false
+        val c = chunks[ChunkPos(sx, sz)]
+        return c?.sectionArray?.get(sy)?.isEmpty ?: false
     }
 
     override fun getIterator(x: Int, y: Int, z: Int): MapIterator? {
-        // TODO("Not yet implemented")
-        return null
+        return FabricDynmapMapIterator()
+    }
+
+    inner class FabricDynmapMapIterator : MapIterator {
+        private var lastStep: BlockStep? = null
+        private var pos: BlockPos.Mutable? = null
+        override fun initialize(x0: Int, y0: Int, z0: Int) {
+            pos = BlockPos.Mutable(x0, y0, z0)
+        }
+
+        override fun getBlockSkyLight(): Int {
+            return world.getLightLevel(LightType.SKY, pos)
+        }
+
+        override fun getBlockEmittedLight(): Int {
+            return world.getLightLevel(LightType.BLOCK, pos)
+        }
+
+        override fun getBiome(): BiomeMap {
+            return BiomeMap.byBiomeID(Registry.BIOME.getRawId(world.getBiome(pos)))
+        }
+
+        override fun getSmoothGrassColorMultiplier(colormap: IntArray): Int {
+            return world.getBiome(pos).getGrassColorAt(pos!!.x.toDouble(), pos!!.z.toDouble()) // TODO
+        }
+
+        override fun getSmoothFoliageColorMultiplier(colormap: IntArray): Int {
+            return world.getBiome(pos).foliageColor // TODO
+        }
+
+        override fun getSmoothWaterColorMultiplier(): Int {
+            return world.getBiome(pos).waterColor // TODO
+        }
+
+        override fun getSmoothWaterColorMultiplier(colormap: IntArray): Int {
+            return world.getBiome(pos).waterColor // TODO
+        }
+
+        override fun getSmoothColorMultiplier(colormap: IntArray, swampcolormap: IntArray): Int {
+            return world.getBiome(pos).getGrassColorAt(pos!!.x.toDouble(), pos!!.z.toDouble()) // TODO
+        }
+
+        override fun stepPosition(step: BlockStep) {
+            lastStep = step
+            pos!!.setOffset(step.xoff, step.yoff, step.zoff)
+        }
+
+        override fun unstepPosition(step: BlockStep) {
+            stepPosition(unstep[step.ordinal])
+        }
+
+        override fun unstepPosition(): BlockStep {
+            val ls = lastStep
+            stepPosition(unstep[lastStep!!.ordinal])
+            return ls!!
+        }
+
+        override fun setY(y: Int) {
+            if (y == pos!!.y) return
+            lastStep = if (y > pos!!.y) BlockStep.Y_PLUS else BlockStep.Y_MINUS
+            pos!!.y = y
+        }
+
+        override fun getBlockTypeAt(s: BlockStep): DynmapBlockState? {
+            val poso = pos!!.add(s.xoff, s.yoff, s.zoff)
+            return FabricDynmapBlockStateMapper.INSTANCE[world.getBlockState(poso)]
+        }
+
+        override fun getLastStep(): BlockStep {
+            return lastStep!!
+        }
+
+        override fun getWorldHeight(): Int {
+            return fworld.worldheight
+        }
+
+        override fun getBlockKey(): Long {
+            return pos!!.asLong()
+        }
+
+        override fun isEmptySection(): Boolean {
+            return world.getChunk(pos).sectionArray[pos!!.y shr 4].isEmpty
+        }
+
+        override fun getInhabitedTicks(): Long {
+            return world.getChunk(pos).inhabitedTime
+        }
+
+        override fun getPatchFactory(): RenderPatchFactory? {
+            return null
+        }
+
+        override fun getBlockType(): DynmapBlockState? {
+            return FabricDynmapBlockStateMapper.INSTANCE[world.getBlockState(pos)]
+        }
+
+        override fun getBlockTileEntityField(fieldId: String): Any? {
+            // TODO
+            return null
+        }
+
+        override fun getBlockTypeAt(xoff: Int, yoff: Int, zoff: Int): DynmapBlockState? {
+            val poso = pos!!.add(xoff, yoff, zoff)
+            return FabricDynmapBlockStateMapper.INSTANCE[world.getBlockState(poso)]
+        }
+
+        override fun getBlockTileEntityFieldAt(fieldId: String, xoff: Int, yoff: Int, zoff: Int): Any? {
+            val poso = pos!!.add(xoff, yoff, zoff)
+            // TODO
+            return null
+        }
+
+        override fun getX(): Int {
+            return pos!!.x
+        }
+
+        override fun getY(): Int {
+            return pos!!.y
+        }
+
+        override fun getZ(): Int {
+            return pos!!.z
+        }
     }
 
     override fun setHiddenFillStyle(style: HiddenChunkStyle) {
@@ -80,6 +249,12 @@ class FabricDynmapMapChunkCache(
     }
 
     override fun getWorld(): DynmapWorld? {
-        return world
+        return fworld
+    }
+
+    companion object {
+        private val unstep = arrayOf(BlockStep.X_MINUS, BlockStep.Y_MINUS, BlockStep.Z_MINUS,
+                BlockStep.X_PLUS, BlockStep.Y_PLUS, BlockStep.Z_PLUS
+        )
     }
 }

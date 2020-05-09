@@ -26,23 +26,24 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.entities.FabricDynmapBlockStateMapper
 import io.github.nyliummc.essentials.entities.FabricDynmapServer
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
+import net.fabricmc.fabric.api.event.server.ServerTickCallback
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.api.ModContainer
-import net.minecraft.block.Block
 import net.minecraft.server.MinecraftServer
-import net.minecraft.util.registry.Registry
+import org.dynmap.DynmapCommonAPIListener
 import org.dynmap.DynmapCore
 import org.dynmap.common.BiomeMap
-import org.dynmap.renderer.DynmapBlockState
 import java.io.File
 
 
 class EssentialsDynmapModule : EssentialsModule {
     override val name = "dynmap"
     override val toggleable = true
+    private var serverInterface: FabricDynmapServer? = null
+
 
     val core = DynmapCore()
 
@@ -53,10 +54,10 @@ class EssentialsDynmapModule : EssentialsModule {
     override fun registerEvents() {
         ServerStartCallback.EVENT.register(ServerStartCallback(::startServer))
         ServerStopCallback.EVENT.register(ServerStopCallback(::stopServer))
+        ServerTickCallback.EVENT.register(ServerTickCallback { serverInterface?.tick() })
     }
 
     private fun startServer(minecraftServer: MinecraftServer) {
-        initBlocks()
         core.server = FabricDynmapServer(minecraftServer)
 
         // Using codeSource allows it to be used in both modular and fatjar impls
@@ -70,27 +71,23 @@ class EssentialsDynmapModule : EssentialsModule {
                 // Get essentials version
                 FabricLoader.getInstance().getModContainer("essentials-mod").get().metadata.version.friendlyString,
                 "Fabric Essentials Module Dynmap")
+        serverInterface = FabricDynmapServer(EssentialsMod.instance.server)
+        core.server = serverInterface
         BiomeMap.loadWellKnownByVersion(core.dynmapPluginPlatformVersion)
+        FabricDynmapBlockStateMapper.INSTANCE.init()
+
         val success = core.enableCore()
         if (!success) throw RuntimeException("Dynmap failed to initialize")
+
+        serverInterface?.init(core)
+
+        DynmapCommonAPIListener.apiInitialized(core);
     }
 
     private fun stopServer(minecraftServer: MinecraftServer) {
+        DynmapCommonAPIListener.apiTerminated();
         core.disableCore()
-    }
-
-    private fun initBlocks() {
-        var id = 0
-        var last: DynmapBlockState? = null
-        for (state in Block.STATE_IDS) {
-            val block: Block = state.block
-            val rawId: Int = Registry.BLOCK.getRawId(block)
-            if (last != null && last.legacyBlockID == rawId) {
-                DynmapBlockState(last, rawId, Registry.BLOCK.getId(block).toString(), state.toString(), state.material.toString(), id++)
-            } else {
-                last = DynmapBlockState(null, rawId, Registry.BLOCK.getId(block).toString(), state.toString(), state.material.toString(), id++)
-            }
-        }
+        serverInterface = null
     }
 
     companion object {

@@ -28,63 +28,88 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
 import net.minecraft.world.LightType
+import net.minecraft.world.World
+import net.minecraft.world.dimension.DimensionType
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapLocation
 import org.dynmap.DynmapWorld
 import org.dynmap.utils.MapChunkCache
+import org.dynmap.utils.Polygon
 
 
-class FabricDynmapWorld(var serverWorld: ServerWorld?) : DynmapWorld(serverWorld!!.dimension.type.suffix, serverWorld.effectiveHeight, serverWorld.seaLevel) {
+class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.type), world.height, world.seaLevel) {
+
     override fun isNether(): Boolean {
-        return serverWorld!!.dimension.isNether
+        return world.dimension.isNether
     }
 
     override fun getSpawnLocation(): DynmapLocation {
-        val spawn = serverWorld!!.spawnPos
-        return DynmapLocation(this.rawName, spawn.x.toDouble(), spawn.y.toDouble(), spawn.z.toDouble())
+        val spawn = world.spawnPos
+        return DynmapLocation(name, spawn.x.toDouble(), spawn.y.toDouble(), spawn.z.toDouble())
     }
 
     override fun getTime(): Long {
-        return serverWorld!!.time
+        return world.time
     }
 
     override fun hasStorm(): Boolean {
-        return serverWorld!!.isRaining
+        return world.isRaining
     }
 
     override fun isThundering(): Boolean {
-        return serverWorld!!.isThundering
+        return world.isThundering
     }
 
     override fun isLoaded(): Boolean {
-        return serverWorld != null
+        // TODO
+        return true
     }
 
     override fun setWorldUnloaded() {
-        serverWorld = null
+        // TODO
     }
 
     override fun getLightLevel(x: Int, y: Int, z: Int): Int {
-        return serverWorld!!.getLightLevel(LightType.BLOCK, BlockPos(x, y, z))
+        return world.getLightLevel(LightType.BLOCK, BlockPos(x, y, z))
     }
 
     override fun getHighestBlockYAt(x: Int, z: Int): Int {
-        return serverWorld!!.getTopY(Heightmap.Type.WORLD_SURFACE, x, z)
+        return world.getTopY(Heightmap.Type.WORLD_SURFACE, x, z)
     }
 
     override fun canGetSkyLightLevel(): Boolean {
-        return serverWorld!!.dimension.hasSkyLight()
+        return world.dimension.hasSkyLight()
     }
 
     override fun getSkyLightLevel(x: Int, y: Int, z: Int): Int {
-        return serverWorld!!.getLightLevel(LightType.SKY, BlockPos(x, y, z))
+        return world.getLightLevel(LightType.SKY, BlockPos(x, y, z))
     }
 
     override fun getEnvironment(): String {
-        return serverWorld!!.getDimension().type.suffix
+        return world.getDimension().type.suffix
     }
 
     override fun getChunkCache(chunks: List<DynmapChunk>): MapChunkCache {
-        return FabricDynmapMapChunkCache(this, chunks)
+        return FabricDynmapMapChunkCache(this, world as ServerWorld, chunks) // TODO
+
+    }
+
+    override fun getWorldBorder(): Polygon? {
+        val wb = world.worldBorder
+        if (wb != null && wb.size < 5.9E7) {
+            val p = Polygon()
+            p.addVertex(wb.boundWest, wb.boundNorth)
+            p.addVertex(wb.boundWest, wb.boundSouth)
+            p.addVertex(wb.boundEast, wb.boundSouth)
+            p.addVertex(wb.boundEast, wb.boundNorth)
+            return p
+        }
+        return null
+    }
+
+    companion object {
+        private fun getName(type: DimensionType): String? {
+            return "world" + type.suffix
+        }
     }
 }

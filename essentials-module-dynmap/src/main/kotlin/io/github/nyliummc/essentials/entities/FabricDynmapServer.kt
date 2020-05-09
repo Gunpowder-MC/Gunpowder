@@ -24,15 +24,20 @@
 
 package io.github.nyliummc.essentials.entities
 
-import io.github.nyliummc.essentials.EssentialsDynmapModule
+import com.mojang.authlib.GameProfile
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.minecraft.block.SignBlock
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapCommonAPIListener
+import org.dynmap.DynmapCore
 import org.dynmap.DynmapWorld
 import org.dynmap.common.DynmapListenerManager
 import org.dynmap.common.DynmapPlayer
@@ -40,28 +45,59 @@ import org.dynmap.common.DynmapServerInterface
 import org.dynmap.utils.MapChunkCache
 import java.util.*
 import java.util.concurrent.Callable
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.function.Supplier
+import java.util.regex.Pattern
 
 
-class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapServerInterface() {
+class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInterface() {
+    private val patternControlCode: Pattern = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]")
+    private val tickTaskMap: Long2ObjectMap<MutableList<Runnable>> = Long2ObjectOpenHashMap()
+    private val fabricWorldMap: WeakHashMap<World, FabricDynmapWorld> = WeakHashMap<World, FabricDynmapWorld>()
     private val registered = mutableSetOf<DynmapListenerManager.EventType>()
 
-
-    override fun scheduleServerTask(run: Runnable?, delay: Long) {
-        Thread {
-            Thread.sleep(delay)
-            minecraftServer.submitAndJoin(run)
-        }.start()
+    private fun getWorld(world: World): FabricDynmapWorld {
+        return fabricWorldMap.computeIfAbsent(world) { FabricDynmapWorld(world) }
     }
 
-    override fun <T> callSyncMethod(task: Callable<T>): Future<T> {
-        return CompletableFuture.supplyAsync(Supplier { task.call() }, minecraftServer)
+    fun init(core: DynmapCore) {
+        for (world in server.worlds) {
+            core.processWorldLoad(getWorld(world))
+        }
+    }
+
+    private fun getProfileByName(player: String): GameProfile? {
+        return server.userCache.findByName(player)
+    }
+
+    override fun scheduleServerTask(run: Runnable, delay: Long) {
+        val tick = server.ticks + if (delay < 0) 0 else delay
+        tickTaskMap.computeIfAbsent(tick) { ArrayList() }.add(run)
+    }
+
+    fun tick() {
+        val list: List<Runnable>? = tickTaskMap.remove(server.ticks.toLong())
+        if (list != null) {
+            for (r in list) {
+                r.run()
+            }
+        }
+    }
+
+
+    override fun <T> callSyncMethod(task: Callable<T>): Future<T?> {
+        return server.submit(Supplier {
+            try {
+                task.call()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        })
     }
 
     override fun getOnlinePlayers(): Array<DynmapPlayer?>? {
-        return minecraftServer.playerManager.playerList.map(::FabricDynmapOnlinePlayer).toTypedArray()
+        return server.playerManager.playerList.map(::FabricDynmapOnlinePlayer).toTypedArray()
     }
 
     override fun reload() {
@@ -69,7 +105,7 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun getPlayer(name: String?): DynmapPlayer? {
-        return minecraftServer.playerManager.getPlayer(name)?.let(::FabricDynmapOnlinePlayer)
+        return server.playerManager.getPlayer(name)?.let(::FabricDynmapOnlinePlayer)
     }
 
     override fun getOfflinePlayer(name: String?): DynmapPlayer? {
@@ -78,21 +114,19 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun getIPBans(): Set<String?>? {
-        return HashSet(minecraftServer.playerManager.ipBanList.names.asList())
+        return HashSet(server.playerManager.ipBanList.names.asList())
     }
 
     override fun getServerName(): String? {
-        return minecraftServer.serverMotd ?: return "Unknown Server"
+        return server.levelName
     }
 
-    override fun isPlayerBanned(pid: String?): Boolean {
-        // TODO: Verify pid is the username
-        return minecraftServer.playerManager.userBanList.names.contains(pid)
+    override fun isPlayerBanned(pid: String): Boolean {
+        return server.playerManager.userBanList.contains(getProfileByName(pid));
     }
 
-    override fun stripChatColor(s: String?): String? {
-        // TODO("Not yet implemented")
-        return s
+    override fun stripChatColor(s: String): String? {
+        return patternControlCode.matcher(s).replaceAll("");
     }
 
     override fun requestEventNotification(type: DynmapListenerManager.EventType): Boolean {
@@ -138,7 +172,7 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun broadcastMessage(msg: String?) {
-        minecraftServer.playerManager.sendToAll(LiteralText(msg))
+        server.sendMessage(LiteralText("[Dynmap] $msg"));
     }
 
     override fun getBiomeIDs(): Array<String?>? {
@@ -156,47 +190,49 @@ class FabricDynmapServer(private val minecraftServer: MinecraftServer) : DynmapS
     }
 
     override fun getWorldByName(wname: String?): DynmapWorld? {
-        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
-        return FabricDynmapWorld(minecraftServer.getWorld(dtype))
+        return getWorld(server.getWorld(Registry.DIMENSION_TYPE.get(Identifier(wname))));
     }
 
     override fun checkPlayerPermissions(player: String?, perms: Set<String?>?): Set<String?>? {
         // TODO("Not yet implemented")
-        return null
+        return setOf()
     }
 
     override fun checkPlayerPermission(player: String?, perm: String?): Boolean {
         // TODO("Not yet implemented")
-        return false
+        return true
     }
 
     override fun createMapChunkCache(w: DynmapWorld, chunks: List<DynmapChunk>, blockdata: Boolean, highesty: Boolean, biome: Boolean, rawbiome: Boolean): MapChunkCache? {
-        return FabricDynmapMapChunkCache(w as FabricDynmapWorld, chunks)
+        val cache = FabricDynmapMapChunkCache(w as FabricDynmapWorld, w.world as ServerWorld, chunks)
+        cache.setChunkDataTypes(blockdata, biome, highesty, rawbiome)
+        return cache
     }
 
     override fun getMaxPlayers(): Int {
-        return minecraftServer.maxPlayerCount
+        return server.maxPlayerCount
     }
 
     override fun getCurrentPlayers(): Int {
-        return minecraftServer.currentPlayerCount
+        return server.currentPlayerCount
     }
 
     override fun getBlockIDAt(wname: String?, x: Int, y: Int, z: Int): Int {
         val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
-        return Registry.BLOCK.getRawId(minecraftServer.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block)
+        return Registry.BLOCK.getRawId(server.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block)
     }
 
     override fun isSignAt(wname: String?, x: Int, y: Int, z: Int): Int {
         val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
-        return if(minecraftServer.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
+        return if(server.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
     }
 
     override fun getServerTPS(): Double {
-        return 1.0 / minecraftServer.tickTime
+        // Get from module-utilities if available
+        return 1.0 / server.tickTime
     }
 
     override fun getServerIP(): String? {
-        return minecraftServer.serverIp
+        return server.serverIp
     }
 }
