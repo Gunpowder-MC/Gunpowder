@@ -1,7 +1,9 @@
 archivesBaseName = "essentials-base"
 
 dependencies {
+    // Shading causes large dep issues
     compile project(":essentials-api")
+    include project(":essentials-api")
 
     // Database
     shade libs.exposed_core

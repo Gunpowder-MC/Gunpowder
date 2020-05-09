@@ -2,4 +2,6 @@ archivesBaseName = "essentials-module-utilities"
 
 dependencies {
     compile project(":essentials-api")
+    modImplementation(libs.playerabilitylib) { transitive = false }
+    include libs.playerabilitylib
 }

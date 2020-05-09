@@ -28,6 +28,8 @@ logger.lifecycle("""
 
 version = project.mod_version + "+" + project.minecraft
 
+// Project config
+
 allprojects { currentProject ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
@@ -83,7 +85,6 @@ allprojects { currentProject ->
         // Hard Dependencies
         modImplementation libs.fabric_api
         modImplementation libs.fabric_language_kotlin
-        modImplementation(libs.playerabilitylib) { transitive = false }
 
         // Database
         implementation libs.exposed_core
@@ -176,6 +177,8 @@ allprojects { currentProject ->
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
 }
 
+// License shit
+
 task licenseFormatAll
 subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 
@@ -187,6 +190,8 @@ subprojects {
         enabled = false
     }
 }
+
+// Build oddities
 
 subprojects.each {
     if (!it.name.contains("-api")) {
@@ -206,7 +211,16 @@ dependencies {
     modRuntime(libs.modmenu) {
         transitive = false // Naughty mods who JIJ fabric api
     }
+    modRuntime(libs.playerabilitylib) {
+        transitive = false
+    }
+    modRuntime(project(":essentials-api")){
+        // patchy or something idfk
+        transitive = false
+    }
 }
+
+// Fat jar
 
 jar {
     enabled = false
@@ -220,6 +234,9 @@ shadowJar {
 }
 
 remapJar.dependsOn(shadowJar)
+
+// Curseforge upload
+// Currently broken
 
 curseforge {
     apply from: 'curseforge.gradle'

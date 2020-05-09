@@ -36,8 +36,8 @@ import java.io.*;
 
 @Mixin(value={DynmapCore.class}, remap=false)
 class DynmapCoreMixin {
-    @Redirect(method="initConfiguration", at=@At(value="NEW", target="Ljava/io/File;"))
-    File configFile() throws IOException {
+    @Redirect(method="initConfiguration", at=@At(value="NEW", target="Ljava/io/File;", ordinal=0))
+    File configFile(File parent, String child) throws IOException {
         System.out.println("We got called!");
 
         File f = new File(FabricLoader.getInstance().getConfigDirectory().getCanonicalPath() + "/essentials-dynmap.yaml");
