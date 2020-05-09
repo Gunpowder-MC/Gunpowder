@@ -238,19 +238,18 @@ remapJar.dependsOn(shadowJar)
 // Curseforge upload
 // Currently broken
 
-curseforge {
-    apply from: 'curseforge.gradle'
-    apiKey = project.apiKey
-    project {
-        id = "350123"
-        releaseType = "beta"
-        changelogType = "markdown"
-        changelog = "Testing auto-upload from gradle"
-        addGameVersion project.minecraft
-        addGameVersion "Fabric"
-        addGameVersion "Java 8"
+    curseforge {
+        apply from: 'curseforge.gradle'
+        apiKey = project.apiKey
+        project {
+            id = "350123"
+            releaseType = "beta"
+            changelogType = "markdown"
+            changelog = "Testing auto-upload from gradle"
+            addGameVersion project.minecraft
+            addGameVersion "Fabric"
+            addGameVersion "Java 8"
 
-        afterEvaluate {
             // Main jar as main artifact
             mainArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}.jar")
 
@@ -259,10 +258,8 @@ curseforge {
             // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
             // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
 
-            subprojects.each { sub ->
+            subprojects { sub ->
                 // Add built modules
-                // TODO: Not being called somehow?
-                System.out.println("Adding file '${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar'")
                 addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
 
                 // Maybe add dev and sources?
@@ -270,10 +267,12 @@ curseforge {
                 // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
                 // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
             }
-            uploadTask.dependsOn(remapJar)
+
+            afterEvaluate {
+                uploadTask.dependsOn(remapJar)
+            }
+        }
+        options {
+            forgeGradleIntegration = false
         }
     }
-    options {
-        forgeGradleIntegration = false
-    }
-}

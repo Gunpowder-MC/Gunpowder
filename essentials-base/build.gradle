@@ -6,16 +6,19 @@ dependencies {
     include project(":essentials-api")
 
     // Database
-    shade libs.exposed_core
-    shade libs.exposed_jdbc
-    shade libs.exposed_java_time
+    // Don't shade for compat issues
+    include libs.exposed_core
+    include libs.exposed_jdbc
+    include libs.exposed_java_time
 
     // Database drivers
-    shade libs.postgresql
-    shade libs.mysql_connector_java
-    shade libs.sqlite_jdbc
+    // No need to have these shaded
+    include libs.postgresql
+    include libs.mysql_connector_java
+    include libs.sqlite_jdbc
 
     // Configs
+    // Again, not shaded for compat
     include libs.jackson_core
     include libs.jackson_kotlin
     include libs.jackson_yaml
