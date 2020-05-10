@@ -72,6 +72,8 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun scheduleServerTask(run: Runnable, delay: Long) {
+        // delay = ticks until we need to run `run`
+
         val tick = server.ticks + if (delay < 0) 0 else delay
         tickTaskMap.computeIfAbsent(tick) { ArrayList() }.add(run)
     }

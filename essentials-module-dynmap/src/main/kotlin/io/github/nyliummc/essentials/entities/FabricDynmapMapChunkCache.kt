@@ -37,6 +37,7 @@ import net.minecraft.world.chunk.ChunkStatus
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapWorld
 import org.dynmap.common.BiomeMap
+import org.dynmap.hdmap.HDBlockModels
 import org.dynmap.renderer.DynmapBlockState
 import org.dynmap.renderer.RenderPatchFactory
 import org.dynmap.utils.BlockStep
@@ -207,7 +208,7 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
         }
 
         override fun getPatchFactory(): RenderPatchFactory? {
-            return null
+            return HDBlockModels.getPatchDefinitionFactory()
         }
 
         override fun getBlockType(): DynmapBlockState? {

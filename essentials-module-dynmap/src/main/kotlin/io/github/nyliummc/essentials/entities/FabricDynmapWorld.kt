@@ -35,6 +35,7 @@ import org.dynmap.DynmapLocation
 import org.dynmap.DynmapWorld
 import org.dynmap.utils.MapChunkCache
 import org.dynmap.utils.Polygon
+import java.util.concurrent.Future
 
 
 class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.type), world.height, world.seaLevel) {
@@ -95,8 +96,11 @@ class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.
     }
 
     override fun getChunkCache(chunks: List<DynmapChunk>): MapChunkCache {
-        return FabricDynmapMapChunkCache(this, world as ServerWorld, chunks) // TODO
+        val cache = FabricDynmapMapChunkCache(this, world as ServerWorld, chunks) // TODO
 
+        cache.loadChunks(chunks.size)
+
+        return cache
     }
 
     override fun getWorldBorder(): Polygon? {

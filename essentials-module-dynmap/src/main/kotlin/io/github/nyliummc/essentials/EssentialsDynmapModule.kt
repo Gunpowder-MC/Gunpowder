@@ -38,6 +38,7 @@ import org.dynmap.DynmapCommonAPIListener
 import org.dynmap.DynmapCore
 import org.dynmap.Log
 import org.dynmap.common.BiomeMap
+import org.dynmap.markers.impl.MarkerAPIImpl
 import java.io.File
 import java.util.logging.Logger
 
@@ -59,12 +60,6 @@ class EssentialsDynmapModule : EssentialsModule {
     }
 
     private fun startServer(minecraftServer: MinecraftServer) {
-        Log.verbose = true
-        Log.setLogger(null)
-
-        // Dont mind me just using log4j logger as java logger
-        Log.setLogger(Logger.getLogger("Essentials-Module-Dynmap"), "[Dynmap]")
-
         core.server = FabricDynmapServer(minecraftServer)
 
         // Using codeSource allows it to be used in both modular and fatjar impls
