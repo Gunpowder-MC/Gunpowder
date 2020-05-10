@@ -38,7 +38,6 @@ import org.dynmap.utils.Polygon
 
 
 class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.type), world.height, world.seaLevel) {
-
     override fun isNether(): Boolean {
         return world.dimension.isNether
     }
@@ -85,8 +84,14 @@ class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.
         return world.getLightLevel(LightType.SKY, BlockPos(x, y, z))
     }
 
+    private val envMap = mapOf(
+            "world" to "normal",
+            "world_nether" to "nether",
+            "world_end" to "the_end"
+    )
+
     override fun getEnvironment(): String {
-        return world.getDimension().type.suffix
+        return envMap.getOrDefault(name, "normal")
     }
 
     override fun getChunkCache(chunks: List<DynmapChunk>): MapChunkCache {

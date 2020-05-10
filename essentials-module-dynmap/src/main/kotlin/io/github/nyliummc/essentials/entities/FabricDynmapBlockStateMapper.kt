@@ -35,6 +35,7 @@ import java.util.*
 
 class FabricDynmapBlockStateMapper {
     private val dynmapBlockStateMap: MutableMap<BlockState, DynmapBlockState> = HashMap<BlockState, DynmapBlockState>()
+
     operator fun get(state: BlockState): DynmapBlockState? {
         return dynmapBlockStateMap[state]
     }

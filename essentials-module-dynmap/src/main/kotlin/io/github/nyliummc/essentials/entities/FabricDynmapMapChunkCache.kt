@@ -25,6 +25,7 @@
 package io.github.nyliummc.essentials.entities
 
 import com.mojang.datafixers.util.Either
+import io.github.nyliummc.essentials.mixin.dynmap.ServerChunkManagerAccessor_Dynmap
 import net.minecraft.server.world.ChunkHolder.Unloaded
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
@@ -52,7 +53,7 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
     private val chunksToLoad = LinkedList<ChunkPos>()
     private val chunkFutures = arrayListOf<CompletableFuture<Either<Chunk, Unloaded>>>()
     private val chunks = hashMapOf<ChunkPos, Chunk>()
-    private var requiredStatus = ChunkStatus.FULL
+    private var requiredStatus = ChunkStatus.FEATURES
 
     init {
         for (c in chunks) {
@@ -72,9 +73,11 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
 
     override fun loadChunks(maxToLoad: Int): Int {
         val maxToLoad = chunksToLoad.size.coerceAtMost(maxToLoad)
+
         for (i in 0 until maxToLoad) {
             val pos = chunksToLoad.remove()
-            chunkFutures.add(chunkManager.getChunkFutureSyncOnMainThread(pos.x, pos.z, requiredStatus, false))
+            chunkManager as ServerChunkManagerAccessor_Dynmap
+            chunkFutures.add(chunkManager.invokeGetChunkFuture(pos.x, pos.z, requiredStatus, false))
         }
 
         return chunks.size + maxToLoad
@@ -87,13 +90,17 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
             if (future.isDone) {
                 futureIterator.remove()
                 try {
-                    future.get().ifLeft { c: Chunk -> chunks[c.pos] = c }
+                    future.get().ifLeft { c ->
+                        println("Fetched chunk: $c")
+                        chunks[c.pos] = c
+                    }
                 } catch (e: Exception) {
                     throw RuntimeException(e)
                 }
             }
         }
 
+        println("isDoneLoading(): ${chunkFutures.isEmpty()}")
         return chunkFutures.isEmpty()
     }
 
@@ -208,8 +215,8 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
         }
 
         override fun getBlockTileEntityField(fieldId: String): Any? {
-            // TODO
-            return null
+            val entity = world.getBlockEntity(pos)
+            return entity?.javaClass?.getDeclaredField(fieldId)?.get(entity)
         }
 
         override fun getBlockTypeAt(xoff: Int, yoff: Int, zoff: Int): DynmapBlockState? {
@@ -219,8 +226,8 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
 
         override fun getBlockTileEntityFieldAt(fieldId: String, xoff: Int, yoff: Int, zoff: Int): Any? {
             val poso = pos!!.add(xoff, yoff, zoff)
-            // TODO
-            return null
+            val entity = world.getBlockEntity(poso)
+            return entity?.javaClass?.getDeclaredField(fieldId)?.get(entity)
         }
 
         override fun getX(): Int {

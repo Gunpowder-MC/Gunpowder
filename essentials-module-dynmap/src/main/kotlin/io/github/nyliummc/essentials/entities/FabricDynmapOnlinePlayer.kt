@@ -59,11 +59,7 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
 
     override fun getAddress(): InetSocketAddress? {
         val address = player.networkHandler.getConnection().address as SocketAddress
-        return if (address is InetSocketAddress) {
-            address
-        } else {
-            null
-        }
+        return address as? InetSocketAddress
     }
 
     override fun isSneaking(): Boolean {

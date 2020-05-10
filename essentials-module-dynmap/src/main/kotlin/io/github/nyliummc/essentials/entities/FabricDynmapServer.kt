@@ -62,7 +62,8 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
 
     fun init(core: DynmapCore) {
         for (world in server.worlds) {
-            core.processWorldLoad(getWorld(world))
+            val dw = getWorld(world)
+            core.processWorldLoad(dw)
         }
     }
 
@@ -125,7 +126,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
         return server.playerManager.userBanList.contains(getProfileByName(pid));
     }
 
-    override fun stripChatColor(s: String): String? {
+    override fun stripChatColor(s: String): String {
         return patternControlCode.matcher(s).replaceAll("");
     }
 
@@ -139,8 +140,9 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
             DynmapListenerManager.EventType.WORLD_UNLOAD,
             DynmapListenerManager.EventType.PLAYER_JOIN,
             DynmapListenerManager.EventType.PLAYER_QUIT -> {
-
+                // Implemented in mixins
             }
+
             DynmapListenerManager.EventType.WORLD_SPAWN_CHANGE -> {
                 // TODO
                 return false
@@ -151,7 +153,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
                 return false
             }
             DynmapListenerManager.EventType.PLAYER_CHAT -> {
-                // TODO
+
                 return false
             }
             DynmapListenerManager.EventType.BLOCK_BREAK -> {
@@ -167,7 +169,8 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
         return true
     }
 
-    override fun sendWebChatEvent(source: String?, name: String?, msg: String?): Boolean {
+    override fun sendWebChatEvent(source: String, name: String, msg: String): Boolean {
+        server.sendMessage(LiteralText("[$source/$name] $msg"))
         return DynmapCommonAPIListener.fireWebChatEvent(source, name, msg)
     }
 
@@ -189,11 +192,11 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
         // TODO("Not yet implemented")
     }
 
-    override fun getWorldByName(wname: String?): DynmapWorld? {
+    override fun getWorldByName(wname: String): DynmapWorld? {
         return getWorld(server.getWorld(Registry.DIMENSION_TYPE.get(Identifier(wname))));
     }
 
-    override fun checkPlayerPermissions(player: String?, perms: Set<String?>?): Set<String?>? {
+    override fun checkPlayerPermissions(player: String, perms: Set<String>?): Set<String?> {
         // TODO("Not yet implemented")
         return setOf()
     }

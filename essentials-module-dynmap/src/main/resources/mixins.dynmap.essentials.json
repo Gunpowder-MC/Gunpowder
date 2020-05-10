@@ -5,6 +5,9 @@
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.DynmapModulePlugin",
   "mixins": [
     "DynmapCoreMixin",
+    "PlayerManagerMixin_Dynmap",
+    "ServerChunkManagerAccessor_Dynmap",
+    "ServerPlayNetworkHandlerMixin_Dynmap",
     "ServerWorldMixin_Dynmap"
   ],
   "client": [
