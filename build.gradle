@@ -257,22 +257,13 @@ curseforge {
         addGameVersion "Fabric"
         addGameVersion "Java 8"
 
-        // Main jar as main artifact
-        mainArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}.jar")
-
-        // Other files as sub-artifacts maybe?
-        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
-        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
-
         subprojects { sub ->
             // Add built modules
-            addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-
-            // Maybe add dev and sources?
-            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
-            // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
+            if (sub.name.contains("-base")) {
+                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+            } else {
+                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+            }
         }
 
         afterEvaluate {
