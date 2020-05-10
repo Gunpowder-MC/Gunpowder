@@ -26,6 +26,7 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.DynmapCommand
 import io.github.nyliummc.essentials.entities.FabricDynmapBlockStateMapper
 import io.github.nyliummc.essentials.entities.FabricDynmapServer
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
@@ -36,6 +37,7 @@ import net.minecraft.server.MinecraftServer
 import org.apache.logging.log4j.LogManager
 import org.dynmap.DynmapCommonAPIListener
 import org.dynmap.DynmapCore
+import org.dynmap.DynmapMapCommands
 import org.dynmap.Log
 import org.dynmap.common.BiomeMap
 import org.dynmap.markers.impl.MarkerAPIImpl
@@ -51,6 +53,10 @@ class EssentialsDynmapModule : EssentialsModule {
 
     init {
         instance = this
+    }
+
+    override fun registerCommands() {
+        EssentialsMod.instance.registry.registerCommand(DynmapCommand::register)
     }
 
     override fun registerEvents() {
@@ -69,7 +75,7 @@ class EssentialsDynmapModule : EssentialsModule {
         core.dataFolder.mkdirs()
         core.setMinecraftVersion(minecraftServer.version)
 
-        val container = (FabricLoader.getInstance().getModContainer("essentials-mod") ?: FabricLoader.getInstance().getModContainer("essentials-base"))
+        val container = FabricLoader.getInstance().getModContainer("essentials-base")
         core.setPluginVersion(
                 // Get essentials version
                 container.get().metadata.version.friendlyString,
@@ -87,6 +93,7 @@ class EssentialsDynmapModule : EssentialsModule {
         if (!success) throw RuntimeException("Dynmap failed to initialize")
 
         serverInterface?.init(core)
+
         DynmapCommonAPIListener.apiInitialized(core);
     }
 

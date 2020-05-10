@@ -25,7 +25,10 @@
 package io.github.nyliummc.essentials.entities
 
 import com.mojang.authlib.GameProfile
+import io.github.nyliummc.essentials.EssentialsDynmapModule
+import it.unimi.dsi.fastutil.ints.Int2IntMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.minecraft.block.SignBlock
 import net.minecraft.server.MinecraftServer
@@ -45,6 +48,7 @@ import org.dynmap.common.DynmapServerInterface
 import org.dynmap.utils.MapChunkCache
 import java.util.*
 import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Future
 import java.util.function.Supplier
 import java.util.regex.Pattern
@@ -52,7 +56,7 @@ import java.util.regex.Pattern
 
 class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInterface() {
     private val patternControlCode: Pattern = Pattern.compile("(?i)[\\u00A7&][0-9A-FK-OR]")
-    private val tickTaskMap: Long2ObjectMap<MutableList<Runnable>> = Long2ObjectOpenHashMap()
+    private val tickTaskMap: ConcurrentHashMap<Long, MutableList<Runnable>> = ConcurrentHashMap()
     private val fabricWorldMap: WeakHashMap<World, FabricDynmapWorld> = WeakHashMap<World, FabricDynmapWorld>()
     private val registered = mutableSetOf<DynmapListenerManager.EventType>()
 
@@ -72,9 +76,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun scheduleServerTask(run: Runnable, delay: Long) {
-        // delay = ticks until we need to run `run`
-
-        val tick = server.ticks + if (delay < 0) 0 else delay
+        val tick = server.ticks.toLong() + if (delay < 0) 0 else delay
         tickTaskMap.computeIfAbsent(tick) { ArrayList() }.add(run)
     }
 
@@ -211,6 +213,11 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     override fun createMapChunkCache(w: DynmapWorld, chunks: List<DynmapChunk>, blockdata: Boolean, highesty: Boolean, biome: Boolean, rawbiome: Boolean): MapChunkCache? {
         val cache = FabricDynmapMapChunkCache(w as FabricDynmapWorld, w.world as ServerWorld, chunks)
         cache.setChunkDataTypes(blockdata, biome, highesty, rawbiome)
+        val f = callSyncMethod {
+            val max = Integer.max(5, EssentialsDynmapModule.core.mapManager.maxChunkLoadsPerTick)
+            cache.loadChunks(max)
+        }
+        f.get()
         return cache
     }
 
