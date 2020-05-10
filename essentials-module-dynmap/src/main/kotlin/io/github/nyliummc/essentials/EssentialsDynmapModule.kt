@@ -45,8 +45,6 @@ class EssentialsDynmapModule : EssentialsModule {
     private var serverInterface: FabricDynmapServer? = null
 
 
-    val core = DynmapCore()
-
     init {
         instance = this
     }
@@ -62,17 +60,22 @@ class EssentialsDynmapModule : EssentialsModule {
 
         // Using codeSource allows it to be used in both modular and fatjar impls
         val path = this::class.java.classLoader.getResource(".")!!.path
-        println(path)
-        core.pluginJarFile = File(path)
+        core.pluginJarFile = File(this::class.java.protectionDomain.codeSource.location.toURI())
         core.dataFolder = File(EssentialsMod.instance.server.runDirectory.canonicalPath + "/dynmap")
         core.dataFolder.mkdirs()
         core.setMinecraftVersion(minecraftServer.version)
+
+        val container = (FabricLoader.getInstance().getModContainer("essentials-mod") ?: FabricLoader.getInstance().getModContainer("essentials-base"))
         core.setPluginVersion(
                 // Get essentials version
-                FabricLoader.getInstance().getModContainer("essentials-mod").get().metadata.version.friendlyString,
+                container.get().metadata.version.friendlyString,
                 "Fabric Essentials Module Dynmap")
+
         serverInterface = FabricDynmapServer(EssentialsMod.instance.server)
         core.server = serverInterface
+
+        core.setTriggerDefault(arrayOf("blockupdate", "chunkpopulate", "chunkgenerate"))
+
         BiomeMap.loadWellKnownByVersion(core.dynmapPluginPlatformVersion)
         FabricDynmapBlockStateMapper.INSTANCE.init()
 
@@ -80,7 +83,6 @@ class EssentialsDynmapModule : EssentialsModule {
         if (!success) throw RuntimeException("Dynmap failed to initialize")
 
         serverInterface?.init(core)
-
         DynmapCommonAPIListener.apiInitialized(core);
     }
 
@@ -92,5 +94,7 @@ class EssentialsDynmapModule : EssentialsModule {
 
     companion object {
         var instance: EssentialsDynmapModule? = null
+        @JvmField
+        val core = DynmapCore()
     }
 }

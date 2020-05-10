@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.modules.chat.modelhandlers
+package io.github.nyliummc.essentials.api.module.chat.modelhandlers
 
-import io.github.nyliummc.essentials.api.modules.chat.dataholders.StoredNickname
+import io.github.nyliummc.essentials.api.module.chat.dataholders.StoredNickname
 import java.util.*
 
 interface NicknameHandler {

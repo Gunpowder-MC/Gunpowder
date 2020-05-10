@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.DynmapModulePlugin",
   "mixins": [
-    "DynmapCoreMixin"
+    "DynmapCoreMixin",
+    "ServerWorldMixin_Dynmap"
   ],
   "client": [
   ],

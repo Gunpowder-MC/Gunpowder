@@ -30,10 +30,12 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
+import io.github.nyliummc.essentials.entities.LanguageHack
 import io.github.nyliummc.essentials.injection.AbstractModule
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import org.apache.logging.log4j.LogManager
 
 abstract class AbstractEssentialsMod : EssentialsMod {
@@ -51,6 +53,8 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     var modules: MutableList<EssentialsModule> = mutableListOf()
 
     fun initialize() {
+        FabricLoader.getInstance().allMods.filter { it.metadata.name.contains("essentials") }.forEach { LanguageHack.activate(it.metadata.name) }
+
         logger.info("Starting Essentials")
         registry.registerBuiltin()
         logger.info("Loading modules")

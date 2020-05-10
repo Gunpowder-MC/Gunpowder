@@ -38,6 +38,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 
 import net.minecraft.world.dimension.DimensionType
+import kotlin.streams.toList
 
 
 class EssentialsUtilitiesModule : EssentialsModule {
@@ -78,7 +79,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
             }
 
             val total = players.size.toDouble()
-            val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }
+            val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }.toList()
 
             val sleepingAmount = sleepingPlayers.count().toDouble()
             val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage

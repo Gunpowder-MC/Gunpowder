@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.modules.market.dataholders
+package io.github.nyliummc.essentials.api.module.market.dataholders
 
 import net.minecraft.item.ItemStack
 import java.math.BigDecimal

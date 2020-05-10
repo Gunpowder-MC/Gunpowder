@@ -108,7 +108,7 @@ class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.
     }
 
     companion object {
-        private fun getName(type: DimensionType): String? {
+        private fun getName(type: DimensionType): String {
             return "world" + type.suffix
         }
     }

@@ -25,7 +25,7 @@
 package io.github.nyliummc.essentials.modelhandlers
 
 import io.github.nyliummc.essentials.api.EssentialsMod
-import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
+import io.github.nyliummc.essentials.api.module.market.dataholders.StoredMarketEntry
 import io.github.nyliummc.essentials.models.MarketEntryTable
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
@@ -40,7 +40,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.time.LocalDateTime
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
+import io.github.nyliummc.essentials.api.module.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
 object MarketEntryHandler : APIMarketEntryHandler {
     private val cache = mutableListOf<StoredMarketEntry>()

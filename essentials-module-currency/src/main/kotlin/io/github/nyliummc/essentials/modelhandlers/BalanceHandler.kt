@@ -25,7 +25,7 @@
 package io.github.nyliummc.essentials.modelhandlers
 
 import io.github.nyliummc.essentials.api.EssentialsMod
-import io.github.nyliummc.essentials.api.modules.currency.dataholders.StoredBalance
+import io.github.nyliummc.essentials.api.module.currency.dataholders.StoredBalance
 import io.github.nyliummc.essentials.configs.CurrencyConfig
 import io.github.nyliummc.essentials.models.BalanceTable
 import org.jetbrains.exposed.sql.SortOrder
@@ -34,7 +34,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 
 object BalanceHandler : APIBalanceHandler {
     private val cache: MutableMap<UUID, StoredBalance> = mutableMapOf()

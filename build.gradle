@@ -8,22 +8,21 @@ plugins {
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-apply from: "dependencies.gradle"
-// apply from: "https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle"
+apply from: "dependencies.gradle"  // libs.*
 
 logger.lifecycle("""
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	Building Essentials
-	Version: $project.mod_version
-	Minecraft Version: $project.minecraft
-	Fabric-Loader Version: $project.fabric_loader
+    =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    Building Essentials
+    Version: $project.mod_version
+    Minecraft Version: $project.minecraft
+    Fabric-Loader Version: $project.fabric_loader
 
-	Using:
-	Fabric-API Version: $project.fabric_api
-	PlayerAbilityLib Version: $project.playerabilitylib
-	
-	Output files will be in /build/libs
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    Using:
+    Fabric-API Version: $project.fabric_api
+    PlayerAbilityLib Version: $project.playerabilitylib
+    
+    Output files will be in /build/libs
+    =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 """)
 
 version = project.mod_version + "+" + project.minecraft
@@ -113,6 +112,7 @@ allprojects { currentProject ->
     // Jars
 
     if (currentProject.name.contains("-api")) {
+    // if (false) {
         shadowJar {
             enabled = false
         }
@@ -156,8 +156,9 @@ allprojects { currentProject ->
     // Set version in fabric.mod.json
     processResources {
         doFirst {
-            delete fileTree('build/resources') {
-                include '**/*'
+            delete fileTree('build/') {
+                exclude 'libs/*.jar'
+                exclude 'download/*.jar'
             }
         }
 
@@ -226,53 +227,59 @@ jar {
     enabled = false
 }
 
+sourcesJar {
+    enabled = false
+}
+
 shadowJar {
+    enabled = false
     // Only shadow implementation/modImplementation
     configurations = [project.configurations.shade]
     classifier = "dev"
     append "src/main/resources/fabric.mod.json"
 }
 
-remapJar.dependsOn(shadowJar)
+remapJar {
+    enabled = false
+}
 
 // Curseforge upload
-// Currently broken
 
-    curseforge {
-        apply from: 'curseforge.gradle'
-        apiKey = project.apiKey
-        project {
-            id = "350123"
-            releaseType = "beta"
-            changelogType = "markdown"
-            changelog = "Testing auto-upload from gradle"
-            addGameVersion project.minecraft
-            addGameVersion "Fabric"
-            addGameVersion "Java 8"
+curseforge {
+    apply from: 'curseforge.gradle'
+    apiKey = project.apiKey
+    project {
+        id = "350123"
+        releaseType = "beta"
+        changelogType = "markdown"
+        changelog = "Testing auto-upload from gradle"
+        addGameVersion project.minecraft
+        addGameVersion "Fabric"
+        addGameVersion "Java 8"
 
-            // Main jar as main artifact
-            mainArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}.jar")
+        // Main jar as main artifact
+        mainArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}.jar")
 
-            // Other files as sub-artifacts maybe?
+        // Other files as sub-artifacts maybe?
+        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
+        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
+        // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
+
+        subprojects { sub ->
+            // Add built modules
+            addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+
+            // Maybe add dev and sources?
             // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
             // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
             // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
-
-            subprojects { sub ->
-                // Add built modules
-                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-
-                // Maybe add dev and sources?
-                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources.jar")
-                // addArtifact file("${project.buildDir}/libs/$archivesBaseName-${project.version}-sources-dev.jar")
-            }
-
-            afterEvaluate {
-                uploadTask.dependsOn(remapJar)
-            }
         }
-        options {
-            forgeGradleIntegration = false
+
+        afterEvaluate {
+            uploadTask.dependsOn(remapJar)
         }
     }
+    options {
+        forgeGradleIntegration = false
+    }
+}

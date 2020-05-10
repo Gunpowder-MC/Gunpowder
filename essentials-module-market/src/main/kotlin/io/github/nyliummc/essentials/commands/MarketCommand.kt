@@ -31,9 +31,9 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.ChestGui
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
-import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler
+import io.github.nyliummc.essentials.api.module.market.dataholders.StoredMarketEntry
+import io.github.nyliummc.essentials.api.module.market.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.configs.MarketConfig
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack

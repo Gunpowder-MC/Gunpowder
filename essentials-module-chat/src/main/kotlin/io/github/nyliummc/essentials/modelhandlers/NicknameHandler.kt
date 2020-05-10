@@ -24,14 +24,14 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
-import io.github.nyliummc.essentials.api.modules.chat.dataholders.StoredNickname
+import io.github.nyliummc.essentials.api.module.chat.dataholders.StoredNickname
 import io.github.nyliummc.essentials.models.NicknameTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
-import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler as APINicknameHandler
+import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler as APINicknameHandler
 
 object NicknameHandler : APINicknameHandler {
     private val cache: MutableMap<UUID, StoredNickname> = mutableMapOf()

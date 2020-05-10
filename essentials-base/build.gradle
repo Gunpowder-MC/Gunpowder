@@ -3,7 +3,6 @@ archivesBaseName = "essentials-base"
 dependencies {
     // Shading causes large dep issues
     compile project(":essentials-api")
-    include project(":essentials-api")
 
     // Database
     // Don't shade for compat issues
@@ -27,4 +26,11 @@ dependencies {
     include libs.guice
 
     include libs.playerabilitylib
+}
+
+sourceSets {
+    main {
+        java.srcDir "${rootProject.rootDir}/essentials-api/src/main/java"
+        kotlin.srcDir "${rootProject.rootDir}/essentials-api/src/main/kotlin"
+    }
 }

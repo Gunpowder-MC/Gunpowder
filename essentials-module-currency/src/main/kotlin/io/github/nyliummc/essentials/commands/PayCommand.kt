@@ -29,7 +29,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler
 import net.minecraft.command.arguments.GameProfileArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText

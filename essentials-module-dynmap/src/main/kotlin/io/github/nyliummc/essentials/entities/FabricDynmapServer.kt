@@ -51,7 +51,7 @@ import java.util.regex.Pattern
 
 
 class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInterface() {
-    private val patternControlCode: Pattern = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]")
+    private val patternControlCode: Pattern = Pattern.compile("(?i)[\\u00A7&][0-9A-FK-OR]")
     private val tickTaskMap: Long2ObjectMap<MutableList<Runnable>> = Long2ObjectOpenHashMap()
     private val fabricWorldMap: WeakHashMap<World, FabricDynmapWorld> = WeakHashMap<World, FabricDynmapWorld>()
     private val registered = mutableSetOf<DynmapListenerManager.EventType>()
@@ -139,7 +139,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
             DynmapListenerManager.EventType.WORLD_UNLOAD,
             DynmapListenerManager.EventType.PLAYER_JOIN,
             DynmapListenerManager.EventType.PLAYER_QUIT -> {
-                // Already handled
+
             }
             DynmapListenerManager.EventType.WORLD_SPAWN_CHANGE -> {
                 // TODO
