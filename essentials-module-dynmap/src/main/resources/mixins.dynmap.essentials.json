@@ -8,8 +8,7 @@
     "DynmapCoreMixin",
     "PlayerManagerMixin_Dynmap",
     "ServerChunkManagerAccessor_Dynmap",
-    "ServerPlayNetworkHandlerMixin_Dynmap",
-    "ServerWorldMixin_Dynmap"
+    "ServerPlayNetworkHandlerMixin_Dynmap"
   ],
   "client": [
   ],

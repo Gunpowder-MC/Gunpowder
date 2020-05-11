@@ -26,12 +26,9 @@ package io.github.nyliummc.essentials.entities
 
 import com.mojang.authlib.GameProfile
 import io.github.nyliummc.essentials.EssentialsDynmapModule
-import it.unimi.dsi.fastutil.ints.Int2IntMaps
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap
-import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.minecraft.block.SignBlock
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
@@ -58,16 +55,22 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     private val patternControlCode: Pattern = Pattern.compile("(?i)[\\u00A7&][0-9A-FK-OR]")
     private val tickTaskMap: ConcurrentHashMap<Long, MutableList<Runnable>> = ConcurrentHashMap()
     private val fabricWorldMap: WeakHashMap<World, FabricDynmapWorld> = WeakHashMap<World, FabricDynmapWorld>()
+    private val fabricPlayerMap: WeakHashMap<ServerPlayerEntity, FabricDynmapOnlinePlayer> = WeakHashMap<ServerPlayerEntity, FabricDynmapOnlinePlayer>()
     private val registered = mutableSetOf<DynmapListenerManager.EventType>()
 
-    private fun getWorld(world: World): FabricDynmapWorld {
+    fun getWorld(world: World): FabricDynmapWorld {
         return fabricWorldMap.computeIfAbsent(world) { FabricDynmapWorld(world) }
+    }
+
+    fun getUser(p: ServerPlayerEntity): FabricDynmapOnlinePlayer {
+        return fabricPlayerMap.computeIfAbsent(p) { FabricDynmapOnlinePlayer(p) }
     }
 
     fun init(core: DynmapCore) {
         for (world in server.worlds) {
             val dw = getWorld(world)
             core.processWorldLoad(dw)
+            EssentialsDynmapModule.core.listenerManager.processWorldEvent(DynmapListenerManager.EventType.WORLD_LOAD, dw)
         }
     }
 
@@ -102,7 +105,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun getOnlinePlayers(): Array<DynmapPlayer?>? {
-        return server.playerManager.playerList.map(::FabricDynmapOnlinePlayer).toTypedArray()
+        return server.playerManager.playerList.map(this::getUser).toTypedArray()
     }
 
     override fun reload() {
@@ -110,7 +113,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun getPlayer(name: String?): DynmapPlayer? {
-        return server.playerManager.getPlayer(name)?.let(::FabricDynmapOnlinePlayer)
+        return server.playerManager.getPlayer(name)?.let(this::getUser)
     }
 
     override fun getOfflinePlayer(name: String?): DynmapPlayer? {
@@ -158,10 +161,6 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
             }
             DynmapListenerManager.EventType.PLAYER_CHAT -> {
 
-                return false
-            }
-            DynmapListenerManager.EventType.BLOCK_BREAK -> {
-                // TODO
                 return false
             }
             DynmapListenerManager.EventType.SIGN_CHANGE -> {
@@ -213,11 +212,6 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     override fun createMapChunkCache(w: DynmapWorld, chunks: List<DynmapChunk>, blockdata: Boolean, highesty: Boolean, biome: Boolean, rawbiome: Boolean): MapChunkCache? {
         val cache = FabricDynmapMapChunkCache(w as FabricDynmapWorld, w.world as ServerWorld, chunks)
         cache.setChunkDataTypes(blockdata, biome, highesty, rawbiome)
-        val f = callSyncMethod {
-            val max = Integer.max(5, EssentialsDynmapModule.core.mapManager.maxChunkLoadsPerTick)
-            cache.loadChunks(max)
-        }
-        f.get()
         return cache
     }
 

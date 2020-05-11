@@ -26,6 +26,7 @@ package io.github.nyliummc.essentials.mixin.dynmap;
 
 import io.github.nyliummc.essentials.EssentialsDynmapModule;
 import io.github.nyliummc.essentials.entities.FabricDynmapOnlinePlayer;
+import io.github.nyliummc.essentials.entities.FabricDynmapServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.dynmap.common.DynmapListenerManager;
@@ -38,6 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PlayerManagerMixin_Dynmap {
     @Inject(method="remove", at=@At("HEAD"))
     void event(ServerPlayerEntity player, CallbackInfo ci) {
-        EssentialsDynmapModule.core.listenerManager.processPlayerEvent(DynmapListenerManager.EventType.PLAYER_QUIT, new FabricDynmapOnlinePlayer(player));
+        FabricDynmapOnlinePlayer p = ((FabricDynmapServer)EssentialsDynmapModule.core.getServer()).getUser(player);
+        EssentialsDynmapModule.core.listenerManager.processPlayerEvent(DynmapListenerManager.EventType.PLAYER_QUIT, p);
     }
 }
