@@ -215,10 +215,6 @@ dependencies {
     modRuntime(libs.playerabilitylib) {
         transitive = false
     }
-    modRuntime(project(":essentials-api")){
-        // patchy or something idfk
-        transitive = false
-    }
 }
 
 // Fat jar

@@ -68,8 +68,6 @@ class EssentialsDynmapModule : EssentialsModule {
     private fun startServer(minecraftServer: MinecraftServer) {
         core.server = FabricDynmapServer(minecraftServer)
 
-        // Using codeSource allows it to be used in both modular and fatjar impls
-        val path = this::class.java.classLoader.getResource(".")!!.path
         core.pluginJarFile = File(this::class.java.protectionDomain.codeSource.location.toURI())
         core.dataFolder = File(EssentialsMod.instance.server.runDirectory.canonicalPath + "/dynmap")
         core.dataFolder.mkdirs()

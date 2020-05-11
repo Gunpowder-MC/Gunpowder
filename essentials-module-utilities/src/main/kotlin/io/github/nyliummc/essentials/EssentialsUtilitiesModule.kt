@@ -66,7 +66,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
     override fun onInitialize() {
         // Skip night by percentage
         WorldTickCallback.EVENT.register(WorldTickCallback { world ->
-            if (world !== world.server!!.getWorld(DimensionType.OVERWORLD)) {
+            if (world.isClient || world !== world.server!!.getWorld(DimensionType.OVERWORLD)) {
                 return@WorldTickCallback
             }
 
@@ -87,7 +87,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
             val shouldSkip = percentage >= treshold
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
-                sleeping.add(it)
+                sleeping.add(it as ServerPlayerEntity)
                 world.server.playerManager.sendToAll(
                         LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"))
             }
