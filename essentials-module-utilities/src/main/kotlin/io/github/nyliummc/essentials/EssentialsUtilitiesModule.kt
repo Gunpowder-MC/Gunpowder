@@ -28,16 +28,17 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
-import io.github.nyliummc.essentials.entities.SleepSetter
+import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import io.github.nyliummc.essentials.entities.TPSTracker
 import io.github.nyliummc.essentials.ext.precision
-import net.fabricmc.fabric.api.event.world.WorldTickCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Util
+import net.minecraft.world.World
 
-import net.minecraft.world.dimension.DimensionType
 import kotlin.streams.toList
 
 
@@ -64,10 +65,14 @@ class EssentialsUtilitiesModule : EssentialsModule {
     }
 
     override fun onInitialize() {
+        ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
+            getTracker(world.registryKey.value.path).tick()
+        })
+
         // Skip night by percentage
-        WorldTickCallback.EVENT.register(WorldTickCallback { world ->
-            if (world.isClient || world !== world.server!!.getWorld(DimensionType.OVERWORLD)) {
-                return@WorldTickCallback
+        ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
+            if (world.isClient || world !== world.server!!.getWorld(World.OVERWORLD)) {
+                return@EndWorldTick
             }
 
             val players = world.players
@@ -75,7 +80,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             if (players.isEmpty()) {
                 (world as SleepSetter).setSleeping(false)
-                return@WorldTickCallback
+                return@EndWorldTick
             }
 
             val total = players.size.toDouble()
@@ -88,8 +93,8 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
                 sleeping.add(it as ServerPlayerEntity)
-                world.server.playerManager.sendToAll(
-                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"))
+                world.server.sendSystemMessage(
+                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"), Util.NIL_UUID)
             }
 
             (world as SleepSetter).setSleeping(shouldSkip)

@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.BaseModulePlugin",
   "mixins": [
-    "LanguageAccessor_Base"
+    "LanguageMixin_Base"
   ],
   "client": [
   ],

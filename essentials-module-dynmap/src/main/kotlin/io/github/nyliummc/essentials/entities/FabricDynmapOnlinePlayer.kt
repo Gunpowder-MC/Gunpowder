@@ -54,7 +54,7 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun getWorld(): String {
-        return player.world.getDimension().type.suffix
+        return player.world.dimensionRegistryKey.value.path
     }
 
     override fun getAddress(): InetSocketAddress? {
@@ -75,8 +75,8 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun getBedSpawnLocation(): DynmapLocation {
-        val pos = player.spawnPosition
-        return DynmapLocation(DimensionType.OVERWORLD.suffix, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+        val pos = player.spawnPointPosition ?: player.server.overworld.spawnPos
+        return DynmapLocation(player.spawnPointDimension.value.path, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
     }
 
     override fun getLastLoginTime(): Long {
@@ -108,7 +108,7 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun sendMessage(msg: String) {
-        player.addChatMessage(LiteralText(msg), false)
+        player.sendMessage(LiteralText(msg), false)
     }
 
     override fun isConnected(): Boolean {
@@ -116,7 +116,7 @@ class FabricDynmapOnlinePlayer(private val player: ServerPlayerEntity) : DynmapP
     }
 
     override fun isOp(): Boolean {
-        return player.allowsPermissionLevel(player.server.opPermissionLevel)
+        return player.hasPermissionLevel(player.server.opPermissionLevel)
     }
 
     override fun hasPermissionNode(node: String): Boolean {

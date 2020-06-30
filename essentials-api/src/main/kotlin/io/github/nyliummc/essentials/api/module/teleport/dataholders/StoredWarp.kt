@@ -24,10 +24,11 @@
 
 package io.github.nyliummc.essentials.api.module.teleport.dataholders
 
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3i
 
 data class StoredWarp(
         val name: String,
         val location: Vec3i,
-        val dimension: Int
+        val dimension: Identifier
 )

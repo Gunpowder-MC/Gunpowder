@@ -39,8 +39,8 @@ object ContainerUtil {
                 syncId = serverPlayerEntitySyncHook.fabric_incrementSyncId()
             }
             is ServerPlayerEntityAccessor -> {
-                syncId = ((player as ServerPlayerEntityAccessor).containerSyncId + 1) % 100
-                (player as ServerPlayerEntityAccessor).containerSyncId = syncId
+                syncId = ((player as ServerPlayerEntityAccessor).screenHandlerSyncId + 1) % 100
+                (player as ServerPlayerEntityAccessor).screenHandlerSyncId = syncId
             }
             else -> throw RuntimeException("Neither ServerPlayerEntitySyncHook nor Accessor present! This should not happen!")
         }

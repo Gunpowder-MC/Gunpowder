@@ -34,7 +34,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 
 object BalanceCommand {
-    private val handler by lazy { // TODO: Dependency Injection
+    private val handler by lazy {
         EssentialsMod.instance.registry.getModelHandler(BalanceHandler::class.java)
     }
 

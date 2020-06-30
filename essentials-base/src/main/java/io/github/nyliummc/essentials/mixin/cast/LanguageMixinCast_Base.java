@@ -22,8 +22,12 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.entities
+package io.github.nyliummc.essentials.mixin.cast;
 
-interface SleepSetter {
-    fun setSleeping(sleeping: Boolean)
+import java.util.Map;
+import java.util.regex.Pattern;
+
+public interface LanguageMixinCast_Base {
+    Map<String, String> getTranslations();
+    Pattern getTokenPattern();
 }

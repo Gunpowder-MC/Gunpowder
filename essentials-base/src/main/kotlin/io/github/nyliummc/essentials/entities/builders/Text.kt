@@ -68,11 +68,11 @@ object Text : APIText {
 
     class StyleBuilder(var text: MCText) : APIText.StyleBuilder {
         override fun onClickCommand(command: String) {
-            text.style.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, command)
+            text.style.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
         }
 
         override fun onClickEvent(event: ClickEvent) {
-            text.style.clickEvent = event
+            text.style.withClickEvent(event)
         }
 
         override fun onHoverText(tooltip: String) {
@@ -84,27 +84,27 @@ object Text : APIText {
         }
 
         override fun color(color: Formatting) {
-            text.style.color = color
+            text.style.withColor(color)
         }
 
         override fun bold() {
-            text.style.isBold = true
+            text.style.withBold(true)
         }
 
         override fun italic() {
-            text.style.isItalic = true
+            text.style.withItalic(true)
         }
 
         override fun strikethrough() {
-            text.style.isStrikethrough = true
+            text.style.withFormatting(Formatting.STRIKETHROUGH)
         }
 
         override fun underlined() {
-            text.style.setUnderline(true)
+            text.style.withFormatting(Formatting.UNDERLINE)
         }
 
         override fun obfuscated() {
-            text.style.isObfuscated = true
+            text.style.withFormatting(Formatting.OBFUSCATED)
         }
 
     }

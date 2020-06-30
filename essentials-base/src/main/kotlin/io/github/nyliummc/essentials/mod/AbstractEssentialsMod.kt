@@ -32,6 +32,7 @@ import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import io.github.nyliummc.essentials.entities.LanguageHack
 import io.github.nyliummc.essentials.injection.AbstractModule
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
@@ -79,7 +80,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
         }
 
         // TODO: Look into cleanup so we can turn this into internal method references
-        ServerStartCallback.EVENT.register(ServerStartCallback { server ->
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
             database.loadDatabase()
 
             modules.forEach {
@@ -88,7 +89,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
             }
         })
 
-        ServerStopCallback.EVENT.register(ServerStopCallback { server ->
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             database.disconnect()
         })

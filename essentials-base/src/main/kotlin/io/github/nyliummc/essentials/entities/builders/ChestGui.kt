@@ -26,10 +26,10 @@ package io.github.nyliummc.essentials.entities.builders
 
 import io.github.nyliummc.essentials.api.util.ContainerUtil
 import io.github.nyliummc.essentials.entities.mc.ChestGuiContainer
-import net.minecraft.container.Container
-import net.minecraft.container.SlotActionType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
 
@@ -64,7 +64,7 @@ object ChestGui : APIChestGui {
             this.icon = icon
         }
 
-        override fun build(): Container {
+        override fun build(): ScreenHandler {
             return ChestGuiContainer(syncId, player!!.inventory).apply {
                 setBackground(icon)
                 setButtons(buttons)

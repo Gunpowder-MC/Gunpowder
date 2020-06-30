@@ -100,7 +100,7 @@ object WarpCommand {
         val warp = handler.getWarp(warpName)
 
         if (warp == null) {
-            context.source.player.addChatMessage(LiteralText("No such warp: '$warp'"), false)
+            context.source.player.sendMessage(LiteralText("No such warp: '$warp'"), false)
             return -1
         }
 
@@ -109,7 +109,7 @@ object WarpCommand {
         TeleportRequest.builder {
             player(player)
             destination(warp.location)
-            dimension(DimensionType.byRawId(warp.dimension)!!)
+            dimension(warp.dimension)
         }.execute(teleportDelay.toLong())
 
         return 1
@@ -128,7 +128,7 @@ object WarpCommand {
                 }
             }
         }
-        context.source.player.addChatMessage(text, false)
+        context.source.player.sendMessage(text, false)
         return 1
     }
 
@@ -138,24 +138,24 @@ object WarpCommand {
         if (handler.newWarp(
                         StoredWarp(
                                 warp,
-                                Vec3i(player.posVector.x, player.posVector.y, player.posVector.z),
-                                player.dimension.rawId
+                                Vec3i(player.pos.x, player.pos.y, player.pos.z),
+                                player.world.dimensionRegistryKey.value
                         )
                 )) {
-            player.addChatMessage(LiteralText("Warp '$warp' set"), false)
+            player.sendMessage(LiteralText("Warp '$warp' set"), false)
             return 1
         }
-        player.addChatMessage(LiteralText("Warp '$warp' already exists"), false)
+        player.sendMessage(LiteralText("Warp '$warp' already exists"), false)
         return -1
     }
 
     fun executeDel(context: CommandContext<ServerCommandSource>): Int {
         val warp = StringArgumentType.getString(context, "warp")
         if (handler.delWarp(warp)) {
-            context.source.player.addChatMessage(LiteralText("Warp '$warp' deleted"), false)
+            context.source.player.sendMessage(LiteralText("Warp '$warp' deleted"), false)
             return 1
         }
-        context.source.player.addChatMessage(LiteralText("No such warp: '$warp'"), false)
+        context.source.player.sendMessage(LiteralText("No such warp: '$warp'"), false)
         return -1
     }
 

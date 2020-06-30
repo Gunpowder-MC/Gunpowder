@@ -38,9 +38,9 @@ import org.dynmap.utils.Polygon
 import java.util.concurrent.Future
 
 
-class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.type), world.height, world.seaLevel) {
+class FabricDynmapWorld(var world: ServerWorld) : DynmapWorld(getName(world.dimension), world.height, world.seaLevel) {
     override fun isNether(): Boolean {
-        return world.dimension.isNether
+        return world.registryKey.value.path == "the_nether"
     }
 
     override fun getSpawnLocation(): DynmapLocation {
@@ -96,7 +96,7 @@ class FabricDynmapWorld(var world: World) : DynmapWorld(getName(world.dimension.
     }
 
     override fun getChunkCache(chunks: List<DynmapChunk>): MapChunkCache {
-        val cache = FabricDynmapMapChunkCache(this, world as ServerWorld, chunks) // TODO
+        val cache = FabricDynmapMapChunkCache(this, world, chunks) // TODO
 
         cache.loadChunks(chunks.size)
 

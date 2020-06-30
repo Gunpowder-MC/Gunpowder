@@ -73,15 +73,15 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
     }
 
     override fun loadChunks(maxToLoad: Int): Int {
-        val maxToLoad = chunksToLoad.size.coerceAtMost(maxToLoad)
+        val maxToLoadNum = chunksToLoad.size.coerceAtMost(maxToLoad)
 
-        for (i in 0 until maxToLoad) {
+        for (i in 0 until maxToLoadNum) {
             val pos = chunksToLoad.remove()
             chunkManager as ServerChunkManagerAccessor_Dynmap
             chunkFutures.add(chunkManager.invokeGetChunkFuture(pos.x, pos.z, requiredStatus, false))
         }
 
-        return chunks.size + maxToLoad
+        return chunks.size + maxToLoadNum
     }
 
     override fun isDoneLoading(): Boolean {
@@ -163,7 +163,7 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
 
         override fun stepPosition(step: BlockStep) {
             lastStep = step
-            pos!!.setOffset(step.xoff, step.yoff, step.zoff)
+            pos = pos!!.add(step.xoff, step.yoff, step.zoff) as BlockPos.Mutable?
         }
 
         override fun unstepPosition(step: BlockStep) {

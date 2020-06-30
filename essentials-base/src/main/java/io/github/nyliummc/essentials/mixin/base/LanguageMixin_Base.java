@@ -24,18 +24,34 @@
 
 package io.github.nyliummc.essentials.mixin.base;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.Language;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @Mixin(Language.class)
-public interface LanguageAccessor_Base {
-    @Accessor
-    Map<String, String> getTranslations();
+public class LanguageMixin_Base {
+    @Shadow @Final private static Pattern TOKEN_PATTERN;
 
-    @Accessor
-    Pattern getField_11489();
+    private static Map<String, String> translations;
+
+    @Inject(method="create", at=@At(value="INVOKE_ASSIGN", target="Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
+    private static void storeTranslations(CallbackInfoReturnable<Language> cir, ImmutableMap<String, String> map) {
+        translations = map;
+    }
+
+    public Map<String, String> getTranslations() {
+        return translations;
+    }
+
+    public Pattern getTokenPattern() {
+        return TOKEN_PATTERN;
+    }
 }

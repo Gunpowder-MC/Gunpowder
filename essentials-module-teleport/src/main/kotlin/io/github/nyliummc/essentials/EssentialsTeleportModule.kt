@@ -50,7 +50,7 @@ class EssentialsTeleportModule : EssentialsModule {
 
     override fun onInitialize() {
         PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
-            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.dimension, player.rotationClient)
+            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.world, player.rotationClient)
         })
     }
 }

@@ -25,22 +25,22 @@
 package io.github.nyliummc.essentials.api.builders
 
 import io.github.nyliummc.essentials.api.EssentialsMod
-import net.minecraft.container.Container
-import net.minecraft.container.SlotActionType
 import net.minecraft.item.ItemStack
+import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 
 interface ChestGui {
     companion object {
         @JvmStatic
-        fun builder(callback: Builder.() -> Unit): Container {
+        fun builder(callback: Builder.() -> Unit): ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
             return builder.build()
         }
 
         @JvmStatic
-        fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> Container {
+        fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
             return {
@@ -56,6 +56,6 @@ interface ChestGui {
         fun emptyIcon(icon: ItemStack)
 
         @Deprecated("Used internally, do not use.")
-        fun build(): Container
+        fun build(): ScreenHandler
     }
 }

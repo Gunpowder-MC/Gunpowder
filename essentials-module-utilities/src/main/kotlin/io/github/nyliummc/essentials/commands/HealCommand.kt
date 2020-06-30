@@ -65,7 +65,7 @@ object HealCommand {
     }
 
     private fun healPlayer(player: ServerPlayerEntity) {
-        player.health = player.maximumHealth;
+        player.health = player.maxHealth;
         player.hungerManager.foodLevel = 20;
         player.extinguish();
         player.clearStatusEffects();

@@ -32,8 +32,10 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapCommonAPIListener
@@ -58,7 +60,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     private val fabricPlayerMap: WeakHashMap<ServerPlayerEntity, FabricDynmapOnlinePlayer> = WeakHashMap<ServerPlayerEntity, FabricDynmapOnlinePlayer>()
     private val registered = mutableSetOf<DynmapListenerManager.EventType>()
 
-    fun getWorld(world: World): FabricDynmapWorld {
+    fun getWorld(world: ServerWorld): FabricDynmapWorld {
         return fabricWorldMap.computeIfAbsent(world) { FabricDynmapWorld(world) }
     }
 
@@ -126,7 +128,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun getServerName(): String? {
-        return server.levelName
+        return server.name
     }
 
     override fun isPlayerBanned(pid: String): Boolean {
@@ -173,12 +175,12 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun sendWebChatEvent(source: String, name: String, msg: String): Boolean {
-        server.sendMessage(LiteralText("[$source/$name] $msg"))
+        server.sendSystemMessage(LiteralText("[$source/$name] $msg"), Util.NIL_UUID)
         return DynmapCommonAPIListener.fireWebChatEvent(source, name, msg)
     }
 
     override fun broadcastMessage(msg: String?) {
-        server.sendMessage(LiteralText("[Dynmap] $msg"));
+        server.sendSystemMessage(LiteralText("[Dynmap] $msg"), Util.NIL_UUID);
     }
 
     override fun getBiomeIDs(): Array<String?>? {
@@ -196,7 +198,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun getWorldByName(wname: String): DynmapWorld? {
-        return getWorld(server.getWorld(Registry.DIMENSION_TYPE.get(Identifier(wname))));
+        return getWorld(server.getWorld(RegistryKey.of(Registry.DIMENSION, Identifier(wname)))!!);
     }
 
     override fun checkPlayerPermissions(player: String, perms: Set<String>?): Set<String?> {
@@ -210,7 +212,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun createMapChunkCache(w: DynmapWorld, chunks: List<DynmapChunk>, blockdata: Boolean, highesty: Boolean, biome: Boolean, rawbiome: Boolean): MapChunkCache? {
-        val cache = FabricDynmapMapChunkCache(w as FabricDynmapWorld, w.world as ServerWorld, chunks)
+        val cache = FabricDynmapMapChunkCache(w as FabricDynmapWorld, w.world, chunks)
         cache.setChunkDataTypes(blockdata, biome, highesty, rawbiome)
         return cache
     }
@@ -224,13 +226,13 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
     }
 
     override fun getBlockIDAt(wname: String?, x: Int, y: Int, z: Int): Int {
-        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
-        return Registry.BLOCK.getRawId(server.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block)
+        val dtype = RegistryKey.of(Registry.DIMENSION, Identifier(wname))
+        return Registry.BLOCK.getRawId(server.getWorld(dtype)!!.getBlockState(BlockPos(x, y, z)).block)
     }
 
     override fun isSignAt(wname: String?, x: Int, y: Int, z: Int): Int {
-        val dtype = Registry.DIMENSION_TYPE.first { it.suffix == wname }
-        return if(server.getWorld(dtype).getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
+        val dtype = RegistryKey.of(Registry.DIMENSION, Identifier(wname))
+        return if(server.getWorld(dtype)!!.getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
     }
 
     override fun getServerTPS(): Double {

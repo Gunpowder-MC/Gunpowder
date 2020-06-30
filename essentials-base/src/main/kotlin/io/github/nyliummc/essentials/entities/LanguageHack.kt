@@ -26,7 +26,7 @@ package io.github.nyliummc.essentials.entities
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import io.github.nyliummc.essentials.mixin.base.LanguageAccessor_Base
+import io.github.nyliummc.essentials.mixin.cast.LanguageMixinCast_Base
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.JsonHelper
 import net.minecraft.util.Language
@@ -38,7 +38,7 @@ import java.nio.file.Files
 // Loads lang files on server
 object LanguageHack {
     fun activate(modid: String) {
-        val language = Language.getInstance() as LanguageAccessor_Base
+        val language = Language.getInstance() as LanguageMixinCast_Base
         val inputStream = Files.newInputStream(
                 FabricLoader.getInstance()
                         .getModContainer(modid).get()
@@ -52,7 +52,7 @@ object LanguageHack {
             )
 
             jsonObject.entrySet().forEach { entry ->
-                val string = language.field_11489
+                val string = language.tokenPattern
                         .matcher(JsonHelper.asString(entry.value, entry.key))
                         .replaceAll("%$1s")
                 language.translations[entry.key] = string

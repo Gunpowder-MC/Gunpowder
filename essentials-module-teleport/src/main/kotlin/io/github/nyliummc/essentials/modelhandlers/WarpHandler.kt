@@ -26,6 +26,7 @@ package io.github.nyliummc.essentials.modelhandlers
 
 import io.github.nyliummc.essentials.api.module.teleport.dataholders.StoredWarp
 import io.github.nyliummc.essentials.models.WarpTable
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3i
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -46,7 +47,7 @@ object WarpHandler : APIWarpHandler {
                 it[WarpTable.name] to StoredWarp(
                         it[WarpTable.name],
                         Vec3i(it[WarpTable.x], it[WarpTable.y], it[WarpTable.z]),
-                        it[WarpTable.dimension])
+                        Identifier(it[WarpTable.dimension]))
             }.toMap())
         }
     }
@@ -81,7 +82,7 @@ object WarpHandler : APIWarpHandler {
                     it[WarpTable.x] = warp.location.x
                     it[WarpTable.y] = warp.location.y
                     it[WarpTable.z] = warp.location.z
-                    it[WarpTable.dimension] = warp.dimension
+                    it[WarpTable.dimension] = warp.dimension.toString()
                 }
             }
             return true
