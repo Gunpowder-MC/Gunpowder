@@ -33,10 +33,7 @@ import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import io.github.nyliummc.essentials.entities.LanguageHack
 import io.github.nyliummc.essentials.injection.AbstractModule
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.fabric.api.event.server.ServerStartCallback
-import net.fabricmc.fabric.api.event.server.ServerStopCallback
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.api.entrypoint.EntrypointContainer
 import org.apache.logging.log4j.LogManager
 
 abstract class AbstractEssentialsMod : EssentialsMod {

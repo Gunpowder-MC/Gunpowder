@@ -29,6 +29,7 @@ import io.github.nyliummc.essentials.configs.ChatConfig;
 import io.github.nyliummc.essentials.entities.TextFormatter;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -43,6 +44,8 @@ public abstract class LiteralTextMixin_Chat extends BaseText {
     @Final
     @Shadow
     private String string;
+
+    @Shadow public abstract LiteralText copy();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void applyFormattingToLiteralText(String string, CallbackInfo ci) {

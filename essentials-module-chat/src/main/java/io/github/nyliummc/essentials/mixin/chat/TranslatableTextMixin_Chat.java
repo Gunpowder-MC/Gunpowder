@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TranslatableText.class)
-public abstract class TranslatableTextMixin_Chat extends BaseTextMixin_Chat {
+public abstract class TranslatableTextMixin_Chat extends BaseText {
     @Mutable
     @Final
     @Shadow
@@ -44,6 +44,8 @@ public abstract class TranslatableTextMixin_Chat extends BaseTextMixin_Chat {
     @Final
     @Shadow
     private Object[] args;
+
+    @Shadow public abstract TranslatableText copy();
 
     protected TranslatableTextMixin_Chat(String key, Object[] args) {
         this.key = key;

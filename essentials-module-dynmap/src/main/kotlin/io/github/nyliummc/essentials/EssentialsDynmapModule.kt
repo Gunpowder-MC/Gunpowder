@@ -29,20 +29,14 @@ import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.DynmapCommand
 import io.github.nyliummc.essentials.entities.FabricDynmapBlockStateMapper
 import io.github.nyliummc.essentials.entities.FabricDynmapServer
-import net.fabricmc.fabric.api.event.server.ServerStartCallback
-import net.fabricmc.fabric.api.event.server.ServerStopCallback
-import net.fabricmc.fabric.api.event.server.ServerTickCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.MinecraftServer
-import org.apache.logging.log4j.LogManager
 import org.dynmap.DynmapCommonAPIListener
 import org.dynmap.DynmapCore
-import org.dynmap.DynmapMapCommands
-import org.dynmap.Log
 import org.dynmap.common.BiomeMap
-import org.dynmap.markers.impl.MarkerAPIImpl
 import java.io.File
-import java.util.logging.Logger
 
 
 class EssentialsDynmapModule : EssentialsModule {
@@ -60,18 +54,18 @@ class EssentialsDynmapModule : EssentialsModule {
     }
 
     override fun registerEvents() {
-        ServerStartCallback.EVENT.register(ServerStartCallback(::startServer))
-        ServerStopCallback.EVENT.register(ServerStopCallback(::stopServer))
-        ServerTickCallback.EVENT.register(ServerTickCallback { serverInterface?.tick() })
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted(::startServer))
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped(::stopServer))
+        ServerTickEvents.END_SERVER_TICK.register(ServerTickEvents.EndTick { serverInterface?.tick() })
     }
 
-    private fun startServer(minecraftServer: MinecraftServer) {
-        core.server = FabricDynmapServer(minecraftServer)
+    private fun startServer(server: MinecraftServer) {
+        core.server = FabricDynmapServer(server)
 
         core.pluginJarFile = File(this::class.java.protectionDomain.codeSource.location.toURI())
-        core.dataFolder = File(EssentialsMod.instance.server.runDirectory.canonicalPath + "/dynmap")
+        core.dataFolder = File(server.runDirectory.canonicalPath + "/dynmap")  // NPE here, lazy load from FabricLoader
         core.dataFolder.mkdirs()
-        core.setMinecraftVersion(minecraftServer.version)
+        core.setMinecraftVersion(server.version)
 
         val container = FabricLoader.getInstance().getModContainer("essentials-base")
         core.setPluginVersion(
@@ -79,7 +73,7 @@ class EssentialsDynmapModule : EssentialsModule {
                 container.get().metadata.version.friendlyString,
                 "Fabric Essentials Module Dynmap")
 
-        serverInterface = FabricDynmapServer(EssentialsMod.instance.server)
+        serverInterface = FabricDynmapServer(server)
         core.server = serverInterface
 
         core.setTriggerDefault(arrayOf("blockupdate", "chunkpopulate", "chunkgenerate"))

@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.ChatModulePlugin",
   "mixins": [
-    "BaseTextMixin_Chat",
     "LiteralTextMixin_Chat",
     "PlayerEntityMixin_Chat",
     "ServerPlayerEntityMixin_Chat",

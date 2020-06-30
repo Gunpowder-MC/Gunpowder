@@ -71,7 +71,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
         // Skip night by percentage
         ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
-            if (world.isClient || world !== world.server!!.getWorld(World.OVERWORLD)) {
+            if (world.isClient || world !== world.server.getWorld(World.OVERWORLD)) {
                 return@EndWorldTick
             }
 
