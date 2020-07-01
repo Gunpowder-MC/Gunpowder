@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "io.github.nyliummc.essentials.mixin.datapacks",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "io.github.nyliummc.essentials.mixin.plugin.MobsModulePlugin",
+  "mixins": [
+    "CreeperEntityMixin_Datapacks_VT",
+    "EndermanEntityMixin_Datapacks_VT",
+    "GhastEntityMixin_Datapacks_VT",
+    "LivingEntityMixin_Datapacks_VT",
+    "NameTagItemMixin_Datapacks_VT",
+    "ServerPlayerEntityMixin_Datapacks_VT"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

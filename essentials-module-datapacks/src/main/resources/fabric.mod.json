@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "essentials-module-currency",
+  "id": "essentials-module-datapacks",
   "version": "${version}",
-  "name": "Essentials Currency",
-  "description": "The currency module for Essentials",
+  "name": "Essentials Datapacks",
+  "description": "The datapacks module for Essentials",
   "contact": {
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
@@ -13,11 +13,16 @@
   "environment": "*",
   "entrypoints": {
     "essentials:modules": [
-      "io.github.nyliummc.essentials.EssentialsCurrencyModule"
+      "io.github.nyliummc.essentials.EssentialsMobsModule"
     ]
   },
+  "mixins": [
+    "mixins.datapacks.essentials.json"
+  ],
+  "accessWidener": "essentials_datapacks.accesswidener",
   "depends": {
     "essentials-base": "${version}",
+    "libcd": "*",
     "fabricloader": ">=0.8.9",
     "fabric": "*"
   }
