@@ -39,13 +39,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LiteralText.class)
-public abstract class LiteralTextMixin_Chat extends BaseText {
+public abstract class LiteralTextMixin_Chat {
     @Mutable
     @Final
     @Shadow
     private String string;
-
-    @Shadow public abstract LiteralText copy();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void applyFormattingToLiteralText(String string, CallbackInfo ci) {
