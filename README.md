@@ -21,15 +21,25 @@ TODO
 #### Datapacks
 
 Essentials-datapacks is a module that aims to port various utility datapacks for better performance.
+Permission has been granted for this by the respective authors, either through explicit permission or following the terms.
 
 Included:
-- [VanillaTweaks by Xisumavoid](https://www.xisumavoid.com/vanillatweaks)
+- [Vanilla Tweaks by Xisumavoid](https://www.xisumavoid.com/vanillatweaks)
   - Anti Creeper Grief
   - Anti Enderman Grief
   - Anti Ghast Grief
   - Silence Mobs
   - Player Head Drops
   - More Mob Heads
+  
+- [Datapacks by VoodooBeard](http://mc.voodoobeard.com/)
+  - Shulkermites
+  - Auto-Plant Saplings
+  - Server Friendly Wither
+  - Anti Zombie Breach
+  - Apiarist Suit
+  - Invisible Item Frames
+  
 
 #### Dynmap
 

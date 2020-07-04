@@ -66,7 +66,7 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                     }
                 });
 
-                if (shouldDrop && heads.size() == 1) {
+                if (shouldDrop && heads.size() >= 1) {
                     ItemStack stack;
 
                     switch(id.toString()) {
@@ -87,8 +87,19 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                             CompoundTag tag = new CompoundTag();
                             CompoundTag proptag = new CompoundTag();
                             ListTag texturestag = new ListTag();
-                            String name = heads.get(0).getName();
-                            String targetUrl = heads.get(0).getUrl();
+                            CustomHead head;
+
+                            // Select first with NBT if present
+                            if (heads.stream().anyMatch((it)->it.getNbt() != null)) {
+                                heads.removeIf((it) -> it.getNbt() != null);
+                                head = heads.get(0);
+                            } else {
+                                // Else select random
+                                head = heads.get(new Random().nextInt(heads.size()-1));
+                            }
+
+                            String name = head.getName();
+                            String targetUrl = head.getUrl();
                             String b64 = new String(Base64.getEncoder().encode(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", targetUrl).getBytes()));
                             NbtIo.read(new DataInputStream(new ByteArrayInputStream(String.format("{Name:\\\"%s\\\",Properties:{textures:[{Value:\\\"%s\\\"}]}}", name, b64).getBytes(StandardCharsets.UTF_8))));
                             proptag.put("textures", texturestag);

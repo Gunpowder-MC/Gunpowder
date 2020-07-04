@@ -41,6 +41,17 @@ data class VanillaTweaksConfig(
     val customHeads: List<CustomHead>
 )
 
+data class VoodooConfig(
+    val shulkermites: Boolean,
+    val silentWither: Boolean,
+    val safeDoors: Boolean,
+    val autoSaplings: Boolean,
+    val apiaristSuit: Boolean,
+    val invisibleItemFrames: Boolean,
+    val netheriteFireImmune: Boolean
+)
+
 data class DatapacksConfig(
-    val vanillaTweaks: VanillaTweaksConfig
+    val vanillaTweaks: VanillaTweaksConfig,
+    val voodooBeard: VoodooConfig
 )
