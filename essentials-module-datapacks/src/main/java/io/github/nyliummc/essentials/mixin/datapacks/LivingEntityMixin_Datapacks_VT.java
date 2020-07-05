@@ -101,7 +101,8 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                             String name = head.getName();
                             String targetUrl = head.getUrl();
                             String b64 = new String(Base64.getEncoder().encode(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", targetUrl).getBytes()));
-                            NbtIo.read(new DataInputStream(new ByteArrayInputStream(String.format("{Name:\\\"%s\\\",Properties:{textures:[{Value:\\\"%s\\\"}]}}", name, b64).getBytes(StandardCharsets.UTF_8))));
+                            CompoundTag root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(String.format("{Name:\\\"%s\\\",Properties:{textures:[{Value:\\\"%s\\\"}]}}", name, b64).getBytes(StandardCharsets.UTF_8))));
+                            texturestag.add(root);
                             proptag.put("textures", texturestag);
                             tag.put("Properties", proptag);
                             stack.getOrCreateTag().put("SkullOwner", tag);
