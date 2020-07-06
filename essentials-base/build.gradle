@@ -24,6 +24,7 @@ dependencies {
 
     // Dependency Injection
     include libs.guice
+    include libs.javax_inject
 
     include libs.playerabilitylib
 }

@@ -33,6 +33,7 @@ ext {
 
             // Dependency Injection
             guice                 : "com.google.inject:guice:$project.guice",
+            javax_inject          : "javax.inject:javax.inject:$project.javax_inject",
 
             // Annotations
             checker_qual          : "org.checkerframework:checker-qual:$project.checker_qual",

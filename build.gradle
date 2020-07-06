@@ -6,6 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "com.dorongold.task-tree" version "1.5"
 }
 
 apply from: "dependencies.gradle"  // libs.*
@@ -121,21 +122,33 @@ allprojects { currentProject ->
             classifier = 'dev'
             from currentProject.sourceSets.main.allSource.srcDirs
         }
+
+        remapJar {
+            enabled = false
+        }
     } else {
         jar {
-            enabled = false
+            enabled = true
+            classifier = "dev"
+
+            doLast {
+                delete fileTree("${project.buildDir}/") {
+                    include "classes/java/main/*refmap*.json"
+                    include "classes/java/**/*"
+                }
+            }
         }
 
         shadowJar {
+            enabled = false
             // Only shadow implementation/modImplementation
             configurations = [project.configurations.shade]
             classifier = "dev"
 
             doLast {
                 delete fileTree("${project.buildDir}/") {
-                    include "resources/**/*.json"
-                    include "resources/**/*.yaml"
                     include "classes/java/main/*refmap*.json"
+                    include "classes/java/**/*"
                 }
             }
         }
@@ -145,15 +158,22 @@ allprojects { currentProject ->
             from currentProject.sourceSets.main.allSource.srcDirs
         }
 
-        sourcesJar.dependsOn(shadowJar)
-    }
+        remapJar {
+            input = file(shadowJar.archivePath)
 
-    remapJar {
-        input = file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-        archiveName = "${archivesBaseName}-${project.version}.jar"
-    }
+            doLast {
+                delete fileTree("${project.buildDir}/") {
+                    include "resources/**/*.json"
+                    include "resources/**/*.yaml"
+                    include "resources/**/*.accesswidener"
+                }
+            }
+        }
 
-    remapJar.dependsOn(sourcesJar)
+        jar.finalizedBy(sourcesJar)
+        shadowJar.finalizedBy(sourcesJar)
+        sourcesJar.finalizedBy(remapJar)
+    }
 
     // Artifacts? Not sure why this is needed
 
@@ -197,7 +217,7 @@ subprojects {
 
 subprojects.each {
     if (!it.name.contains("-api")) {
-        remapJar.dependsOn("${it.path}:remapJar")
+        build.dependsOn("${it.path}:build")
     }
 }
 
