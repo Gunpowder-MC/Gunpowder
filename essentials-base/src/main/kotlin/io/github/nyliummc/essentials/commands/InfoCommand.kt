@@ -36,7 +36,7 @@ import net.minecraft.util.Formatting
 object InfoCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("info") {
+            command("info", "essentials") {
                 executes(::showInfo)
             }
         }

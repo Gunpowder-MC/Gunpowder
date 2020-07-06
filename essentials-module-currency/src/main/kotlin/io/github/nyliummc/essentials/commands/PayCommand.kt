@@ -36,7 +36,7 @@ import net.minecraft.text.LiteralText
 import kotlin.math.roundToInt
 
 object PayCommand {
-    val handler by lazy { // TODO: Dependency Injection
+    val handler by lazy {
         EssentialsMod.instance.registry.getModelHandler(BalanceHandler::class.java)
     }
 

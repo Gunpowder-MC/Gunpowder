@@ -41,7 +41,7 @@ object NicknameCommand {
     val config by lazy {
         EssentialsMod.instance.registry.getConfig(ChatConfig::class.java)
     }
-    val handler by lazy { // TODO: Dependency Injection
+    val handler by lazy {
         EssentialsMod.instance.registry.getModelHandler(NicknameHandler::class.java)
     }
 

@@ -112,7 +112,6 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                             CustomHead head;
 
                             // Select first with NBT if present
-                            System.out.println(heads);
                             if (heads.size() > 1) {
                                 if (heads.stream().anyMatch((it) -> it.getNbt() != null)) {
                                     heads.removeIf((it) -> it.getNbt() != null);
@@ -129,7 +128,7 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                             String targetUrl = head.getUrl();
                             String b64 = new String(Base64.getEncoder().encode(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", targetUrl).getBytes()));
                             String _id = head.getUuid();
-                            String fmt = String.format("{Id:\"%s\",Name:\"%s\",Properties:{textures:[{Value:\"%s\"}]}}", _id, name, b64);
+                            String fmt = String.format("{Id:%s,Name:\"%s\",Properties:{textures:[{Value:\"%s\"}]}}", _id, name, b64);
                             CompoundTag root = StringNbtReader.parse(fmt);
                             CompoundTag mainTag = stack.getOrCreateTag();
                             mainTag.put("SkullOwner", root);
