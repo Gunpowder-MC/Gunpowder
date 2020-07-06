@@ -115,7 +115,7 @@ allprojects { currentProject ->
     if (currentProject.name.contains("-api")) {
     // if (false) {
         jar {
-            classifier = "dev"
+            classifier = ""
         }
 
         shadowJar {
@@ -274,9 +274,9 @@ curseforge {
     apiKey = project.apiKey
     project {
         id = "350123"
-        releaseType = "beta"
+        releaseType = "release"
         changelogType = "markdown"
-        changelog = "Testing auto-upload from gradle"
+        changelog = "Rewrite release"
         addGameVersion project.minecraft
         addGameVersion "Fabric"
         addGameVersion "Java 8"
@@ -285,6 +285,8 @@ curseforge {
             // Add built modules
             if (sub.name.contains("-base")) {
                 mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+            } else if (sub.name.contains("-api")) {
+                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
             } else {
                 addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
             }
