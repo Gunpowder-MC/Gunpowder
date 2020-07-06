@@ -27,6 +27,7 @@ package io.github.nyliummc.essentials.configs
 data class CustomHead(
     val id: String,
     val name: String,
+    val uuid: String,
     val url: String,
     val nbt: String?
 )

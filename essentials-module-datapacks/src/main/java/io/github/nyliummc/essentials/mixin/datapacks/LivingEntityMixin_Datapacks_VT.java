@@ -72,7 +72,7 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
     }
 
     @Inject(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
-    void dropHead(DamageSource source, CallbackInfo ci) throws IOException {
+    void dropHead(DamageSource source, CallbackInfo ci) throws CommandSyntaxException {
         if (source.getAttacker() instanceof ServerPlayerEntity) {
             VanillaTweaksConfig cfg = EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVanillaTweaks();
 
@@ -83,7 +83,8 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                 List<CustomHead> heads = cfg.getCustomHeads();
                 heads.removeIf((it) -> {
                     try {
-                        if (!it.getId().equals(id.toString())) return false;
+                        if (!it.getId().equalsIgnoreCase(id.toString())) return true;
+                        if (it.getNbt() == null) return false;
                         return new NbtPredicate(StringNbtReader.parse(it.getNbt())).test(this);
                     } catch (CommandSyntaxException var3) {
                         throw new JsonSyntaxException("Invalid nbt tag: " + var3.getMessage());
@@ -108,28 +109,31 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                             break;
                         default:
                             stack = new ItemStack(Items.PLAYER_HEAD);
-                            CompoundTag tag = new CompoundTag();
-                            CompoundTag proptag = new CompoundTag();
-                            ListTag texturestag = new ListTag();
                             CustomHead head;
 
                             // Select first with NBT if present
-                            if (heads.stream().anyMatch((it)->it.getNbt() != null)) {
-                                heads.removeIf((it) -> it.getNbt() != null);
-                                head = heads.get(0);
+                            System.out.println(heads);
+                            if (heads.size() > 1) {
+                                if (heads.stream().anyMatch((it) -> it.getNbt() != null)) {
+                                    heads.removeIf((it) -> it.getNbt() != null);
+                                    head = heads.get(0);
+                                } else {
+                                    // Else select random
+                                    head = heads.get(new Random().nextInt(heads.size()));
+                                }
                             } else {
-                                // Else select random
-                                head = heads.get(new Random().nextInt(heads.size()-1));
+                                head = heads.get(0);
                             }
 
                             String name = head.getName();
                             String targetUrl = head.getUrl();
                             String b64 = new String(Base64.getEncoder().encode(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", targetUrl).getBytes()));
-                            CompoundTag root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(String.format("{Name:\\\"%s\\\",Properties:{textures:[{Value:\\\"%s\\\"}]}}", name, b64).getBytes(StandardCharsets.UTF_8))));
-                            texturestag.add(root);
-                            proptag.put("textures", texturestag);
-                            tag.put("Properties", proptag);
-                            stack.getOrCreateTag().put("SkullOwner", tag);
+                            String _id = head.getUuid();
+                            String fmt = String.format("{Id:\"%s\",Name:\"%s\",Properties:{textures:[{Value:\"%s\"}]}}", _id, name, b64);
+                            CompoundTag root = StringNbtReader.parse(fmt);
+                            CompoundTag mainTag = stack.getOrCreateTag();
+                            mainTag.put("SkullOwner", root);
+                            mainTag.put("display", StringNbtReader.parse(String.format("{Name:{\"text\":\"%s Head\",\"italic\":false}}", name)));
                     }
 
                     ItemScatterer.spawn(world, getX(), getY(), getZ(), stack);

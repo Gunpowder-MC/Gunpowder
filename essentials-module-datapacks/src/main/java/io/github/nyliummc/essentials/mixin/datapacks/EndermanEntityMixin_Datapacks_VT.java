@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(EndermanEntity.PickUpBlockGoal.class)
 public class EndermanEntityMixin_Datapacks_VT {
-    @Redirect(method="tick", at=@At(value="INVOKE_ASSIGN", target="Lnet/minecraft/block/Block;isIn(Lnet/minecraft/tag/Tag;)Z"))
+    @Redirect(method="tick", at=@At(value="INVOKE", target="Lnet/minecraft/block/Block;isIn(Lnet/minecraft/tag/Tag;)Z"))
     boolean stopPickup(Block block, Tag<Block> tag) {
         return block.isIn(tag) && EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVanillaTweaks().getAllowEndermanPickup();
     }

@@ -13,7 +13,7 @@
   "environment": "*",
   "entrypoints": {
     "essentials:modules": [
-      "io.github.nyliummc.essentials.EssentialsMobsModule"
+      "io.github.nyliummc.essentials.EssentialsDatapacksModule"
     ]
   },
   "mixins": [
@@ -22,7 +22,6 @@
   "accessWidener": "essentials_datapacks.accesswidener",
   "depends": {
     "essentials-base": "${version}",
-    "libcd": "*",
     "fabricloader": ">=0.8.9",
     "fabric": "*"
   }

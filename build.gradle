@@ -114,13 +114,12 @@ allprojects { currentProject ->
 
     if (currentProject.name.contains("-api")) {
     // if (false) {
-        shadowJar {
-            enabled = false
+        jar {
+            classifier = "dev"
         }
 
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'dev'
-            from currentProject.sourceSets.main.allSource.srcDirs
+        shadowJar {
+            enabled = false
         }
 
         remapJar {
@@ -128,19 +127,13 @@ allprojects { currentProject ->
         }
     } else {
         jar {
-            enabled = true
-            classifier = "dev"
-
-            doLast {
-                delete fileTree("${project.buildDir}/") {
-                    include "classes/java/main/*refmap*.json"
-                    include "classes/java/**/*"
-                }
-            }
+            enabled = false
         }
 
+        // TODO: Delete jar if present
+
         shadowJar {
-            enabled = false
+            enabled = true
             // Only shadow implementation/modImplementation
             configurations = [project.configurations.shade]
             classifier = "dev"
@@ -169,10 +162,6 @@ allprojects { currentProject ->
                 }
             }
         }
-
-        jar.finalizedBy(sourcesJar)
-        shadowJar.finalizedBy(sourcesJar)
-        sourcesJar.finalizedBy(remapJar)
     }
 
     // Artifacts? Not sure why this is needed
@@ -192,6 +181,9 @@ allprojects { currentProject ->
 
         from(currentProject.sourceSets.main.resources.srcDirs) {
             exclude "fabric.mod.json"
+            include "*.json"
+            include "*.yaml"
+            include "*.accesswidener"
         }
     }
 
@@ -215,11 +207,22 @@ subprojects {
 
 // Build oddities
 
-subprojects.each {
+Task last = null
+for (Project it : subprojects) {
     if (!it.name.contains("-api")) {
-        build.dependsOn("${it.path}:build")
+        if (last != null) {
+            // Ignore this shit, it makes it all work
+            it.compileKotlin.dependsOn(last)
+        }
+        it.shadowJar.dependsOn(it.compileJava)
+        it.shadowJar.dependsOn(it.compileKotlin)
+        it.shadowJar.dependsOn(it.processResources)
+        it.sourcesJar.dependsOn(it.shadowJar)
+        it.remapJar.dependsOn(it.sourcesJar)
+        last = it.remapJar as Task
     }
 }
+build.dependsOn(last)
 
 
 dependencies {
@@ -253,7 +256,7 @@ shadowJar {
     // Only shadow implementation/modImplementation
     configurations = [project.configurations.shade]
     classifier = "dev"
-    append "src/main/resources/fabric.mod.json"
+    //append "src/main/resources/fabric.mod.json"
 }
 
 remapJar {

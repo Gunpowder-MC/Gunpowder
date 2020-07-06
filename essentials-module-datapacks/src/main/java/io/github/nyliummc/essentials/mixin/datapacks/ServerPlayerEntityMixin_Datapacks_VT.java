@@ -58,7 +58,7 @@ public abstract class ServerPlayerEntityMixin_Datapacks_VT extends PlayerEntity 
         super(world, blockPos, gameProfile);
     }
 
-    @Inject(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
+    @Inject(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/server/network/ServerPlayerEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
     void dropHead(DamageSource source, CallbackInfo ci) {
         if (source.getAttacker() instanceof ServerPlayerEntity && source.getAttacker() != this) {
             // Killed by another player

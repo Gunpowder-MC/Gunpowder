@@ -41,8 +41,8 @@ public class WitherEntityMixin_Datapacks_Voodoo extends HostileEntity {
         super(entityType, world);
     }
 
-    @Redirect(method="mobTick", at=@At(value="INVOKE", target="Lnet/minecraft/entity/Entity;isSilent()Z"))
-    public boolean disableGlobalSound(Entity entity) {
+    @Redirect(method="mobTick", at=@At(value="INVOKE", target="Lnet/minecraft/entity/boss/WitherEntity;isSilent()Z"))
+    public boolean disableGlobalSound(WitherEntity entity) {
         return EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getSilentWither() || entity.isSilent();
     }
 }

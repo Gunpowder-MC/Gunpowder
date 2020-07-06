@@ -21,10 +21,15 @@ dependencies {
     include libs.jackson_core
     include libs.jackson_kotlin
     include libs.jackson_yaml
+    include libs.jackson_databind
+    include libs.jackson_annotations
+    include libs.snakeyaml
+    include 'org.slf4j:slf4j-api:1.8.0-beta1'  // TODO: Move to libs I'm fucking done adding deps
 
     // Dependency Injection
     include libs.guice
     include libs.javax_inject
+    include libs.aop
 
     include libs.playerabilitylib
 }
