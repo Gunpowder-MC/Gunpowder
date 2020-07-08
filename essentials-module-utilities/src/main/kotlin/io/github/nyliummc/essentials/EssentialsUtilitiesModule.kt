@@ -28,16 +28,18 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
-import io.github.nyliummc.essentials.entities.SleepSetter
+import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import io.github.nyliummc.essentials.entities.TPSTracker
 import io.github.nyliummc.essentials.ext.precision
-import net.fabricmc.fabric.api.event.world.WorldTickCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Util
+import net.minecraft.world.World
 
-import net.minecraft.world.dimension.DimensionType
+import kotlin.streams.toList
 
 
 class EssentialsUtilitiesModule : EssentialsModule {
@@ -62,33 +64,38 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerConfig("essentials-utilities.yaml", UtilitiesConfig::class.java, "essentials-utilities.yaml")
     }
 
-    override fun onInitialize() {
+    override fun registerEvents() {
+        ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
+            getTracker(world.registryKey.value.path).tick()
+        })
+
         // Skip night by percentage
-        WorldTickCallback.EVENT.register(WorldTickCallback { world ->
-            if (world !== world.server!!.getWorld(DimensionType.OVERWORLD)) {
-                return@WorldTickCallback
+        ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
+            if (world.isClient || world !== world.server.getWorld(World.OVERWORLD)) {
+                return@EndWorldTick
             }
 
             val players = world.players
+            val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage
+
             players.removeIf { obj: PlayerEntity -> obj.isSpectator }
 
             if (players.isEmpty()) {
                 (world as SleepSetter).setSleeping(false)
-                return@WorldTickCallback
+                return@EndWorldTick
             }
 
             val total = players.size.toDouble()
-            val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }
+            val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }.toList()
 
             val sleepingAmount = sleepingPlayers.count().toDouble()
-            val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage
-            val percentage = total / sleepingAmount
+            val percentage = sleepingAmount / total
             val shouldSkip = percentage >= treshold
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
-                sleeping.add(it)
-                world.server.playerManager.sendToAll(
-                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"))
+                sleeping.add(it as ServerPlayerEntity)
+                world.server.sendSystemMessage(
+                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"), Util.NIL_UUID)
             }
 
             (world as SleepSetter).setSleeping(shouldSkip)

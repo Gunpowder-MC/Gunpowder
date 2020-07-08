@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.modules.chat.dataholders
+package io.github.nyliummc.essentials.api.module.chat.dataholders
 
 import java.util.*
 

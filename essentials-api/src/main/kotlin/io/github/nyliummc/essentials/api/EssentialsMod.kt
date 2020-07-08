@@ -39,6 +39,6 @@ interface EssentialsMod {
 
         @JvmStatic
         val instance: EssentialsMod
-            get() = implementation ?: throw IllegalArgumentException("Essentials mod instance was not available yet!")
+            get() = implementation ?: throw Exception("Essentials mod instance was not available yet!")
     }
 }

@@ -29,14 +29,14 @@ import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler
 import net.minecraft.command.arguments.GameProfileArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import kotlin.math.roundToInt
 
 object PayCommand {
-    val handler by lazy { // TODO: Dependency Injection
+    val handler by lazy {
         EssentialsMod.instance.registry.getModelHandler(BalanceHandler::class.java)
     }
 
@@ -78,8 +78,8 @@ object PayCommand {
 
         val targetEntity = context.source.minecraftServer.playerManager.getPlayer(to.id)
 
-        targetEntity?.addChatMessage(
-                LiteralText("Received $$amount from ${from.name}"),
+        targetEntity?.sendMessage(
+                LiteralText("Received $$amount from ${from.entityName}"),
                 false)
         return 1
     }

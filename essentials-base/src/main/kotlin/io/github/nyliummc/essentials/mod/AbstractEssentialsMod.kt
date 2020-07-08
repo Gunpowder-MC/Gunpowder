@@ -30,9 +30,9 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
+import io.github.nyliummc.essentials.entities.LanguageHack
 import io.github.nyliummc.essentials.injection.AbstractModule
-import net.fabricmc.fabric.api.event.server.ServerStartCallback
-import net.fabricmc.fabric.api.event.server.ServerStopCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.apache.logging.log4j.LogManager
 
@@ -51,11 +51,19 @@ abstract class AbstractEssentialsMod : EssentialsMod {
     var modules: MutableList<EssentialsModule> = mutableListOf()
 
     fun initialize() {
+        FabricLoader.getInstance().allMods.filter { it.metadata.name.contains("essentials") }.forEach { LanguageHack.activate(it.metadata.name) }
+
         logger.info("Starting Essentials")
         registry.registerBuiltin()
         logger.info("Loading modules")
 
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, EssentialsModule::class.java)
+
+        // Register events before registering commands
+        // in case of a RegisterCommandEvent or something
+        entrypoints.forEach {
+            it.entrypoint.registerEvents()
+        }
 
         entrypoints.forEach {
             val module = it.entrypoint
@@ -69,7 +77,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
         }
 
         // TODO: Look into cleanup so we can turn this into internal method references
-        ServerStartCallback.EVENT.register(ServerStartCallback { server ->
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
             database.loadDatabase()
 
             modules.forEach {
@@ -78,7 +86,7 @@ abstract class AbstractEssentialsMod : EssentialsMod {
             }
         })
 
-        ServerStopCallback.EVENT.register(ServerStopCallback { server ->
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             database.disconnect()
         })

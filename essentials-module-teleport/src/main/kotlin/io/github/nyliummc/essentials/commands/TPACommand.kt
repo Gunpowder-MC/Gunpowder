@@ -90,14 +90,14 @@ object TPACommand {
         val target = EntityArgumentType.getPlayer(context, "user")
 
         if (!TPACache.requestTpa(player, target) {
-                    player.addChatMessage(LiteralText("TPA timed out"), false)
+                    player.sendMessage(LiteralText("TPA timed out"), false)
                 }) {
-            player.addChatMessage(LiteralText("Please specify a user"), false)
+            player.sendMessage(LiteralText("Please specify a user"), false)
             return -1
         }
 
-        player.addChatMessage(LiteralText("Requested TPA"), false)
-        target.addChatMessage(Text.builder {
+        player.sendMessage(LiteralText("Requested TPA"), false)
+        target.sendMessage(Text.builder {
             text(player.gameProfile.name) {
                 color(Formatting.RED)
             }
@@ -122,13 +122,13 @@ object TPACommand {
         val player = context.source.player
         val target = EntityArgumentType.getPlayer(context, "user")
         if (!TPACache.requestTpaHere(player, target) {
-                    player.addChatMessage(LiteralText("TPA timed out"), false)
+                    player.sendMessage(LiteralText("TPA timed out"), false)
                 }) {
-            player.addChatMessage(LiteralText("Please specify a user"), false)
+            player.sendMessage(LiteralText("Please specify a user"), false)
             return -1
         }
-        player.addChatMessage(LiteralText("Requested TPA"), false)
-        target.addChatMessage(Text.builder {
+        player.sendMessage(LiteralText("Requested TPA"), false)
+        target.sendMessage(Text.builder {
             text(player.gameProfile.name) {
                 color(Formatting.RED)
             }
@@ -163,16 +163,16 @@ object TPACommand {
             TeleportRequest.builder {
                 player(it.requester())
                 destination(it.targetLocationEntity.pos)
-                dimension(it.targetLocationEntity.dimension)
+                dimension(it.targetLocationEntity.world)
             }.execute(config.teleportDelay.toLong())
-            it.requester().addChatMessage(LiteralText("TPA accepted"), false)
+            it.requester().sendMessage(LiteralText("TPA accepted"), false)
         }
         return 1
     }
 
     fun executeTpdeny(context: CommandContext<ServerCommandSource>, findSource: Boolean): Int {
         TPACache.closeTpa(if (findSource) null else EntityArgumentType.getPlayer(context, "user"), context.source.player) {
-            it.requester().addChatMessage(LiteralText("TPA denied"), false)
+            it.requester().sendMessage(LiteralText("TPA denied"), false)
         }
         return 1
     }

@@ -53,7 +53,7 @@ object SpawnCommand {
 
         TeleportRequest.builder {
             player(player)
-            dimension(DimensionType.OVERWORLD)
+            dimension(DimensionType.OVERWORLD_REGISTRY_KEY)
             destination(Vec3i(props.spawnX, props.spawnY, props.spawnZ))
         }.execute(teleportDelay.toLong())
 

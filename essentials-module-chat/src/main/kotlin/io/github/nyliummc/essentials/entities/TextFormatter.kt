@@ -66,6 +66,6 @@ object TextFormatter {
     }
 
     private fun matches(c: Char): Boolean {
-        return "b0931825467adcfeklmnor".contains(c.toString())
+        return c in "b0931825467adcfeklmnor"
     }
 }

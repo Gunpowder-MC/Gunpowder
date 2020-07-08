@@ -32,5 +32,5 @@ object HomeTable : Table() {
     val x = integer("x")
     val y = integer("y")
     val z = integer("z")
-    val dimension = integer("dimension")
+    val dimension = varchar("dimension", 255)
 }

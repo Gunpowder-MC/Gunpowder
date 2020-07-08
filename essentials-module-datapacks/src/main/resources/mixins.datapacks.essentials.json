@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "io.github.nyliummc.essentials.mixin.datapacks",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "io.github.nyliummc.essentials.mixin.plugin.MobsModulePlugin",
+  "mixins": [
+    "BeeEntityMixin_Datapacks_Voodoo",
+    "CreeperEntityMixin_Datapacks_VT",
+    "EndermanEntityMixin_Datapacks_VT",
+    "EndermiteEntityMixin_Datapacks_Voodoo",
+    "GhastEntityMixin_Datapacks_VT",
+    "ItemEntityMixin_Datapacks_Voodoo",
+    "ItemFrameEntityMixin_Datapacks_Voodoo",
+    "LivingEntityMixin_Datapacks_VT",
+    "NameTagItemMixin_Datapacks_VT",
+    "ServerPlayerEntityMixin_Datapacks_Voodoo",
+    "ServerPlayerEntityMixin_Datapacks_VT",
+    "WitherEntityMixin_Datapacks_Voodoo",
+    "ZombieEntityMixin_Datapacks_Voodoo"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

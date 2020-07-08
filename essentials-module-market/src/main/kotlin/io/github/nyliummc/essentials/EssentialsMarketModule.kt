@@ -31,7 +31,7 @@ import io.github.nyliummc.essentials.configs.MarketConfig
 import io.github.nyliummc.essentials.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.models.MarketEntryTable
 import java.util.function.Supplier
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
+import io.github.nyliummc.essentials.api.module.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
 class EssentialsMarketModule : EssentialsModule {
     override val name = "market"

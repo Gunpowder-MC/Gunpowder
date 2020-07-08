@@ -32,7 +32,7 @@ import io.github.nyliummc.essentials.configs.CurrencyConfig
 import io.github.nyliummc.essentials.modelhandlers.BalanceHandler
 import io.github.nyliummc.essentials.models.BalanceTable
 import java.util.function.Supplier
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler as APIBalanceHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 
 class EssentialsCurrencyModule : EssentialsModule {
     override val name = "currency"
@@ -50,7 +50,6 @@ class EssentialsCurrencyModule : EssentialsModule {
 
     override fun onInitialize() {
         essentials.registry.registerTable(BalanceTable)
-
         essentials.registry.registerModelHandler(APIBalanceHandler::class.java, Supplier { BalanceHandler })
     }
 

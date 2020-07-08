@@ -99,13 +99,13 @@ object HomeCommand {
         val player = context.source.player
         val home = handler.getHome(player.uuid, "home")
         if (home == null) {
-            player.addChatMessage(LiteralText("No such home: 'home'"), false)
+            player.sendMessage(LiteralText("No such home: 'home'"), false)
             return -1
         }
 
         TeleportRequest.builder {
             player(player)
-            dimension(DimensionType.byRawId(home.dimension)!!)
+            dimension(home.dimension)
             destination(home.location)
         }.execute(teleportDelay.toLong())
 
@@ -117,13 +117,13 @@ object HomeCommand {
         val homeName = StringArgumentType.getString(context, "home")
         val home = handler.getHome(player.uuid, homeName)
         if (home == null) {
-            player.addChatMessage(LiteralText("No such home: '${homeName}'"), false)
+            player.sendMessage(LiteralText("No such home: '${homeName}'"), false)
             return -1
         }
 
         TeleportRequest.builder {
             player(player)
-            dimension(DimensionType.byRawId(home.dimension)!!)
+            dimension(home.dimension)
             destination(home.location)
         }.execute(teleportDelay.toLong())
 
@@ -143,7 +143,7 @@ object HomeCommand {
                 }
             }
         }
-        context.source.player.addChatMessage(text, false)
+        context.source.player.sendMessage(text, false)
         return 1
     }
 
@@ -153,14 +153,14 @@ object HomeCommand {
                         StoredHome(
                                 player.uuid,
                                 "home",
-                                Vec3i(player.posVector.x, player.posVector.y, player.posVector.z),
-                                player.dimension.rawId
+                                Vec3i(player.pos.x, player.pos.y, player.pos.z),
+                                player.world.registryKey.value
                         )
                 )) {
-            player.addChatMessage(LiteralText("Home 'home' set"), false)
+            player.sendMessage(LiteralText("Home 'home' set"), false)
             return 1
         }
-        player.addChatMessage(LiteralText("Home 'home' already exists"), false)
+        player.sendMessage(LiteralText("Home 'home' already exists"), false)
         return -1
     }
 
@@ -171,33 +171,33 @@ object HomeCommand {
                         StoredHome(
                                 player.uuid,
                                 home,
-                                Vec3i(player.posVector.x, player.posVector.y, player.posVector.z),
-                                player.dimension.rawId
+                                Vec3i(player.pos.x, player.pos.y, player.pos.z),
+                                player.world.registryKey.value
                         )
                 )) {
-            player.addChatMessage(LiteralText("Home '$home' set"), false)
+            player.sendMessage(LiteralText("Home '$home' set"), false)
             return 1
         }
-        player.addChatMessage(LiteralText("Home '$home' already exists"), false)
+        player.sendMessage(LiteralText("Home '$home' already exists"), false)
         return -1
     }
 
     fun executeDel(context: CommandContext<ServerCommandSource>): Int {
         if (handler.delHome(context.source.player.uuid, "home")) {
-            context.source.player.addChatMessage(LiteralText("Home 'home' deleted"), false)
+            context.source.player.sendMessage(LiteralText("Home 'home' deleted"), false)
             return 1
         }
-        context.source.player.addChatMessage(LiteralText("No such home: 'home'"), false)
+        context.source.player.sendMessage(LiteralText("No such home: 'home'"), false)
         return -1
     }
 
     fun executeDelTarget(context: CommandContext<ServerCommandSource>): Int {
         val home = StringArgumentType.getString(context, "home")
         if (handler.delHome(context.source.player.uuid, home)) {
-            context.source.player.addChatMessage(LiteralText("Home '$home' deleted"), false)
+            context.source.player.sendMessage(LiteralText("Home '$home' deleted"), false)
             return 1
         }
-        context.source.player.addChatMessage(LiteralText("No such home: '$home'"), false)
+        context.source.player.sendMessage(LiteralText("No such home: '$home'"), false)
         return -1
     }
 

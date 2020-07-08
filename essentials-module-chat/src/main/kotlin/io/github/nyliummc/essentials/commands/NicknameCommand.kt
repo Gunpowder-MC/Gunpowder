@@ -30,7 +30,7 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.Text
-import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler
+import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler
 import io.github.nyliummc.essentials.configs.ChatConfig
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket
 import net.minecraft.server.command.ServerCommandSource
@@ -41,7 +41,7 @@ object NicknameCommand {
     val config by lazy {
         EssentialsMod.instance.registry.getConfig(ChatConfig::class.java)
     }
-    val handler by lazy { // TODO: Dependency Injection
+    val handler by lazy {
         EssentialsMod.instance.registry.getModelHandler(NicknameHandler::class.java)
     }
 

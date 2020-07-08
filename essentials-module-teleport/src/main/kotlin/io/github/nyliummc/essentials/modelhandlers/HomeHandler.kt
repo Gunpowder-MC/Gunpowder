@@ -28,6 +28,7 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.module.teleport.dataholders.StoredHome
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.models.HomeTable
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3i
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -58,7 +59,7 @@ object HomeHandler : APIHomeHandler {
                                     owner,
                                     it[HomeTable.name],
                                     Vec3i(it[HomeTable.x], it[HomeTable.y], it[HomeTable.z]),
-                                    it[HomeTable.dimension]
+                                    Identifier(it[HomeTable.dimension])
                             )
                 }.toMap().toMutableMap()
             }
@@ -92,7 +93,7 @@ object HomeHandler : APIHomeHandler {
                 it[x] = home.location.x
                 it[y] = home.location.y
                 it[z] = home.location.z
-                it[dimension] = home.dimension
+                it[dimension] = home.dimension.toString()
             }
         }
 

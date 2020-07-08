@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.nyliummc.essentials.mixin.base",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "io.github.nyliummc.essentials.mixin.plugin.BaseModulePlugin",
+  "mixins": [
+    "LanguageMixin_Base"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

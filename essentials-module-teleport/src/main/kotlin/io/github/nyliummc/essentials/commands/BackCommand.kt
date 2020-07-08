@@ -34,13 +34,14 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import java.util.*
 
 object BackCommand {
     data class LastPosition(
             val position: Vec3d,
-            val dimension: DimensionType,
+            val dimension: World,
             val facing: Vec2f
     )
 
@@ -70,7 +71,7 @@ object BackCommand {
                 player(context.source.player)
                 destination(p.position)
                 facing(p.facing)
-                dimension(p.dimension)
+                dimension(p.dimension.dimensionRegistryKey.value)
             }
 
             request.execute(teleportDelay.toLong())

@@ -35,6 +35,7 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 
 object RTPCommand {
@@ -53,7 +54,7 @@ object RTPCommand {
     fun execute(context: CommandContext<ServerCommandSource>): Int {
         val distance = config.rtpDistance
         val player = context.source.player
-        val world = context.source.minecraftServer.getWorld(DimensionType.OVERWORLD)
+        val world = context.source.minecraftServer.getWorld(World.OVERWORLD)!!
         val deltaX = distance * player.random.nextGaussian() + 1
         val deltaZ = distance * player.random.nextGaussian() + 1
         val newX = deltaX + player.x
@@ -63,7 +64,7 @@ object RTPCommand {
 
         if (world.getBlockState(BlockPos(newX, world.seaLevel.toDouble(), newZ)).block == Blocks.VOID_AIR) {
             // Void world, cancel teleport
-            player.addChatMessage(LiteralText("Void world detected, cancelling..."), false)
+            player.sendMessage(LiteralText("Void world detected, cancelling..."), false)
             return -1
         }
 
@@ -78,7 +79,7 @@ object RTPCommand {
         TeleportRequest.builder {
             player(player)
             destination(Vec3d(newX, i.toDouble(), newZ))
-            dimension(DimensionType.OVERWORLD)
+            dimension(DimensionType.OVERWORLD_REGISTRY_KEY.value)
             facing(player.rotationClient)
         }.execute(config.teleportDelay.toLong())
 

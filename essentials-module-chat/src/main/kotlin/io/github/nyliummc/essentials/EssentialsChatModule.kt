@@ -31,7 +31,7 @@ import io.github.nyliummc.essentials.configs.ChatConfig
 import io.github.nyliummc.essentials.modelhandlers.NicknameHandler
 import io.github.nyliummc.essentials.models.NicknameTable
 import java.util.function.Supplier
-import io.github.nyliummc.essentials.api.modules.chat.modelhandlers.NicknameHandler as APINicknameHandler
+import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler as APINicknameHandler
 
 class EssentialsChatModule : EssentialsModule {
     override val name = "chat"
@@ -48,7 +48,6 @@ class EssentialsChatModule : EssentialsModule {
 
     override fun onInitialize() {
         essentials.registry.registerTable(NicknameTable)
-
         essentials.registry.registerModelHandler(APINicknameHandler::class.java, Supplier { NicknameHandler })
     }
 

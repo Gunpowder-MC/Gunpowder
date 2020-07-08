@@ -46,3 +46,6 @@ Thumbs.db # Random generated file
 # VM Crash logs
 
 hs_err_pid*
+
+# CF key
+curseforge.gradle

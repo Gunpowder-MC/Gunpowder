@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.modules.market.modelhandlers
+package io.github.nyliummc.essentials.api.module.market.modelhandlers
 
-import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
+import io.github.nyliummc.essentials.api.module.market.dataholders.StoredMarketEntry
 
 interface MarketEntryHandler {
     fun createEntry(e: StoredMarketEntry)

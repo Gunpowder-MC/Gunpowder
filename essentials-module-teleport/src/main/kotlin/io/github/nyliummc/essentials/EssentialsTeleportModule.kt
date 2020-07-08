@@ -26,9 +26,16 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
+import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.events.PlayerTeleportCallback
+import io.github.nyliummc.essentials.modelhandlers.HomeHandler
+import io.github.nyliummc.essentials.modelhandlers.WarpHandler
+import io.github.nyliummc.essentials.models.HomeTable
+import io.github.nyliummc.essentials.models.WarpTable
+import java.util.function.Supplier
 
 class EssentialsTeleportModule : EssentialsModule {
     override val name = "teleport"
@@ -48,9 +55,16 @@ class EssentialsTeleportModule : EssentialsModule {
         essentials.registry.registerConfig("essentials-teleport.yaml", TeleportConfig::class.java, "essentials-teleport.yaml")
     }
 
-    override fun onInitialize() {
+    override fun registerEvents() {
         PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
-            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.dimension, player.rotationClient)
+            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.world, player.rotationClient)
         })
+    }
+
+    override fun onInitialize() {
+        essentials.registry.registerTable(WarpTable)
+        essentials.registry.registerTable(HomeTable)
+        essentials.registry.registerModelHandler(APIWarpHandler::class.java, Supplier { WarpHandler })
+        essentials.registry.registerModelHandler(APIHomeHandler::class.java, Supplier { HomeHandler })
     }
 }

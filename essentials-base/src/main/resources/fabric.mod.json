@@ -16,10 +16,8 @@
     ]
   },
   "depends": {
-    "essentials-api": "${version}",
-    "fabricloader": ">=0.7.2",
+    "fabricloader": ">=0.8.9",
     "fabric": "*",
-    "fabric-language-kotlin": ">=1.3.50",
-    "playerabilitylib": ">=1.1.0"
+    "fabric-language-kotlin": ">=1.3.50"
   }
 }

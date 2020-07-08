@@ -25,10 +25,14 @@
 package io.github.nyliummc.essentials.api.builders
 
 import io.github.nyliummc.essentials.api.EssentialsMod
+import net.minecraft.client.util.math.Vector3f
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.math.Vec3i
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
@@ -36,7 +40,7 @@ import java.time.temporal.TemporalUnit
 interface TeleportRequest {
     val player: ServerPlayerEntity
     val destination: Vec3d
-    val dimension: DimensionType
+    val dimension: Identifier
     val facing: Vec2f?
     val callback: (() -> Unit)?
 
@@ -58,10 +62,16 @@ interface TeleportRequest {
     interface Builder {
         fun player(player: ServerPlayerEntity)
         fun facing(facing: Vec2f)
-        fun dimension(dimension: DimensionType)
+        fun dimension(dimension: Identifier)
+        fun dimension(dimension: RegistryKey<DimensionType>) {
+            dimension(dimension.value)
+        }
+        fun dimension(dimension: World) {
+            dimension(dimension.dimensionRegistryKey)
+        }
         fun destination(destination: Vec3d)
         fun destination(destination: Vec3i) {
-            destination(Vec3d(destination))
+            destination(Vec3d.of(destination))
         }
 
         fun onComplete(callback: () -> Unit)

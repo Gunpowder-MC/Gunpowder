@@ -4,33 +4,38 @@ plugins {
     id 'net.minecrell.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "com.dorongold.task-tree" version "1.5"
 }
 
-apply from: "dependencies.gradle"
-// apply from: "https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle"
+apply from: "dependencies.gradle"  // libs.*
 
 logger.lifecycle("""
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	Building Essentials
-	Version: $project.mod_version
-	Minecraft Version: $project.minecraft
-	Fabric-Loader Version: $project.fabric_loader
+    =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    Building Essentials
+    Version: $project.mod_version
+    Minecraft Version: $project.minecraft
+    Fabric-Loader Version: $project.fabric_loader
 
-	Using:
-	Fabric-API Version: $project.fabric_api
-	PlayerAbilityLib Version: $project.playerabilitylib
-	
-	Output files will be in /build/libs
-	=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    Using:
+    Fabric-API Version: $project.fabric_api
+    PlayerAbilityLib Version: $project.playerabilitylib
+    
+    Output files will be in /build/libs
+    =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 """)
 
 version = project.mod_version + "+" + project.minecraft
 
-allprojects {
+// Project config
+
+allprojects { currentProject ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'net.minecrell.licenser'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -42,6 +47,8 @@ allprojects {
 
     configurations {
         dev
+        compile.extendsFrom shade
+        modCompile.extendsFrom modShade
     }
 
     license {
@@ -56,6 +63,10 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
+        maven {
             name = "Ladysnake Libs"
             url = "https://dl.bintray.com/ladysnake/libs"
         }
@@ -63,16 +74,17 @@ allprojects {
 
     dependencies {
         // Kotlin Stdlib
-        implementation libs.kotlin_stdlib
+        compileOnly libs.kotlin_stdlib
 
-        minecraft libs.minecraft
+        minecraft(libs.minecraft) {
+            transitive = false
+        }
         mappings libs.yarn
         modImplementation libs.fabric_loader
 
         // Hard Dependencies
         modImplementation libs.fabric_api
         modImplementation libs.fabric_language_kotlin
-        modImplementation(libs.playerabilitylib) { transitive = false }
 
         // Database
         implementation libs.exposed_core
@@ -93,57 +105,131 @@ allprojects {
         implementation libs.guice
 
         // We use checker for annotations
-        compileOnly libs.checker_qual
+        implementation libs.checker_qual
 
         // TODO: Permissions
     }
 
-    jar {
-        classifier = "dev"
-        from "LICENSE"
-    }
+    // Jars
 
-    afterEvaluate {
+    if (currentProject.name.contains("-api")) {
+    // if (false) {
+        jar {
+            classifier = ""
+        }
+
+        shadowJar {
+            enabled = false
+        }
+
         remapJar {
-            input = file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar")
-            archiveName = "${archivesBaseName}-${project.version}.jar"
+            enabled = false
+        }
+    } else {
+        jar {
+            enabled = false
         }
 
-        artifacts {
-            dev file: file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar"), type: "jar", builtBy: jar
-        }
+        // TODO: Delete jar if present
 
-        processResources {
-            inputs.property "version", project.version
+        shadowJar {
+            enabled = true
+            // Only shadow implementation/modImplementation
+            configurations = [project.configurations.shade]
+            classifier = "dev"
 
-            from(sourceSets.main.resources.srcDirs) {
-                include "fabric.mod.json"
-                expand "version": project.version
+            doLast {
+                delete fileTree("${project.buildDir}/") {
+                    include "classes/java/main/*refmap*.json"
+                    include "classes/java/**/*"
+                }
             }
+        }
 
-            from(sourceSets.main.resources.srcDirs) {
-                exclude "fabric.mod.json"
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from currentProject.sourceSets.main.allSource.srcDirs
+        }
+
+        remapJar {
+            input = file(shadowJar.archivePath)
+
+            doLast {
+                delete fileTree("${project.buildDir}/") {
+                    include "resources/**/*.json"
+                    include "resources/**/*.yaml"
+                    include "resources/**/*.accesswidener"
+                }
             }
         }
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
+    // Artifacts? Not sure why this is needed
+
+    artifacts {
+        // dev file: file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar"), type: "jar", builtBy: jar
     }
 
+    // Set version in fabric.mod.json
+    processResources {
+        inputs.property "version", project.version
+
+        from(currentProject.sourceSets.main.resources.srcDirs) {
+            include "fabric.mod.json"
+            expand "version": project.version
+        }
+
+        from(currentProject.sourceSets.main.resources.srcDirs) {
+            exclude "fabric.mod.json"
+            include "*.json"
+            include "*.yaml"
+            include "*.accesswidener"
+        }
+    }
+
+    // Fix some kotlin warnings
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
 }
 
+// License shit
+
 task licenseFormatAll
 subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
-subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
+
+subprojects {
+    runClient {
+        enabled = false
+    }
+    runServer {
+        enabled = false
+    }
+}
+
+// Build oddities
+
+Task last = null
+for (Project it : subprojects) {
+    if (!it.name.contains("-api")) {
+        if (last != null) {
+            // Ignore this shit, it makes it all work
+            it.compileKotlin.dependsOn(last)
+        }
+        it.shadowJar.dependsOn(it.compileJava)
+        it.shadowJar.dependsOn(it.compileKotlin)
+        it.shadowJar.dependsOn(it.processResources)
+        it.sourcesJar.dependsOn(it.shadowJar)
+        it.remapJar.dependsOn(it.sourcesJar)
+        last = it.remapJar as Task
+    }
+}
+build.dependsOn(last)
+curseforge.dependsOn(last)
+
 
 dependencies {
     afterEvaluate {
         subprojects.each {
-            compile project(path: ":${it.name}", configuration: "dev")
-            include project("${it.name}:")
+            shade project(path: ":${it.name}", configuration: 'shadow')
         }
     }
 
@@ -151,8 +237,67 @@ dependencies {
     modRuntime(libs.modmenu) {
         transitive = false // Naughty mods who JIJ fabric api
     }
+    modRuntime(libs.playerabilitylib) {
+        transitive = false
+    }
 }
 
+// Fat jar
+
 jar {
-    from "LICENSE"
+    enabled = false
+}
+
+sourcesJar {
+    enabled = false
+}
+
+shadowJar {
+    enabled = false
+    // Only shadow implementation/modImplementation
+    configurations = [project.configurations.shade]
+    classifier = "dev"
+    //append "src/main/resources/fabric.mod.json"
+}
+
+remapJar {
+    enabled = false
+}
+
+remapSourcesJar {
+    enabled = false
+}
+
+// Curseforge upload
+
+curseforge {
+    apply from: 'curseforge.gradle'
+    apiKey = project.apiKey
+    project {
+        id = "350123"
+        releaseType = "release"
+        changelogType = "markdown"
+        changelog = "Fix various issues posted on CF and Github"
+        addGameVersion project.minecraft
+        addGameVersion "Fabric"
+        addGameVersion "Java 8"
+
+        subprojects { sub ->
+            // Add built modules
+            if (sub.name.contains("-base")) {
+                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+            } else if (sub.name.contains("-api")) {
+                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
+            } else {
+                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+            }
+        }
+
+        afterEvaluate {
+            uploadTask.dependsOn(remapJar)
+        }
+    }
+    options {
+        forgeGradleIntegration = false
+    }
 }

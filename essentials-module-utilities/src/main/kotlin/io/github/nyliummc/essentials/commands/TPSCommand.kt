@@ -49,7 +49,7 @@ object TPSCommand {
         val count = trackers.size
         val width = trackers.map { (k, _) -> k.length }.toList().max()!! + 1
 
-        context.source.player.addChatMessage(Text.builder {
+        context.source.player.sendMessage(Text.builder {
             text("${"Dimension".padEnd(width, ' ')} | TPS   | MSPT")
             trackers.forEach { id, tracker ->
                 val tps = tracker.getTps()

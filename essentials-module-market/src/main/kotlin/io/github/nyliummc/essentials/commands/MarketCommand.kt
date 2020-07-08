@@ -31,15 +31,15 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.ChestGui
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.modules.currency.modelhandlers.BalanceHandler
-import io.github.nyliummc.essentials.api.modules.market.dataholders.StoredMarketEntry
-import io.github.nyliummc.essentials.api.modules.market.modelhandlers.MarketEntryHandler
+import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler
+import io.github.nyliummc.essentials.api.module.market.dataholders.StoredMarketEntry
+import io.github.nyliummc.essentials.api.module.market.modelhandlers.MarketEntryHandler
 import io.github.nyliummc.essentials.configs.MarketConfig
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.ListTag
-import net.minecraft.network.packet.s2c.play.OpenContainerS2CPacket
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
@@ -131,7 +131,7 @@ object MarketCommand {
 
     private fun openGui(context: CommandContext<ServerCommandSource>, entries: List<StoredMarketEntry>, page: Int, maxPage: Int) {
         val player = context.source.player
-        player.closeContainer()
+        player.closeCurrentScreen()
 
         val gui = ChestGui.builder {
             player(context.source.player)
@@ -158,7 +158,7 @@ object MarketCommand {
                         println("Navigating to $prevPage")
                         openGui(context, entries, prevPage, maxPage)
                     } catch (e: StackOverflowError) {
-                        player.closeContainer()
+                        player.closeCurrentScreen()
                     }
                 }
 
@@ -168,16 +168,16 @@ object MarketCommand {
                         println("Navigating to $nextPage")
                         openGui(context, entries, nextPage, maxPage)
                     } catch (e: StackOverflowError) {
-                        player.closeContainer()
+                        player.closeCurrentScreen()
                     }
                 }
             }
         }
 
         player.networkHandler.sendPacket(
-                OpenContainerS2CPacket(gui.syncId, gui.type, LiteralText("Market")))
+                OpenScreenS2CPacket(gui.syncId, gui.type, LiteralText("Market")))
         gui.addListener(player)
-        player.container = gui
+        player.currentScreenHandler = gui
     }
 
     private fun buyItem(player: ServerPlayerEntity, entry: StoredMarketEntry) {
@@ -185,7 +185,7 @@ object MarketCommand {
 
         // Check if user has enough money
         if (balance < entry.price) {
-            player.addChatMessage(LiteralText("Not enough money!"), false)
+            player.sendMessage(LiteralText("Not enough money!"), false)
         } else {
             // Check if still present
             if (marketHandler.getEntries().contains(entry)) {
@@ -233,15 +233,15 @@ object MarketCommand {
                     ItemScatterer.spawn(player.world, player.x, player.y, player.z, item)
                 }
 
-                player.addChatMessage(
+                player.sendMessage(
                         LiteralText("Successfully purchased item!"),
                         false)
-                player.server.playerManager.getPlayer(entry.uuid)?.addChatMessage(
+                player.server.playerManager.getPlayer(entry.uuid)?.sendMessage(
                         LiteralText("${player.entityName} purchased one of your items!"),
                         false)
 
             } else {
-                player.addChatMessage(LiteralText("Item no longer available"), false)
+                player.sendMessage(LiteralText("Item no longer available"), false)
             }
         }
     }

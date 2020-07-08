@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.modules.currency.modelhandlers
+package io.github.nyliummc.essentials.api.module.currency.modelhandlers
 
-import io.github.nyliummc.essentials.api.modules.currency.dataholders.StoredBalance
+import io.github.nyliummc.essentials.api.module.currency.dataholders.StoredBalance
 import java.util.*
 
 interface BalanceHandler {

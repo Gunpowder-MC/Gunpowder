@@ -25,18 +25,18 @@
 package io.github.nyliummc.essentials.entities.mc
 
 import io.github.nyliummc.essentials.entities.builders.ChestGui
-import net.minecraft.container.ContainerType
-import net.minecraft.container.GenericContainer
-import net.minecraft.container.SlotActionType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.inventory.BasicInventory
+import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket
+import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.ScreenHandlerType
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 
 
-class ChestGuiContainer(syncId: Int, playerInventory: PlayerInventory) : GenericContainer(ContainerType.GENERIC_9X6, syncId, playerInventory, BasicInventory(54), 6) {
+class ChestGuiContainer(syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X6, syncId, playerInventory, SimpleInventory(54), 6) {
     private var buttons: Map<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
 
@@ -50,7 +50,7 @@ class ChestGuiContainer(syncId: Int, playerInventory: PlayerInventory) : Generic
 
     internal fun createInventory() {
         for (i in 0 until 54) {
-            inventory.setInvStack(i, buttons[i]?.icon ?: background)
+            inventory.setStack(i, buttons[i]?.icon ?: background)
         }
     }
 
@@ -66,7 +66,7 @@ class ChestGuiContainer(syncId: Int, playerInventory: PlayerInventory) : Generic
 
         // Avoid desyncs
         inventory.markDirty()
-        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, playerEntity.container.stacks))
+        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, playerEntity.currentScreenHandler.stacks))
         sendContentUpdates()
 
         return ItemStack.EMPTY

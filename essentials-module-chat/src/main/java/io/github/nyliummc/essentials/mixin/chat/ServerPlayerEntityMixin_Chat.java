@@ -37,7 +37,7 @@ abstract class ServerPlayerEntityMixin_Chat extends PlayerEntityMixin_Chat {
      */
     @Overwrite
     @SuppressWarnings("OverwriteModifiers") // javax is drunk
-    public Text method_14206() { // getPlayerListName
+    public Text getPlayerListName() { // getPlayerListName
         return this.getDisplayName();
     }
 }
