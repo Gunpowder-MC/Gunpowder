@@ -12,11 +12,23 @@ Essentials-base is the core implementation of essentials. This is needed for mos
 
 #### Chat
 
-TODO
+Chat module. Provides nicknames and chat colors.
+
+##### Commands
+
+ - /nickname [nickname]
+    - Sets your current nickname or clears it. Supports color codes.
 
 #### Currency
 
-TODO
+Module providing the currency handling in essentials as well as some basic commands
+
+##### Commands
+
+ - /balance [player]
+    - Show your current account balance, or from a specified player
+ - /pay \<user> \<amount>
+    - Send money from your account to someone else
 
 #### Datapacks
 
@@ -43,11 +55,18 @@ Included:
 
 #### Dynmap
 
-TODO
+Implementation of Dynmap for Essentials. WIP and unreleased.
 
 #### Market
 
-TODO
+Public Market module
+
+##### Commands
+
+ - /market
+    - Opens the market GUI
+ - /market add \<price> [amount]
+    - Adds the current item the player is holding to the market
 
 #### Teleport
 
@@ -58,13 +77,20 @@ TODO
 Includes a bunch of commands and miscellaneous features that don't belong to any specific module.
 
 ##### Commands
- - /flight - Allows toggling a player's ability to fly.
- - /god - Makes a player invulnerable
- - /hat - Allows a player to place the item in their hand on their head
- - /head - Gives a player another player's head
- - /heal - Heals a player
- - /speed - Allows a player's walking and or flying speed to be changed
- - /tps - Prints the server's current tick rate in ticks per second
+ - /flight 
+    - Allows toggling a player's ability to fly.
+ - /god 
+    - Makes a player invulnerable
+ - /hat 
+    - Allows a player to place the item in their hand on their head
+ - /head 
+    - Gives a player another player's head
+ - /heal 
+    - Heals a player
+ - /speed 
+    - Allows a player's walking and flying speed to be changed
+ - /tps 
+    - Prints the server's current tick rate in ticks per second
 
 ## License
 This mod is available under the [MIT license](LICENSE).

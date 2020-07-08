@@ -223,6 +223,7 @@ for (Project it : subprojects) {
     }
 }
 build.dependsOn(last)
+curseforge.dependsOn(last)
 
 
 dependencies {
@@ -276,7 +277,7 @@ curseforge {
         id = "350123"
         releaseType = "release"
         changelogType = "markdown"
-        changelog = "Rewrite release"
+        changelog = "Fix various issues posted on CF and Github"
         addGameVersion project.minecraft
         addGameVersion "Fabric"
         addGameVersion "Java 8"
