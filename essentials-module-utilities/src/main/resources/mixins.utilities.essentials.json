@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.UtilitiesModulePlugin",
   "mixins": [
+    "PlayerAbilitiesAccessor",
     "ServerWorldMixin_Utilities"
   ],
   "client": [

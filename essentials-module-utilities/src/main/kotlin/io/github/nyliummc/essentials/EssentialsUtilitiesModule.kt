@@ -64,7 +64,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerConfig("essentials-utilities.yaml", UtilitiesConfig::class.java, "essentials-utilities.yaml")
     }
 
-    override fun onInitialize() {
+    override fun registerEvents() {
         ServerTickEvents.END_WORLD_TICK.register(ServerTickEvents.EndWorldTick { world ->
             getTracker(world.registryKey.value.path).tick()
         })
@@ -76,6 +76,8 @@ class EssentialsUtilitiesModule : EssentialsModule {
             }
 
             val players = world.players
+            val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage
+
             players.removeIf { obj: PlayerEntity -> obj.isSpectator }
 
             if (players.isEmpty()) {
@@ -87,8 +89,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
             val sleepingPlayers = players.stream().filter { it.isSleepingLongEnough }.toList()
 
             val sleepingAmount = sleepingPlayers.count().toDouble()
-            val treshold = essentials.registry.getConfig(UtilitiesConfig::class.java).sleepPercentage
-            val percentage = total / sleepingAmount
+            val percentage = sleepingAmount / total
             val shouldSkip = percentage >= treshold
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {

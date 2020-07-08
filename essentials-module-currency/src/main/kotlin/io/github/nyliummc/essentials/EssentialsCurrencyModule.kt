@@ -50,7 +50,6 @@ class EssentialsCurrencyModule : EssentialsModule {
 
     override fun onInitialize() {
         essentials.registry.registerTable(BalanceTable)
-
         essentials.registry.registerModelHandler(APIBalanceHandler::class.java, Supplier { BalanceHandler })
     }
 
