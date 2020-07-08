@@ -1,6 +1,8 @@
-# Fabric Essentials
+# Essentials for Fabric
 
-Fabric Essentials aims to port the popular "Essentials" plugin to Fabric, as well as adding features from other plugins and QoL changes, to provide an all-in-one mod for your server's needs.
+Essentials for Fabric aims to port the popular "Essentials" plugin to Fabric, as well as adding features from other plugins and QoL changes, to provide an all-in-one mod for your server's needs.
+
+Essentials for Fabric is easily extendable using the api module, which is made available on curseforge. A maven may be created if deemed necessary.
 
 ## Support
 
