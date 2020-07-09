@@ -223,8 +223,6 @@ for (Project it : subprojects) {
     }
 }
 build.dependsOn(last)
-curseforge.dependsOn(last)
-
 
 dependencies {
     afterEvaluate {

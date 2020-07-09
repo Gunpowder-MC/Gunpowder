@@ -161,7 +161,7 @@ object TPACommand {
     fun executeTpaccept(context: CommandContext<ServerCommandSource>, findSource: Boolean): Int {
         TPACache.closeTpa(if (findSource) null else EntityArgumentType.getPlayer(context, "user"), context.source.player) {
             TeleportRequest.builder {
-                player(it.requester())
+                player(it.teleportingEntity)
                 destination(it.targetLocationEntity.pos)
                 dimension(it.targetLocationEntity.world)
             }.execute(config.teleportDelay.toLong())
