@@ -5,6 +5,8 @@
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.UtilitiesModulePlugin",
   "mixins": [
     "PlayerAbilitiesAccessor",
+    "PlayerListS2CPacketMixin_Utilities",
+    "ServerPlayerEntityMixin_Utilities",
     "ServerWorldMixin_Utilities"
   ],
   "client": [

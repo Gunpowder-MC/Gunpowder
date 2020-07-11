@@ -31,6 +31,7 @@ import io.github.ladysnake.pal.Pal
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.mixin.cast.SpeedSetter
 import net.minecraft.command.arguments.EntityArgumentType
+import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
@@ -114,6 +115,7 @@ object SpeedCommand {
 
     private fun setSpeed(player: ServerPlayerEntity, speed: Double) {
         // TODO: Use PAL once it supports this
+        // NOTE: Seems to require entity attributes
         (player.abilities as SpeedSetter).setServerFlySpeed(speed.toFloat())
         (player.abilities as SpeedSetter).setServerWalkSpeed(2 * speed.toFloat())
         player.sendAbilitiesUpdate()
