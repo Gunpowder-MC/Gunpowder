@@ -38,9 +38,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Block.class)
 public class BlockMixin_Dynmap {
-    @Shadow private BlockState defaultState;
+    @Shadow
+    private BlockState defaultState;
 
-    @Inject(method="onBroken", at=@At("RETURN"))
+    @Inject(method = "onBroken", at = @At("RETURN"))
     void event(WorldAccess world, BlockPos pos, BlockState state, CallbackInfo ci) {
         EssentialsDynmapModule.core.listenerManager.processBlockEvent(DynmapListenerManager.EventType.BLOCK_BREAK, this.defaultState.getMaterial().toString(), world.toString(), pos.getX(), pos.getY(), pos.getZ());
     }

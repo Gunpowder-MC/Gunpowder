@@ -25,34 +25,34 @@
 package io.github.nyliummc.essentials.configs
 
 data class CustomHead(
-    val id: String,
-    val name: String,
-    val uuid: String,
-    val url: String,
-    val nbt: String?
+        val id: String,
+        val name: String,
+        val uuid: String,
+        val url: String,
+        val nbt: String?
 )
 
 data class VanillaTweaksConfig(
-    val creeperExplosionStrength: Int,
-    val ghastExplosionStrength: Int,
-    val allowEndermanPickup: Boolean,
-    val silenceNametagValues: List<String>,
-    val playersDropHeads: Boolean,
-    val mobHeadChance: Int,
-    val customHeads: List<CustomHead>
+        val creeperExplosionStrength: Int,
+        val ghastExplosionStrength: Int,
+        val allowEndermanPickup: Boolean,
+        val silenceNametagValues: List<String>,
+        val playersDropHeads: Boolean,
+        val mobHeadChance: Int,
+        val customHeads: List<CustomHead>
 )
 
 data class VoodooConfig(
-    val shulkermites: Boolean,
-    val silentWither: Boolean,
-    val safeDoors: Boolean,
-    val autoSaplings: Boolean,
-    val apiaristSuit: Boolean,
-    val invisibleItemFrames: Boolean,
-    val netheriteFireImmune: Boolean
+        val shulkermites: Boolean,
+        val silentWither: Boolean,
+        val safeDoors: Boolean,
+        val autoSaplings: Boolean,
+        val apiaristSuit: Boolean,
+        val invisibleItemFrames: Boolean,
+        val netheriteFireImmune: Boolean
 )
 
 data class DatapacksConfig(
-    val vanillaTweaks: VanillaTweaksConfig,
-    val voodooBeard: VoodooConfig
+        val vanillaTweaks: VanillaTweaksConfig,
+        val voodooBeard: VoodooConfig
 )

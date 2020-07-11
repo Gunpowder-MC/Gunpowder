@@ -113,7 +113,7 @@ allprojects { currentProject ->
     // Jars
 
     if (currentProject.name.contains("-api")) {
-    // if (false) {
+        // if (false) {
         jar {
             classifier = ""
         }

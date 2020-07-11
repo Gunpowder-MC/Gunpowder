@@ -39,9 +39,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin_Dynmap {
-    @Inject(method = "<init>", at=@At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     void event(MinecraftServer minecraftServer, ClientConnection clientConnection, ServerPlayerEntity serverPlayerEntity, CallbackInfo ci) {
-        FabricDynmapOnlinePlayer p = ((FabricDynmapServer)EssentialsDynmapModule.core.getServer()).getUser(serverPlayerEntity);
+        FabricDynmapOnlinePlayer p = ((FabricDynmapServer) EssentialsDynmapModule.core.getServer()).getUser(serverPlayerEntity);
         EssentialsDynmapModule.core.listenerManager.processPlayerEvent(DynmapListenerManager.EventType.PLAYER_JOIN, p);
     }
 }

@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ZombieEntity.class)
 public class ZombieEntityMixin_Datapacks_Voodoo {
-    @Inject(method="canBreakDoors", at=@At("RETURN"), cancellable=true)
+    @Inject(method = "canBreakDoors", at = @At("RETURN"), cancellable = true)
     void disableDoorBreaking(CallbackInfoReturnable<Boolean> cir) {
         if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getSafeDoors()) {
             cir.setReturnValue(false);

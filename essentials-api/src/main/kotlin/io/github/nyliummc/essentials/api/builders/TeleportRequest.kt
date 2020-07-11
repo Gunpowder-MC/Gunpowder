@@ -25,7 +25,6 @@
 package io.github.nyliummc.essentials.api.builders
 
 import io.github.nyliummc.essentials.api.EssentialsMod
-import net.minecraft.client.util.math.Vector3f
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
@@ -66,9 +65,11 @@ interface TeleportRequest {
         fun dimension(dimension: RegistryKey<DimensionType>) {
             dimension(dimension.value)
         }
+
         fun dimension(dimension: World) {
             dimension(dimension.dimensionRegistryKey)
         }
+
         fun destination(destination: Vec3d)
         fun destination(destination: Vec3i) {
             destination(Vec3d.of(destination))

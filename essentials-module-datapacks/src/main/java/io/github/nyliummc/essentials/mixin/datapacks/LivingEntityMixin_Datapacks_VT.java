@@ -24,9 +24,7 @@
 
 package io.github.nyliummc.essentials.mixin.datapacks;
 
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.JsonReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.nyliummc.essentials.api.EssentialsMod;
 import io.github.nyliummc.essentials.configs.CustomHead;
@@ -39,28 +37,18 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.predicate.NbtPredicate;
-import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.text.WordUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Random;
@@ -71,7 +59,7 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
         super(type, world);
     }
 
-    @Inject(method="onDeath", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
+    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
     void dropHead(DamageSource source, CallbackInfo ci) throws CommandSyntaxException {
         if (source.getAttacker() instanceof ServerPlayerEntity) {
             VanillaTweaksConfig cfg = EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVanillaTweaks();
@@ -83,8 +71,12 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                 List<CustomHead> heads = cfg.getCustomHeads();
                 heads.removeIf((it) -> {
                     try {
-                        if (!it.getId().equalsIgnoreCase(id.toString())) return true;
-                        if (it.getNbt() == null) return false;
+                        if (!it.getId().equalsIgnoreCase(id.toString())) {
+                            return true;
+                        }
+                        if (it.getNbt() == null) {
+                            return false;
+                        }
                         return new NbtPredicate(StringNbtReader.parse(it.getNbt())).test(this);
                     } catch (CommandSyntaxException var3) {
                         throw new JsonSyntaxException("Invalid nbt tag: " + var3.getMessage());
@@ -94,7 +86,7 @@ public abstract class LivingEntityMixin_Datapacks_VT extends Entity {
                 if (shouldDrop && heads.size() >= 1) {
                     ItemStack stack;
 
-                    switch(id.toString()) {
+                    switch (id.toString()) {
                         case "minecraft:skeleton":
                             stack = new ItemStack(Items.SKELETON_SKULL);
                             break;

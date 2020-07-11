@@ -28,17 +28,15 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
-import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import io.github.nyliummc.essentials.entities.TPSTracker
 import io.github.nyliummc.essentials.ext.precision
+import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Util
 import net.minecraft.world.World
-
 import kotlin.streams.toList
 
 

@@ -29,5 +29,6 @@ import java.util.regex.Pattern;
 
 public interface LanguageMixinCast_Base {
     Map<String, String> getTranslations();
+
     Pattern getTokenPattern();
 }

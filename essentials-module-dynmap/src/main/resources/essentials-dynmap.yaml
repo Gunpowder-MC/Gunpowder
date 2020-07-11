@@ -59,11 +59,11 @@ components:
     webchat-permissions: false
     # Limit length of single chat messages
     chatlengthlimit: 256
-  #  # Optional - make players hidden when they are inside/underground/in shadows (#=light level: 0=full shadow,15=sky)
-  #  hideifshadow: 4
-  #  # Optional - make player hidden when they are under cover (#=sky light level,0=underground,15=open to sky)
-  #  hideifundercover: 14
-  #  # (Optional) if true, players that are crouching/sneaking will be hidden
+    #  # Optional - make players hidden when they are inside/underground/in shadows (#=light level: 0=full shadow,15=sky)
+    #  hideifshadow: 4
+    #  # Optional - make player hidden when they are under cover (#=sky light level,0=underground,15=open to sky)
+    #  hideifundercover: 14
+    #  # (Optional) if true, players that are crouching/sneaking will be hidden
     hideifsneaking: false
     # If true, player positions/status is protected (login with ID with dynmap.playermarkers.seeall permission required for info other than self)
     protected-player-info: false
@@ -402,30 +402,30 @@ cyrillic-support: false
 
 # Messages to customize
 msg:
-    maptypes: "Map Types"
-    players: "Players"
-    chatrequireslogin: "Chat Requires Login"
-    chatnotallowed: "You are not permitted to send chat messages"
-    hiddennamejoin: "Player joined"
-    hiddennamequit: "Player quit"
+  maptypes: "Map Types"
+  players: "Players"
+  chatrequireslogin: "Chat Requires Login"
+  chatnotallowed: "You are not permitted to send chat messages"
+  hiddennamejoin: "Player joined"
+  hiddennamequit: "Player quit"
 
 # URL for client configuration (only need to be tailored for proxies or other non-standard configurations)
 url:
-    # configuration URL
-    #configuration: "up/configuration"
-    # update URL
-    #update: "up/world/{world}/{timestamp}"
-    # sendmessage URL
-    #sendmessage: "up/sendmessage"
-    # login URL
-    #login: "up/login"
-    # register URL
-    #register: "up/register"
-    # tiles base URL
-    #tiles: "tiles/"
-    # markers base URL
-    #markers: "tiles/"
-    # Snapshot cache size, in chunks
+# configuration URL
+#configuration: "up/configuration"
+# update URL
+#update: "up/world/{world}/{timestamp}"
+# sendmessage URL
+#sendmessage: "up/sendmessage"
+# login URL
+#login: "up/login"
+# register URL
+#register: "up/register"
+# tiles base URL
+#tiles: "tiles/"
+# markers base URL
+#markers: "tiles/"
+# Snapshot cache size, in chunks
 snapshotcachesize: 500
 # Snapshot cache uses soft references (true), else weak references (false)
 soft-ref-cache: true
