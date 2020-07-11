@@ -8,6 +8,7 @@
     "ExplosionMixin_Claims",
     "PistonBlockMixin",
     "PistonBlockMixin_Claims",
+    "ServerPlayerInteractionManagerMixin_Claims",
     "ServerWorldMixin_Claims"
   ],
   "injectors": {
