@@ -81,7 +81,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             players.removeIf { obj: PlayerEntity -> obj.isSpectator }
 
-            if (players.isEmpty()) {
+            if (players.isEmpty() || treshold <= 0) {
                 (world as SleepSetter).setSleeping(false)
                 return@EndWorldTick
             }
