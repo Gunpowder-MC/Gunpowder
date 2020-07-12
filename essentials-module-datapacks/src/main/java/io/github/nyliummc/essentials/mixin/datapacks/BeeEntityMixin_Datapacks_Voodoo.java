@@ -37,14 +37,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.StreamSupport;
 
 @Mixin(BeeEntity.class)
 public class BeeEntityMixin_Datapacks_Voodoo {
-    @Inject(method="tryAttack", at=@At("HEAD"), cancellable=true)
+    @Inject(method = "tryAttack", at = @At("HEAD"), cancellable = true)
     void apiaristSuitCheck(Entity target, CallbackInfoReturnable<Boolean> cir) {
         if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getApiaristSuit()) {
             if (target instanceof PlayerEntity) {

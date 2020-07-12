@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class MobsModulePlugin implements IMixinConfigPlugin {
+public class ClaimsModulePlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
     }

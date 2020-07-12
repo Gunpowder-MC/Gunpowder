@@ -24,7 +24,6 @@
 
 package io.github.nyliummc.essentials.mixin.dynmap;
 
-import io.github.nyliummc.essentials.api.EssentialsMod;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.IOUtils;
 import org.dynmap.DynmapCore;
@@ -34,9 +33,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.*;
 
-@Mixin(value={DynmapCore.class}, remap=false)
+@Mixin(value = {DynmapCore.class}, remap = false)
 class DynmapCoreMixin {
-    @Redirect(method="initConfiguration", at=@At(value="NEW", target="Ljava/io/File;", ordinal=0))
+    @Redirect(method = "initConfiguration", at = @At(value = "NEW", target = "Ljava/io/File;", ordinal = 0))
     File configFile(File parent, String child) throws IOException {
         File f = new File(FabricLoader.getInstance().getConfigDirectory().getCanonicalPath() + "/essentials-dynmap.yaml");
         if (!f.exists()) {

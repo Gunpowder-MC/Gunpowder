@@ -37,9 +37,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin_Dynmap {
-    @Inject(method="remove", at=@At("HEAD"))
+    @Inject(method = "remove", at = @At("HEAD"))
     void event(ServerPlayerEntity player, CallbackInfo ci) {
-        FabricDynmapOnlinePlayer p = ((FabricDynmapServer)EssentialsDynmapModule.core.getServer()).getUser(player);
+        FabricDynmapOnlinePlayer p = ((FabricDynmapServer) EssentialsDynmapModule.core.getServer()).getUser(player);
         EssentialsDynmapModule.core.listenerManager.processPlayerEvent(DynmapListenerManager.EventType.PLAYER_QUIT, p);
     }
 }

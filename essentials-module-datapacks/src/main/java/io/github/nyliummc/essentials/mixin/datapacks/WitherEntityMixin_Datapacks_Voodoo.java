@@ -26,7 +26,6 @@ package io.github.nyliummc.essentials.mixin.datapacks;
 
 import io.github.nyliummc.essentials.api.EssentialsMod;
 import io.github.nyliummc.essentials.configs.DatapacksConfig;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -41,7 +40,7 @@ public class WitherEntityMixin_Datapacks_Voodoo extends HostileEntity {
         super(entityType, world);
     }
 
-    @Redirect(method="mobTick", at=@At(value="INVOKE", target="Lnet/minecraft/entity/boss/WitherEntity;isSilent()Z"))
+    @Redirect(method = "mobTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/boss/WitherEntity;isSilent()Z"))
     public boolean disableGlobalSound(WitherEntity entity) {
         return EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getSilentWither() || entity.isSilent();
     }

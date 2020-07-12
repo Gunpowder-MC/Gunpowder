@@ -113,7 +113,6 @@ allprojects { currentProject ->
     // Jars
 
     if (currentProject.name.contains("-api")) {
-    // if (false) {
         jar {
             classifier = ""
         }
@@ -162,12 +161,6 @@ allprojects { currentProject ->
                 }
             }
         }
-    }
-
-    // Artifacts? Not sure why this is needed
-
-    artifacts {
-        // dev file: file("${project.buildDir}/libs/$archivesBaseName-${project.version}-dev.jar"), type: "jar", builtBy: jar
     }
 
     // Set version in fabric.mod.json

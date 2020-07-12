@@ -49,7 +49,7 @@ import java.util.concurrent.CompletableFuture
 
 
 class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
-                                private val world: ServerWorld, chunks: List<DynmapChunk>): MapChunkCache() {
+                                private val world: ServerWorld, chunks: List<DynmapChunk>) : MapChunkCache() {
     private val chunkManager = world.chunkManager
     private val chunksToLoad = LinkedList<ChunkPos>()
     private val chunkFutures = arrayListOf<CompletableFuture<Either<Chunk, Unloaded>>>()
@@ -113,6 +113,7 @@ class FabricDynmapMapChunkCache(private val fworld: FabricDynmapWorld,
         chunkFutures.clear();
         chunks.clear();
     }
+
     override fun isEmptySection(sx: Int, sy: Int, sz: Int): Boolean {
         val c = chunks[ChunkPos(sx, sz)]
         return c?.sectionArray?.get(sy)?.isEmpty ?: false

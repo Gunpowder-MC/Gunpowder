@@ -79,7 +79,7 @@ object FlightCommand {
         return 1
     }
 
-    private fun toggleFlight (player: ServerPlayerEntity) {
+    private fun toggleFlight(player: ServerPlayerEntity) {
         if (ESSENTIALS_ABILITY_FLY.grants(player, VanillaAbilities.FLYING)) {
             ESSENTIALS_ABILITY_FLY.revokeFrom(player, VanillaAbilities.ALLOW_FLYING)
             ESSENTIALS_ABILITY_FLY.revokeFrom(player, VanillaAbilities.FLYING)

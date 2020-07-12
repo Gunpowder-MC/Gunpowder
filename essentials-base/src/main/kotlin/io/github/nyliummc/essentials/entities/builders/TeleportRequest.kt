@@ -36,8 +36,6 @@ import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.World
-import net.minecraft.world.dimension.DimensionType
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.TemporalUnit

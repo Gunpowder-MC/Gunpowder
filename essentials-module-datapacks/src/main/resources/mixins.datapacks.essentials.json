@@ -2,7 +2,7 @@
   "required": true,
   "package": "io.github.nyliummc.essentials.mixin.datapacks",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "io.github.nyliummc.essentials.mixin.plugin.MobsModulePlugin",
+  "plugin": "io.github.nyliummc.essentials.mixin.plugin.DatapacksModulePlugin",
   "mixins": [
     "BeeEntityMixin_Datapacks_Voodoo",
     "CreeperEntityMixin_Datapacks_VT",

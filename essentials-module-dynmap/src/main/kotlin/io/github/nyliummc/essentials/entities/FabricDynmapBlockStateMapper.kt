@@ -27,7 +27,6 @@ package io.github.nyliummc.essentials.entities
 import net.minecraft.block.BlockState
 import net.minecraft.block.Material
 import net.minecraft.state.property.Properties
-import net.minecraft.state.property.Property
 import net.minecraft.util.registry.Registry
 import org.dynmap.renderer.DynmapBlockState
 import java.util.*

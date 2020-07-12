@@ -97,6 +97,7 @@ class EssentialsDynmapModule : EssentialsModule {
 
     companion object {
         var instance: EssentialsDynmapModule? = null
+
         @JvmField
         val core = DynmapCore()
     }

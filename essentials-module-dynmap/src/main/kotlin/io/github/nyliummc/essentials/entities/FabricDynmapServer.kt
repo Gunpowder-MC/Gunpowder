@@ -144,7 +144,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
             return true
         }
 
-        when(type) {
+        when (type) {
             DynmapListenerManager.EventType.WORLD_LOAD,
             DynmapListenerManager.EventType.WORLD_UNLOAD,
             DynmapListenerManager.EventType.PLAYER_JOIN,
@@ -232,7 +232,7 @@ class FabricDynmapServer(private val server: MinecraftServer) : DynmapServerInte
 
     override fun isSignAt(wname: String?, x: Int, y: Int, z: Int): Int {
         val dtype = RegistryKey.of(Registry.DIMENSION, Identifier(wname))
-        return if(server.getWorld(dtype)!!.getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
+        return if (server.getWorld(dtype)!!.getBlockState(BlockPos(x, y, z)).block is SignBlock) 1 else 0
     }
 
     override fun getServerTPS(): Double {
