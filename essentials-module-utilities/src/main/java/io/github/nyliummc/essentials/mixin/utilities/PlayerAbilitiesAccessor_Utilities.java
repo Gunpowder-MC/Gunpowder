@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerAbilities.class)
-public abstract class PlayerAbilitiesAccessor implements SpeedSetter {
+public abstract class PlayerAbilitiesAccessor_Utilities implements SpeedSetter {
     @Shadow
     private float walkSpeed;
 
