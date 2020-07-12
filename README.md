@@ -39,6 +39,12 @@ Chat module. Provides nicknames and chat colors.
 </details>
 
 <details>
+<summary>Claims</summary>
+
+The Claims module provides the API backend for claiming chunks.
+</details>
+
+<details>
 <summary>Currency</summary>
 <h5>Description</h5>
 
