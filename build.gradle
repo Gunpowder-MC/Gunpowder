@@ -268,7 +268,7 @@ curseforge {
         id = "350123"
         releaseType = "release"
         changelogType = "markdown"
-        changelog = "Fix various issues posted on CF and Github"
+        changelog = "Fix various issues"
         addGameVersion project.minecraft
         addGameVersion "Fabric"
         addGameVersion "Java 8"
