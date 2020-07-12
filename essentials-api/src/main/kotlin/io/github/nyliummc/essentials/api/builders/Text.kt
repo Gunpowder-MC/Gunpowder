@@ -42,8 +42,15 @@ interface Text {
     }
 
     interface Builder {
+        /**
+         * Add text
+         */
         fun text(text: String)
         fun text(text: MCText)
+
+        /**
+         * Add styled text
+         */
         fun text(text: String, callback: StyleBuilder.() -> Unit)
         fun text(text: MCText, callback: StyleBuilder.() -> Unit)
 
@@ -52,15 +59,35 @@ interface Text {
     }
 
     interface StyleBuilder {
+        /**
+         * Run a command when clicked
+         */
         fun onClickCommand(command: String)
+
+        /**
+         * Text to show when hovering
+         */
         fun onHoverText(tooltip: String)
+
+        /**
+         * Color of text
+         */
         fun color(color: Formatting)
+
         fun bold()
         fun italic()
         fun strikethrough()
         fun underlined()
         fun obfuscated()
+
+        /**
+         * What to do when clicked
+         */
         fun onClickEvent(event: ClickEvent)
+
+        /**
+         * What to do when hovering
+         */
         fun onHoverEvent(event: HoverEvent)
     }
 }

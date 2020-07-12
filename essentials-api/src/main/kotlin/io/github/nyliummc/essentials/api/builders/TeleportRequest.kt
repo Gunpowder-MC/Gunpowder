@@ -52,15 +52,32 @@ interface TeleportRequest {
         }
     }
 
+    /**
+     * Teleport after specified seconds
+     */
     fun execute(seconds: Long) {
         execute(seconds, ChronoUnit.SECONDS)
     }
 
+    /**
+     * Teleport after specified amount of time
+     */
     fun execute(time: Long, unit: TemporalUnit)
 
     interface Builder {
+        /**
+         * Player to teleport
+         */
         fun player(player: ServerPlayerEntity)
+
+        /**
+         * Direction the player faces
+         */
         fun facing(facing: Vec2f)
+
+        /**
+         * Dimension to teleport to
+         */
         fun dimension(dimension: Identifier)
         fun dimension(dimension: RegistryKey<DimensionType>) {
             dimension(dimension.value)
@@ -75,6 +92,9 @@ interface TeleportRequest {
             destination(Vec3d.of(destination))
         }
 
+        /**
+         * Callback to run after teleporting
+         */
         fun onComplete(callback: () -> Unit)
 
         @Deprecated("Used internally, do not use.")

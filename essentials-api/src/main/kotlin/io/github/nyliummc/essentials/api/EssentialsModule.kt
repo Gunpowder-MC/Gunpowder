@@ -30,5 +30,9 @@ interface EssentialsModule {
     fun registerCommands() {}
     fun registerEvents() {}
     fun registerConfigs() {}
+
+    /**
+     * Register Database-related stuff here for now
+     */
     fun onInitialize() {}
 }
