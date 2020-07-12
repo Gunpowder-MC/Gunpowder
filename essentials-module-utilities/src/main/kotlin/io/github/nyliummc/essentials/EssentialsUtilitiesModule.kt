@@ -49,6 +49,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
 
     override fun registerCommands() {
+        essentials.registry.registerCommand(EnderchestCommand::register)
         essentials.registry.registerCommand(FlightCommand::register)
         essentials.registry.registerCommand(GodCommand::register)
         essentials.registry.registerCommand(HatCommand::register)
