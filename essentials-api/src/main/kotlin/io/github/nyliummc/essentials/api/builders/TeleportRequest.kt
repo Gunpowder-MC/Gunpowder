@@ -87,6 +87,9 @@ interface TeleportRequest {
             dimension(dimension.dimensionRegistryKey)
         }
 
+        /**
+         * Coordinates to teleport to
+         */
         fun destination(destination: Vec3d)
         fun destination(destination: Vec3i) {
             destination(Vec3d.of(destination))

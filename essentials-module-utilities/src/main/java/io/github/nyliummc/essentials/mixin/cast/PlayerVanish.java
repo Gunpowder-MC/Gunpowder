@@ -25,6 +25,7 @@
 package io.github.nyliummc.essentials.mixin.cast;
 
 public interface PlayerVanish {
-    void setVanished(boolean enabled);
     boolean isVanished();
+
+    void setVanished(boolean enabled);
 }

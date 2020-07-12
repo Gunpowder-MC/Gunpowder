@@ -88,6 +88,9 @@ class TeleportRequest private constructor(
 
         override fun player(player: ServerPlayerEntity) {
             this.player = player
+            if (dimension == null) {
+                dimension = player.world.dimensionRegistryKey.value
+            }
         }
 
         override fun facing(facing: Vec2f) {

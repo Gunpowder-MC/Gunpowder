@@ -39,11 +39,14 @@ import java.util.List;
 
 @Mixin(PlayerListS2CPacket.class)
 public class PlayerListS2CPacketMixin_Utilities {
-    @Shadow @Final private List<PlayerListS2CPacket.Entry> entries;
+    @Shadow
+    @Final
+    private List<PlayerListS2CPacket.Entry> entries;
 
-    @Shadow private PlayerListS2CPacket.Action action;
+    @Shadow
+    private PlayerListS2CPacket.Action action;
 
-    @Inject(method= "write(Lnet/minecraft/network/PacketByteBuf;)V", at=@At("HEAD"))
+    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
     void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
         if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
             this.entries.removeIf((it) -> ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(it.getProfile().getId())).isVanished());
