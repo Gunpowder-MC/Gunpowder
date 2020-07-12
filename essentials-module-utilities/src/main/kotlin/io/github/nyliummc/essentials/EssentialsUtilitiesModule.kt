@@ -33,6 +33,7 @@ import io.github.nyliummc.essentials.ext.precision
 import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.network.MessageType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Util
@@ -57,6 +58,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(HealCommand::register)
         essentials.registry.registerCommand(SpeedCommand::register)
         essentials.registry.registerCommand(TPSCommand::register)
+        // essentials.registry.registerCommand(WorkbenchCommand::register)
     }
 
     override fun registerConfigs() {
@@ -93,13 +95,13 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
                 sleeping.add(it as ServerPlayerEntity)
-                world.server.sendSystemMessage(
-                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"), Util.NIL_UUID)
+                world.server.playerManager.broadcastChatMessage(
+                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"), MessageType.SYSTEM, Util.NIL_UUID)
             }
 
             (world as SleepSetter).setSleeping(shouldSkip)
             if (shouldSkip) {
-                // world.server.playerManager.sendToAll(LiteralText("Good morning!"))
+                world.server.playerManager.broadcastChatMessage(LiteralText("Good morning!"), MessageType.SYSTEM, Util.NIL_UUID)
                 sleeping.clear()
             }
         })
