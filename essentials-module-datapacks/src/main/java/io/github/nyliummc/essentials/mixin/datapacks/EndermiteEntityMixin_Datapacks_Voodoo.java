@@ -43,13 +43,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EndermiteEntity.class)
 public class EndermiteEntityMixin_Datapacks_Voodoo extends HostileEntity {
-    @Shadow private int lifeTime;
+    @Shadow
+    private int lifeTime;
 
     protected EndermiteEntityMixin_Datapacks_Voodoo(EntityType<? extends HostileEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    @Inject(method="tick", at=@At("HEAD"), cancellable=true)
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     void burrow(CallbackInfo ci) {
         if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getShulkermites()) {
             BlockPos below = getBlockPos().down();

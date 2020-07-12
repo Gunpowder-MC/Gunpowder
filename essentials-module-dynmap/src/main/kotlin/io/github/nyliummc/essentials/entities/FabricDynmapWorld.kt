@@ -28,14 +28,12 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.Heightmap
 import net.minecraft.world.LightType
-import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import org.dynmap.DynmapChunk
 import org.dynmap.DynmapLocation
 import org.dynmap.DynmapWorld
 import org.dynmap.utils.MapChunkCache
 import org.dynmap.utils.Polygon
-import java.util.concurrent.Future
 
 
 class FabricDynmapWorld(var world: ServerWorld) : DynmapWorld(getName(world.dimension), world.height, world.seaLevel) {

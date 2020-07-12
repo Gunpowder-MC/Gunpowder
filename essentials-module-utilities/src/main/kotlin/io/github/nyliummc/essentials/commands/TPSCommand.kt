@@ -31,7 +31,6 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.api.builders.Text
 import io.github.nyliummc.essentials.ext.precision
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
 
 object TPSCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {

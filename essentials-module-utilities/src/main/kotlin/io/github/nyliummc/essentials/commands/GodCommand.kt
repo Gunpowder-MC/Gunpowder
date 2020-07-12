@@ -79,7 +79,7 @@ object GodCommand {
         return 1
     }
 
-    private fun toggleGod (player: ServerPlayerEntity) {
+    private fun toggleGod(player: ServerPlayerEntity) {
         if (ESSENTIALS_ABILITY_GOD.grants(player, VanillaAbilities.INVULNERABLE)) {
             ESSENTIALS_ABILITY_GOD.revokeFrom(player, VanillaAbilities.INVULNERABLE)
         } else {

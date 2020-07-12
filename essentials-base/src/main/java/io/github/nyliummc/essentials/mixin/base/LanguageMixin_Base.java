@@ -38,11 +38,13 @@ import java.util.regex.Pattern;
 
 @Mixin(Language.class)
 public class LanguageMixin_Base {
-    @Shadow @Final private static Pattern TOKEN_PATTERN;
+    @Shadow
+    @Final
+    private static Pattern TOKEN_PATTERN;
 
     private static Map<String, String> translations;
 
-    @Inject(method="create", at=@At(value="INVOKE_ASSIGN", target="Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
+    @Inject(method = "create", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
     private static void storeTranslations(CallbackInfoReturnable<Language> cir, ImmutableMap<String, String> map) {
         translations = map;
     }

@@ -35,7 +35,6 @@ import net.minecraft.text.LiteralText
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
-import net.minecraft.world.dimension.DimensionType
 import java.util.*
 
 object BackCommand {

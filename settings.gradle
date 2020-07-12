@@ -17,9 +17,10 @@ include 'essentials-base'
 
 // Modules
 include 'essentials-module-chat'
+include 'essentials-module-claims'
 include 'essentials-module-currency'
+include 'essentials-module-datapacks'
 include 'essentials-module-dynmap'
 include 'essentials-module-market'
-include 'essentials-module-datapacks'
 include 'essentials-module-teleport'
 include 'essentials-module-utilities'

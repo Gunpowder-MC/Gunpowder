@@ -26,8 +26,6 @@ package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
-import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
-import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.TeleportConfig
 import io.github.nyliummc.essentials.events.PlayerTeleportCallback
@@ -36,6 +34,8 @@ import io.github.nyliummc.essentials.modelhandlers.WarpHandler
 import io.github.nyliummc.essentials.models.HomeTable
 import io.github.nyliummc.essentials.models.WarpTable
 import java.util.function.Supplier
+import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
+import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
 
 class EssentialsTeleportModule : EssentialsModule {
     override val name = "teleport"

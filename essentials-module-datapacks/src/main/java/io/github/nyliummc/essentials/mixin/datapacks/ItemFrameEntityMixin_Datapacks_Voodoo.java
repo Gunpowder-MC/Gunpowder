@@ -42,13 +42,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemFrameEntity.class)
 public abstract class ItemFrameEntityMixin_Datapacks_Voodoo extends AbstractDecorationEntity {
-    @Shadow public abstract void setHeldItemStack(ItemStack stack);
-
     protected ItemFrameEntityMixin_Datapacks_Voodoo(EntityType<? extends AbstractDecorationEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    @Inject(method= "setHeldItemStack(Lnet/minecraft/item/ItemStack;)V", at=@At("HEAD"), cancellable=true)
+    @Shadow
+    public abstract void setHeldItemStack(ItemStack stack);
+
+    @Inject(method = "setHeldItemStack(Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"), cancellable = true)
     void makeInvisible(ItemStack stack, CallbackInfo ci) {
         if (stack.getItem() == Items.POTION && !isInvisible()) {
             if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getInvisibleItemFrames() && (PotionUtil.getPotion(stack) == Potions.INVISIBILITY || PotionUtil.getPotion(stack) == Potions.LONG_INVISIBILITY)) {

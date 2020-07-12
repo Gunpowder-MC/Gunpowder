@@ -41,12 +41,12 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.Vec3i
-import net.minecraft.world.dimension.DimensionType
 import java.util.concurrent.CompletableFuture
+import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
 
 object WarpCommand {
     val handler by lazy {
-        EssentialsMod.instance.registry.getModelHandler(WarpHandler::class.java)
+        EssentialsMod.instance.registry.getModelHandler(APIWarpHandler::class.java)
     }
     val teleportDelay by lazy {
         EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).teleportDelay
@@ -116,7 +116,7 @@ object WarpCommand {
     }
 
     fun executeList(context: CommandContext<ServerCommandSource>): Int {
-        val warps = handler.cache
+        val warps = (handler as WarpHandler).cache
         val text = Text.builder {
             text("Warps:")
             warps.forEach {
@@ -160,7 +160,7 @@ object WarpCommand {
     }
 
     fun suggestWarps(context: CommandContext<ServerCommandSource>, builder: SuggestionsBuilder): CompletableFuture<Suggestions> {
-        val homes = handler.cache
+        val homes = (handler as WarpHandler).cache
         // TODO: Match input
         return CommandSource.suggestMatching(homes.map { it.key }, builder)
     }

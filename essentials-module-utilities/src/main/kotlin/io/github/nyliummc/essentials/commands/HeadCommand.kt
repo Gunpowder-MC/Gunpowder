@@ -29,12 +29,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.builders.Command
-import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.LiteralText
 import net.minecraft.util.ItemScatterer
 
 

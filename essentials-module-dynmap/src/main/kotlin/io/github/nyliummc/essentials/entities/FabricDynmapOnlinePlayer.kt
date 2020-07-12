@@ -26,7 +26,6 @@ package io.github.nyliummc.essentials.entities
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
-import net.minecraft.world.dimension.DimensionType
 import org.dynmap.DynmapLocation
 import org.dynmap.common.DynmapPlayer
 import java.net.InetSocketAddress

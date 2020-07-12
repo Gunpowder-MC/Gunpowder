@@ -48,9 +48,10 @@ public abstract class ItemEntityMixin_Datapacks_Voodoo extends Entity {
         super(type, world);
     }
 
-    @Shadow public abstract ItemStack getStack();
+    @Shadow
+    public abstract ItemStack getStack();
 
-    @Inject(method="tick", at=@At("HEAD"), cancellable=true)
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     void plantSaplings(CallbackInfo ci) {
         Item i = getStack().getItem();
         if (i instanceof BlockItem && age >= 600) {
