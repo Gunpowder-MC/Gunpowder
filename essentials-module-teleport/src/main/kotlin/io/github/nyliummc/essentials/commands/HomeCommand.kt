@@ -108,6 +108,10 @@ object HomeCommand {
             destination(home.location)
         }.execute(teleportDelay.toLong())
 
+        if (teleportDelay > 0) {
+            context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
+        }
+
         return 1
     }
 
@@ -125,6 +129,10 @@ object HomeCommand {
             dimension(home.dimension)
             destination(home.location)
         }.execute(teleportDelay.toLong())
+
+        if (teleportDelay > 0) {
+            context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
+        }
 
         return 1
     }

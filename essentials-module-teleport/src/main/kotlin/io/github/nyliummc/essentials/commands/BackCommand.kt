@@ -73,6 +73,10 @@ object BackCommand {
                 dimension(p.dimension.dimensionRegistryKey.value)
             }
 
+            if (teleportDelay > 0) {
+                context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
+            }
+
             request.execute(teleportDelay.toLong())
 
             return 1

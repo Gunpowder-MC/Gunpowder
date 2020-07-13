@@ -37,6 +37,14 @@ allprojects { currentProject ->
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+        afterEvaluate {
+            input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+            archiveName = "${archivesBaseName}-${version}.jar"
+            addNestedDependencies = true
+        }
+    }
+
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -127,6 +135,14 @@ allprojects { currentProject ->
     } else {
         jar {
             enabled = false
+            classifier = "dev"
+
+            doLast {
+                delete fileTree("${project.buildDir}/") {
+                    include "classes/java/main/*refmap*.json"
+                    include "classes/java/**/*"
+                }
+            }
         }
 
         // TODO: Delete jar if present
@@ -151,8 +167,10 @@ allprojects { currentProject ->
         }
 
         remapJar {
-            input = file(shadowJar.archivePath)
+            enabled = false
+        }
 
+        remapShadowJar {
             doLast {
                 delete fileTree("${project.buildDir}/") {
                     include "resources/**/*.json"
@@ -211,8 +229,8 @@ for (Project it : subprojects) {
         it.shadowJar.dependsOn(it.compileKotlin)
         it.shadowJar.dependsOn(it.processResources)
         it.sourcesJar.dependsOn(it.shadowJar)
-        it.remapJar.dependsOn(it.sourcesJar)
-        last = it.remapJar as Task
+        it.remapShadowJar.dependsOn(it.sourcesJar)
+        last = it.remapShadowJar as Task
     }
 }
 build.dependsOn(last)
@@ -255,6 +273,10 @@ remapJar {
     enabled = false
 }
 
+remapShadowJar {
+    enabled = false
+}
+
 remapSourcesJar {
     enabled = false
 }
@@ -268,7 +290,7 @@ curseforge {
         id = "350123"
         releaseType = "release"
         changelogType = "markdown"
-        changelog = "Fix various issues"
+        changelog = file("CHANGELOG.md").readLines().join("\n")
         addGameVersion project.minecraft
         addGameVersion "Fabric"
         addGameVersion "Java 8"

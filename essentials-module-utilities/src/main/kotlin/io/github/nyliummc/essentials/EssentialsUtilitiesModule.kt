@@ -58,6 +58,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(HealCommand::register)
         essentials.registry.registerCommand(SpeedCommand::register)
         essentials.registry.registerCommand(TPSCommand::register)
+        essentials.registry.registerCommand(TrashCommand::register)
         // essentials.registry.registerCommand(WorkbenchCommand::register)
     }
 

@@ -83,6 +83,10 @@ object RTPCommand {
             facing(player.rotationClient)
         }.execute(config.teleportDelay.toLong())
 
+        if (config.teleportDelay > 0) {
+            context.source.sendFeedback(LiteralText("Teleporting in ${config.teleportDelay.toLong()} seconds..."), false)
+        }
+
         return 1
     }
 }
