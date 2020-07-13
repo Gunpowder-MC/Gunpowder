@@ -1,3 +1,18 @@
+## Essentials 0.2.4
+
+Bugs fixed:
+
+- Fix chat spam when sleeping
+
+New Features:
+
+- None 
+
+Improvements:
+
+- None
+
+
 ## Essentials 0.2.3
 
 Bugs fixed:

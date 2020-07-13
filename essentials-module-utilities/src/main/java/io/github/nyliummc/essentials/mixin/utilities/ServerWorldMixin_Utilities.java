@@ -26,16 +26,43 @@ package io.github.nyliummc.essentials.mixin.utilities;
 
 import io.github.nyliummc.essentials.mixin.cast.SleepSetter;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.MutableWorldProperties;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.function.Supplier;
+
 @Mixin(ServerWorld.class)
-public class ServerWorldMixin_Utilities implements SleepSetter {
+public abstract class ServerWorldMixin_Utilities extends World implements SleepSetter {
     @Shadow
     private boolean allPlayersSleeping;
+
+    @Shadow public abstract void method_29199(long l);
+
+    @Shadow protected abstract void wakeSleepingPlayers();
+
+    @Shadow protected abstract void resetWeather();
+
+    protected ServerWorldMixin_Utilities(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, RegistryKey<DimensionType> registryKey2, DimensionType dimensionType, Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
+        super(mutableWorldProperties, registryKey, registryKey2, dimensionType, profiler, bl, bl2, l);
+    }
 
     @Override
     public void setSleeping(boolean sleeping) {
         this.allPlayersSleeping = sleeping;
+        if (getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
+            long l = this.properties.getTimeOfDay() + 24000L;
+            method_29199(l - l % 24000L);
+        }
+
+        wakeSleepingPlayers();
+        if (this.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
+            resetWeather();
+        }
     }
 }
