@@ -2,7 +2,7 @@
 
 Bugs fixed:
 
-- Fix chat spam when sleeping
+- (module-utilities) Fix chat spam when sleeping
 
 New Features:
 
