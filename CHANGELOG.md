@@ -2,6 +2,7 @@
 
 Bugs fixed:
 
+- (all) Fix accesswidener not being remapped
 - (module-utilities) Fix chat spam when sleeping
 
 New Features:

@@ -42,6 +42,7 @@ allprojects { currentProject ->
             input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
             archiveName = "${archivesBaseName}-${version}.jar"
             addNestedDependencies = true
+            remapAccessWidener = true
         }
     }
 
@@ -152,13 +153,6 @@ allprojects { currentProject ->
             // Only shadow implementation/modImplementation
             configurations = [project.configurations.shade]
             classifier = "dev"
-
-            doLast {
-                delete fileTree("${project.buildDir}/") {
-                    include "classes/java/main/*refmap*.json"
-                    include "classes/java/**/*"
-                }
-            }
         }
 
         task sourcesJar(type: Jar, dependsOn: classes) {
@@ -176,6 +170,8 @@ allprojects { currentProject ->
                     include "resources/**/*.json"
                     include "resources/**/*.yaml"
                     include "resources/**/*.accesswidener"
+                    include "classes/java/main/*refmap*.json"
+                    include "classes/java/**/*"
                 }
             }
         }

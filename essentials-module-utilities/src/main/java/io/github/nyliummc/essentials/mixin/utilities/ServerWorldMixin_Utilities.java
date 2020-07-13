@@ -55,14 +55,17 @@ public abstract class ServerWorldMixin_Utilities extends World implements SleepS
     @Override
     public void setSleeping(boolean sleeping) {
         this.allPlayersSleeping = sleeping;
-        if (getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-            long l = this.properties.getTimeOfDay() + 24000L;
-            method_29199(l - l % 24000L);
-        }
 
-        wakeSleepingPlayers();
-        if (this.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
-            resetWeather();
+        if (sleeping) {
+            if (getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
+                long l = this.properties.getTimeOfDay() + 24000L;
+                method_29199(l - l % 24000L);
+            }
+
+            wakeSleepingPlayers();
+            if (this.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE)) {
+                resetWeather();
+            }
         }
     }
 }
