@@ -1,0 +1,5 @@
+archivesBaseName = "essentials-module-simpleclaims"
+
+dependencies {
+    compile project(":essentials-api")
+}

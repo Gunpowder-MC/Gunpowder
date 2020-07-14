@@ -34,6 +34,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 import io.github.nyliummc.essentials.api.module.claims.modelhandlers.ClaimHandler as APIClaimHandler
 
 object ClaimHandler : APIClaimHandler {
@@ -151,5 +152,9 @@ object ClaimHandler : APIClaimHandler {
             return true
         }
         return false
+    }
+
+    override fun getClaims(uuid: UUID): List<StoredClaim> {
+        return claimMap.values.filter { it.owner == uuid }.toList()
     }
 }

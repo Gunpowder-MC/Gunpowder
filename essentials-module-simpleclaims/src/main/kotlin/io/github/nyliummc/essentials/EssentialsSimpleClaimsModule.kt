@@ -22,22 +22,23 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.module.claims.modelhandlers
+package io.github.nyliummc.essentials
 
-import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaim
-import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAuthorized
-import net.minecraft.util.math.ChunkPos
-import java.util.*
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.ClaimCommand
+import io.github.nyliummc.essentials.configs.SimpleClaimsConfig
 
-interface ClaimHandler {
-    fun isChunkClaimed(chunk: ChunkPos): Boolean
+class EssentialsSimpleClaimsModule : EssentialsModule {
+    override val name = "simpleclaims"
+    override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
 
-    fun createClaim(data: StoredClaim): Boolean
-    fun getClaim(chunk: ChunkPos): StoredClaim
-    fun deleteClaim(chunk: ChunkPos): Boolean
+    override fun registerCommands() {
+        essentials.registry.registerCommand(ClaimCommand::register)
+    }
 
-    fun getClaimAllowed(chunk: ChunkPos): List<StoredClaimAuthorized>
-    fun addClaimAllowed(data: StoredClaimAuthorized): Boolean
-    fun removeClaimAllowed(data: StoredClaimAuthorized): Boolean
-    fun getClaims(uuid: UUID): List<StoredClaim>
+    override fun registerConfigs() {
+        essentials.registry.registerConfig("essentials-claims.yaml", SimpleClaimsConfig::class.java, "essentials-claims.yaml")
+    }
 }

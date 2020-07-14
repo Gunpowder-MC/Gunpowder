@@ -22,22 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.module.claims.modelhandlers
+package io.github.nyliummc.essentials.configs
 
-import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaim
-import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAuthorized
-import net.minecraft.util.math.ChunkPos
-import java.util.*
-
-interface ClaimHandler {
-    fun isChunkClaimed(chunk: ChunkPos): Boolean
-
-    fun createClaim(data: StoredClaim): Boolean
-    fun getClaim(chunk: ChunkPos): StoredClaim
-    fun deleteClaim(chunk: ChunkPos): Boolean
-
-    fun getClaimAllowed(chunk: ChunkPos): List<StoredClaimAuthorized>
-    fun addClaimAllowed(data: StoredClaimAuthorized): Boolean
-    fun removeClaimAllowed(data: StoredClaimAuthorized): Boolean
-    fun getClaims(uuid: UUID): List<StoredClaim>
-}
+data class SimpleClaimsConfig(
+        val maxClaimChunks: Int,
+        val price: Double
+)
