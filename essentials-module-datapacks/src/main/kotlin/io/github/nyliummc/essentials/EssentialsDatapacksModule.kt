@@ -25,20 +25,47 @@
 package io.github.nyliummc.essentials
 
 import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsMod.Companion.instance
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.configs.DatapacksConfig
+import io.github.nyliummc.essentials.events.PlayerDeathCallback
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtHelper
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
+import net.minecraft.util.ItemScatterer
 
 class EssentialsDatapacksModule : EssentialsModule {
     override val name = "datapacks"
     override val toggleable = true
     val essentials: EssentialsMod = EssentialsMod.instance
 
-    override fun registerCommands() {
-
-    }
-
     override fun registerConfigs() {
         essentials.registry.registerConfig("essentials-datapacks.yaml", DatapacksConfig::class.java, "essentials-datapacks.yaml")
+    }
+
+    override fun registerEvents() {
+        PlayerDeathCallback.EVENT.register(PlayerDeathCallback { player, source ->
+            if (source.attacker is ServerPlayerEntity && source.attacker !== player) {
+                // Killed by another player
+                if (instance.registry.getConfig(DatapacksConfig::class.java).vanillaTweaks.playersDropHeads) {
+                    // Dropping heads enabled
+                    val stack = ItemStack(Items.PLAYER_HEAD)
+                    var name: Text? = player.customName
+                    if (name == null) {
+                        name = player.name
+                    }
+                    stack.setCustomName(LiteralText(name!!.asString() + "'s Head").styled { style: Style -> style.withColor(Formatting.DARK_BLUE) })
+                    stack.orCreateTag.put("SkullOwner", NbtHelper.fromGameProfile(CompoundTag(), player.gameProfile))
+                    ItemScatterer.spawn(player.world, player.x, player.y, player.z, stack)
+                }
+            }
+        })
     }
 
     override fun onInitialize() {

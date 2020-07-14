@@ -7,11 +7,11 @@ Bugs fixed:
 
 New Features:
 
-- None 
+- (module-teleport) Add death support to /back
 
 Improvements:
 
-- None
+- (api) Add PlayerDeathCallback (+ updated onDeath mixins to use this callback)
 
 
 ## Essentials 0.2.3
