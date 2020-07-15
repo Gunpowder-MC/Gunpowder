@@ -27,16 +27,18 @@ package io.github.nyliummc.essentials.api.module.claims.modelhandlers
 import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaim
 import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAuthorized
 import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
 import java.util.*
 
 interface ClaimHandler {
-    fun isChunkClaimed(chunk: ChunkPos): Boolean
+    fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean
 
     fun createClaim(data: StoredClaim): Boolean
-    fun getClaim(chunk: ChunkPos): StoredClaim
-    fun deleteClaim(chunk: ChunkPos): Boolean
+    fun getClaim(chunk: ChunkPos, dimension: RegistryKey<World>): StoredClaim
+    fun deleteClaim(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean
 
-    fun getClaimAllowed(chunk: ChunkPos): List<StoredClaimAuthorized>
+    fun getClaimAllowed(chunk: ChunkPos, dimension: RegistryKey<World>): List<StoredClaimAuthorized>
     fun addClaimAllowed(data: StoredClaimAuthorized): Boolean
     fun removeClaimAllowed(data: StoredClaimAuthorized): Boolean
     fun getClaims(uuid: UUID): List<StoredClaim>

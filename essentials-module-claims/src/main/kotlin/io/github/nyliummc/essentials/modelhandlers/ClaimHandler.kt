@@ -28,67 +28,67 @@ import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaim
 import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAuthorized
 import io.github.nyliummc.essentials.models.ClaimAuthorizedTable
 import io.github.nyliummc.essentials.models.ClaimTable
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.ChunkPos
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import io.github.nyliummc.essentials.api.module.claims.modelhandlers.ClaimHandler as APIClaimHandler
 
 object ClaimHandler : APIClaimHandler {
-    private val claimMap = mutableMapOf<ChunkPos, StoredClaim>();
+    private val claimMap = mutableMapOf<RegistryKey<World>, MutableMap<ChunkPos, StoredClaim>>();
     private val claimAuthorizedMap = mutableMapOf<StoredClaim, MutableList<StoredClaimAuthorized>>();
 
     init {
         loadAllClaims()
+
+        ClaimTable.selectAll().forEach {
+            val chunk = ChunkPos(it[ClaimTable.chunkX], it[ClaimTable.chunkZ]);
+            val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(it[ClaimTable.dimension]))
+            claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = StoredClaim(it[ClaimTable.owner], chunk, dimension)
+        }
     }
 
     private fun loadAllClaims() {
-        val claims = transaction {
-            ClaimTable.selectAll().map {
-                val chunk = ChunkPos(it[ClaimTable.chunkX], it[ClaimTable.chunkZ]);
-                chunk to StoredClaim(it[ClaimTable.owner], chunk)
-            }.toMap()
-        }
+        val claimsTemp = mutableMapOf<Int, StoredClaim>()
 
-        val auth = transaction {
-            ClaimAuthorizedTable.selectAll().map {
-                val chunk = ChunkPos(it[ClaimAuthorizedTable.claimX], it[ClaimAuthorizedTable.claimZ]);
-                claims[chunk]!! to StoredClaimAuthorized(claims[chunk]!!, it[ClaimAuthorizedTable.user])
-            }
-        }
-
-        claimMap.putAll(claims)
-        auth.forEach {
-            if (!claimAuthorizedMap.containsKey(it.first)) {
-                claimAuthorizedMap[it.first] = mutableListOf(it.second)
-            } else {
-                claimAuthorizedMap[it.first]!!.add(it.second)
+        transaction {
+            ClaimAuthorizedTable.selectAll().forEach {
+                val claim = claimsTemp.getOrPut(it[ClaimAuthorizedTable.claim]) {
+                    val c = ClaimTable.select { ClaimTable.id.eq(it[ClaimAuthorizedTable.claim]) }.first()
+                    val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(c[ClaimTable.dimension]))
+                    val chunk = ChunkPos(c[ClaimTable.chunkX], c[ClaimTable.chunkZ])
+                    val cl = StoredClaim(c[ClaimTable.owner], chunk, dimension)
+                    claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = cl
+                    cl
+                }
+                claimAuthorizedMap[claim]!!.add(StoredClaimAuthorized(claim, it[ClaimAuthorizedTable.user]))
             }
         }
     }
 
-    override fun isChunkClaimed(chunk: ChunkPos): Boolean {
-        return claimMap[chunk] != null
+    override fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {
+        return claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] != null
     }
 
     override fun createClaim(data: StoredClaim): Boolean {
-        if (claimMap[data.chunk] != null) {
+        if (claimMap.getOrPut(data.dimension, ::mutableMapOf)[data.chunk] != null) {
             return false
         }
 
         transaction {
-            ClaimTable.insert {
+            val c = ClaimTable.insert {
                 it[chunkX] = data.chunk.startX shr 4
                 it[chunkZ] = data.chunk.startZ shr 4
+                it[dimension] = data.dimension.value.toString()
                 it[owner] = data.owner
             }
 
             ClaimAuthorizedTable.insert {
-                it[claimX] = data.chunk.startX shr 4
-                it[claimZ] = data.chunk.startZ shr 4
+                it[claim] = c[ClaimTable.id]
                 it[user] = data.owner
             }
         }
@@ -96,29 +96,32 @@ object ClaimHandler : APIClaimHandler {
         return true
     }
 
-    override fun getClaim(chunk: ChunkPos): StoredClaim {
-        return claimMap[chunk]!!
+    override fun getClaim(chunk: ChunkPos, dimension: RegistryKey<World>): StoredClaim {
+        return claimMap[dimension]!![chunk]!!
     }
 
-    override fun deleteClaim(chunk: ChunkPos): Boolean {
-        if (!claimMap.containsKey(chunk)) {
+    override fun deleteClaim(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {
+        if (!claimMap.getOrPut(dimension, ::mutableMapOf).containsKey(chunk)) {
             return false
         }
 
-        val stored = claimMap[chunk]!!
+        val stored = claimMap[dimension]!![chunk]!!
         claimAuthorizedMap.remove(stored)
-        claimMap.remove(chunk)
+        claimMap[dimension]!!.remove(chunk)
 
         transaction {
-            ClaimAuthorizedTable.deleteWhere { ClaimAuthorizedTable.claimX.eq(chunk.startX shr 4).and(ClaimAuthorizedTable.claimZ.eq(chunk.startZ shr 4)) }
-            ClaimTable.deleteWhere { ClaimTable.chunkX.eq(chunk.startX shr 4).and(ClaimTable.chunkZ.eq(chunk.startZ shr 4)) }
+            ClaimTable.deleteWhere {
+                ClaimTable.chunkX.eq(chunk.startX shr 4)
+                        .and(ClaimTable.chunkZ.eq(chunk.startZ shr 4))
+                        .and(ClaimTable.dimension.eq(dimension.value.toString()))
+            }
         }
 
         return true
     }
 
-    override fun getClaimAllowed(chunk: ChunkPos): List<StoredClaimAuthorized> {
-        return claimAuthorizedMap[claimMap[chunk]!!]!!.toList();
+    override fun getClaimAllowed(chunk: ChunkPos, dimension: RegistryKey<World>): List<StoredClaimAuthorized> {
+        return claimAuthorizedMap[claimMap[dimension]!![chunk]!!]!!.toList();
     }
 
     override fun addClaimAllowed(data: StoredClaimAuthorized): Boolean {
@@ -129,9 +132,14 @@ object ClaimHandler : APIClaimHandler {
         claimAuthorizedMap[data.claim]!!.add(data);
 
         transaction {
+            val c = ClaimTable.select {
+                ClaimTable.chunkX.eq(data.claim.chunk.startX)
+                        .and(ClaimTable.chunkZ.eq(data.claim.chunk.startZ shr 4))
+                        .and(ClaimTable.dimension.eq(data.claim.dimension.value.toString()))
+            }.first()
+
             ClaimAuthorizedTable.insert {
-                it[claimX] = data.claim.chunk.startX shr 4
-                it[claimZ] = data.claim.chunk.startZ shr 4
+                it[claim] = c[ClaimTable.id]
                 it[user] = data.user
             }
         }
@@ -144,8 +152,15 @@ object ClaimHandler : APIClaimHandler {
             claimAuthorizedMap[data.claim]!!.remove(data)
 
             transaction {
+                val c = ClaimTable.select {
+                    ClaimTable.chunkX.eq(data.claim.chunk.startX)
+                            .and(ClaimTable.chunkZ.eq(data.claim.chunk.startZ shr 4))
+                            .and(ClaimTable.dimension.eq(data.claim.dimension.value.toString()))
+                }.first()
+
                 ClaimAuthorizedTable.deleteWhere {
-                    ClaimAuthorizedTable.claimX.eq(data.claim.chunk.startX shr 4).and(ClaimAuthorizedTable.claimZ.eq(data.claim.chunk.startZ shr 4)).and(ClaimAuthorizedTable.user.eq(data.user))
+                    ClaimAuthorizedTable.claim.eq(c[ClaimTable.id])
+                            .and(ClaimAuthorizedTable.user.eq(data.user))
                 }
             }
 

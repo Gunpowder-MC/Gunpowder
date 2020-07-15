@@ -25,9 +25,12 @@
 package io.github.nyliummc.essentials.api.module.claims.dataholders
 
 import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
 import java.util.*
 
 data class StoredClaim(
         val owner: UUID,
-        val chunk: ChunkPos
+        val chunk: ChunkPos,
+        val dimension: RegistryKey<World>
 )
