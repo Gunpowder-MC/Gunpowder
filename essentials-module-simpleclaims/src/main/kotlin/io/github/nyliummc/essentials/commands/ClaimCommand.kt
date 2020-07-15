@@ -93,7 +93,7 @@ object ClaimCommand {
     private fun claimChunk(context: CommandContext<ServerCommandSource>): Int {
         val chunk = getChunk(context)
 
-        if (handler.isChunkClaimed(chunk)) {
+        if (handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, already claimed
             return 0
         }
@@ -109,7 +109,7 @@ object ClaimCommand {
     private fun confirmClaimChunk(context: CommandContext<ServerCommandSource>): Int {
         val chunk = getChunk(context)
 
-        if (handler.isChunkClaimed(chunk)) {
+        if (handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, claimed before us
             return 0
         }
@@ -121,7 +121,8 @@ object ClaimCommand {
 
         handler.createClaim(StoredClaim(
                 context.source.player.uuid,
-                chunk
+                chunk,
+                context.source.world.registryKey
         ))
         // Success
         return 1
@@ -130,12 +131,12 @@ object ClaimCommand {
     private fun chunkOwner(context: CommandContext<ServerCommandSource>): Int {
         val chunk = getChunk(context)
 
-        if (!handler.isChunkClaimed(chunk)) {
+        if (!handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, no claim
             return 0
         }
 
-        val owner = EssentialsMod.instance.server.userCache.getByUuid(handler.getClaim(chunk).owner)
+        val owner = EssentialsMod.instance.server.userCache.getByUuid(handler.getClaim(chunk, context.source.world.registryKey).owner)
 
         // Message
         return 1
@@ -145,18 +146,18 @@ object ClaimCommand {
         val chunk = getChunk(context)
         val player = GameProfileArgumentType.getProfileArgument(context, "player").first()
 
-        if (!handler.isChunkClaimed(chunk)) {
+        if (!handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, no claim
             return 0
         }
 
-        val cfg = handler.getClaim(chunk)
+        val cfg = handler.getClaim(chunk, context.source.world.registryKey)
         if (cfg.owner != context.source.player.uuid) {
             // Error, not owner
             return 0
         }
 
-        if (handler.getClaimAllowed(chunk).any { it.user == player.id }) {
+        if (handler.getClaimAllowed(chunk, context.source.world.registryKey).any { it.user == player.id }) {
             // Error, already allowed
             return 0
         }
@@ -170,42 +171,42 @@ object ClaimCommand {
         val chunk = getChunk(context)
         val player = GameProfileArgumentType.getProfileArgument(context, "player").first()
 
-        if (!handler.isChunkClaimed(chunk)) {
+        if (!handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, no claim
             return 0
         }
 
-        val cfg = handler.getClaim(chunk)
+        val cfg = handler.getClaim(chunk, context.source.world.registryKey)
         if (cfg.owner != context.source.player.uuid) {
             // Error, not owner
             return 0
         }
 
-        if (handler.getClaimAllowed(chunk).none { it.user == player.id }) {
+        if (handler.getClaimAllowed(chunk, context.source.world.registryKey).none { it.user == player.id }) {
             // Error, already not allowed
             return 0
         }
 
-        handler.removeClaimAllowed(handler.getClaimAllowed(chunk).first { it.user == player.id })
+        handler.removeClaimAllowed(handler.getClaimAllowed(chunk, context.source.world.registryKey).first { it.user == player.id })
         // Message
         return 1
     }
 
     private fun unclaimChunk(context: CommandContext<ServerCommandSource>): Int {
         val chunk = getChunk(context)
-        if (!handler.isChunkClaimed(chunk)) {
+        if (!handler.isChunkClaimed(chunk, context.source.world.registryKey)) {
             // Error, no claim
             return 0
         }
 
-        val cfg = handler.getClaim(chunk)
+        val cfg = handler.getClaim(chunk, context.source.world.registryKey)
         if (cfg.owner != context.source.player.uuid) {
             // Error, not owner
             return 0
         }
 
-        handler.getClaimAllowed(chunk).map(handler::removeClaimAllowed)
-        handler.deleteClaim(chunk)
+        handler.getClaimAllowed(chunk, context.source.world.registryKey).map(handler::removeClaimAllowed)
+        handler.deleteClaim(chunk, context.source.world.registryKey)
 
         // Message
         return 1

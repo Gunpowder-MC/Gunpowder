@@ -170,6 +170,6 @@ object ClaimHandler : APIClaimHandler {
     }
 
     override fun getClaims(uuid: UUID): List<StoredClaim> {
-        return claimMap.values.filter { it.owner == uuid }.toList()
+        return claimMap.values.map { m -> m.values.filter { it.owner == uuid }.toList() }.toList().flatten()
     }
 }
