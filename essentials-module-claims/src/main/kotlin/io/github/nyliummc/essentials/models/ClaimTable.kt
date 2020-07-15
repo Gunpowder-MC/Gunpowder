@@ -27,7 +27,9 @@ package io.github.nyliummc.essentials.models
 import org.jetbrains.exposed.sql.Table
 
 object ClaimTable : Table() {
+    val id = integer("id").autoIncrement()
     val owner = uuid("owner")
     val chunkX = integer("x")
     val chunkZ = integer("z")
+    val dimension = varchar("dim", 255)
 }
