@@ -83,6 +83,12 @@ interface ChestGui {
          */
         fun emptyIcon(icon: ItemStack)
 
+        /**
+         * Sets the amount of rows used in the gui. 6 by default.
+         * Must be at least 1 and at most 6.
+         */
+        fun size(rows: Int)
+
         @Deprecated("Used internally, do not use.")
         fun build(): ScreenHandler
     }

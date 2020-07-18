@@ -36,7 +36,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 
 
-class ChestGuiContainer(syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X6, syncId, playerInventory, SimpleInventory(54), 6) {
+class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6) {
     private var buttons: Map<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
 
