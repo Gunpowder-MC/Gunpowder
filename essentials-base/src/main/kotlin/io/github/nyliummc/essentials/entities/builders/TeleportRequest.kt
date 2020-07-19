@@ -52,7 +52,8 @@ class TeleportRequest private constructor(
     override fun execute(time: Long, unit: TemporalUnit) {
         val now = LocalDateTime.now()
         val server = player.server
-        server.submit {
+
+        Thread(Runnable {
             Thread.sleep(Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis())
 
             // Verify they're still online
@@ -60,23 +61,23 @@ class TeleportRequest private constructor(
                 val res = PlayerPreTeleportCallback.EVENT.invoker().trigger(player, this)
                 if (res != ActionResult.FAIL) {
                     PlayerTeleportCallback.EVENT.invoker().trigger(player, this)
+                    server.submit {
+                        // Load chunk
+                        val chunkPos = ChunkPos(BlockPos(destination))
+                        val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
 
-                    // Load chunk
-                    val chunkPos = ChunkPos(BlockPos(destination))
-                    val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
+                        // field_19347 = POST_TELEPORT
+                        world!!.chunkManager.addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.entityId)
 
-                    // field_19347 = POST_TELEPORT
-                    world!!.chunkManager.addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.entityId)
+                        player.teleport(world,
+                                destination.x, destination.y, destination.z,
+                                facing?.x ?: player.pitch, facing?.y ?: player.yaw)
 
-                    player.teleport(world,
-                            destination.x, destination.y, destination.z,
-                            facing?.x ?: player.pitch, facing?.y ?: player.yaw)
-
-                    callback?.invoke()
+                        callback?.invoke()
+                    }
                 }
             }
-
-        }
+        }).start()
     }
 
     class Builder : APITeleportRequest.Builder {

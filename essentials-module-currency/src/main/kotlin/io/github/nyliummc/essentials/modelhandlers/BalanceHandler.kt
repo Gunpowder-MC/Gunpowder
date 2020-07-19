@@ -31,12 +31,15 @@ import io.github.nyliummc.essentials.models.BalanceTable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
 import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHandler as APIBalanceHandler
 
 object BalanceHandler : APIBalanceHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
+
     private val cache: MutableMap<UUID, StoredBalance> = mutableMapOf()
 
     val startBalance by lazy {
@@ -48,17 +51,17 @@ object BalanceHandler : APIBalanceHandler {
     }
 
     private fun loadAllUsers() {
-        transaction {
+        db.transaction {
             val items = BalanceTable.selectAll().map {
                 it[BalanceTable.user] to StoredBalance(it[BalanceTable.user], it[BalanceTable.balance])
             }.toMap()
 
             cache.putAll(items)
-        }
+        }.get()
     }
 
     override fun getUser(user: UUID): StoredBalance {
-        return cache[user] ?: transaction {
+        return cache[user] ?: db.transaction {
             val userObj = BalanceTable.insert {
                 it[BalanceTable.user] = user
                 it[BalanceTable.balance] = startBalance
@@ -68,12 +71,12 @@ object BalanceHandler : APIBalanceHandler {
                     startBalance)
             cache[user] = balance
             balance
-        }
+        }.get()
     }
 
     override fun updateUser(user: StoredBalance) {
         cache[user.uuid] = user
-        transaction {
+        db.transaction {
             BalanceTable.update({
                 BalanceTable.user.eq(user.uuid)
             }) {
@@ -83,12 +86,12 @@ object BalanceHandler : APIBalanceHandler {
     }
 
     override fun getBalanceTop(): Array<StoredBalance> {
-        return transaction {
+        return db.transaction {
             val users = BalanceTable.selectAll().orderBy(BalanceTable.balance, SortOrder.DESC).limit(10)
             users.map {
                 StoredBalance(it[BalanceTable.user], it[BalanceTable.balance])
             }.toTypedArray()
-        }
+        }.get()
     }
 
     override fun modifyUser(user: UUID, callable: (StoredBalance) -> StoredBalance) {

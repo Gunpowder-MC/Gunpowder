@@ -24,6 +24,7 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.module.chat.dataholders.StoredNickname
 import io.github.nyliummc.essentials.models.NicknameTable
 import org.jetbrains.exposed.sql.insert
@@ -34,6 +35,9 @@ import java.util.*
 import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler as APINicknameHandler
 
 object NicknameHandler : APINicknameHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     private val cache: MutableMap<UUID, StoredNickname> = mutableMapOf()
 
     init {
@@ -41,16 +45,16 @@ object NicknameHandler : APINicknameHandler {
     }
 
     private fun loadAllNicknames() {
-        val items = transaction {
+        val items = db.transaction {
             NicknameTable.selectAll().map {
                 it[NicknameTable.user] to StoredNickname(it[NicknameTable.user], it[NicknameTable.nickname])
             }.toMap()
-        }
+        }.get()
         cache.putAll(items)
     }
 
     override fun getUser(user: UUID): StoredNickname {
-        return cache[user] ?: transaction {
+        return cache[user] ?: db.transaction {
             NicknameTable.insert {
                 it[NicknameTable.user] = user
                 it[NicknameTable.nickname] = ""
@@ -60,12 +64,12 @@ object NicknameHandler : APINicknameHandler {
                     "")
             cache[user] = stored
             stored
-        }
+        }.get()
     }
 
     override fun updateUser(user: StoredNickname) {
         cache[user.uuid] = user
-        transaction {
+        db.transaction {
             NicknameTable.update({
                 NicknameTable.user.eq(user.uuid)
             }) {

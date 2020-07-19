@@ -24,10 +24,10 @@
 
 package io.github.nyliummc.essentials.models
 
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
 object ClaimAuthorizedTable : Table() {
-    val claimX = integer("x") references ClaimTable.chunkX
-    val claimZ = integer("z") references ClaimTable.chunkZ
+    val claim = integer("claimId").references(ClaimTable.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val user = uuid("user")
 }

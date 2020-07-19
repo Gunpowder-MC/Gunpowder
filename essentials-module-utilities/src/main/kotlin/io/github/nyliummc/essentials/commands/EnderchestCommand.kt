@@ -26,41 +26,32 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
-import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.builders.TeleportRequest
-import io.github.nyliummc.essentials.configs.TeleportConfig
+import net.minecraft.block.EnderChestBlock
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.inventory.EnderChestInventory
+import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.ScreenHandlerFactory
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
-import net.minecraft.util.math.Vec3i
-import net.minecraft.world.dimension.DimensionType
+import net.minecraft.stat.Stats
 
-object SpawnCommand {
-    val teleportDelay by lazy {
-        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).teleportDelay
-    }
-
+object EnderchestCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("spawn") {
-                executes(::execute)
+            command("enderchest", "ec") {
+                executes(::openEnderchest)
             }
         }
     }
 
-    fun execute(context: CommandContext<ServerCommandSource>): Int {
-        val player = context.source.player
-        val props = context.source.world.levelProperties
+    private fun openEnderchest(context: CommandContext<ServerCommandSource>): Int {
+        val player = context.source.player;
+        val enderChestInventory: EnderChestInventory = player.enderChestInventory
 
-        TeleportRequest.builder {
-            player(player)
-            dimension(DimensionType.OVERWORLD_REGISTRY_KEY)
-            destination(Vec3i(props.spawnX, props.spawnY, props.spawnZ))
-        }.execute(teleportDelay.toLong())
-
-        if (teleportDelay > 0) {
-            context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
-        }
+        player.openHandledScreen(SimpleNamedScreenHandlerFactory(ScreenHandlerFactory { i: Int, playerInventory: PlayerInventory?, _: PlayerEntity? -> GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChestInventory) }, EnderChestBlock.CONTAINER_NAME))
+        player.incrementStat(Stats.OPEN_ENDERCHEST)
 
         return 1
     }

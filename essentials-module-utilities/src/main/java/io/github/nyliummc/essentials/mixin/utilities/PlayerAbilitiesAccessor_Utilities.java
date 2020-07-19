@@ -22,15 +22,28 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.module.claims.dataholders
+package io.github.nyliummc.essentials.mixin.utilities;
 
-import net.minecraft.util.math.ChunkPos
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.World
-import java.util.*
+import io.github.nyliummc.essentials.mixin.cast.SpeedSetter;
+import net.minecraft.entity.player.PlayerAbilities;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-data class StoredClaim(
-        val owner: UUID,
-        val chunk: ChunkPos,
-        val dimension: RegistryKey<World>
-)
+@Mixin(PlayerAbilities.class)
+public abstract class PlayerAbilitiesAccessor_Utilities implements SpeedSetter {
+    @Shadow
+    private float walkSpeed;
+
+    @Shadow
+    private float flySpeed;
+
+    @Override
+    public void setServerWalkSpeed(float speed) {
+        this.walkSpeed = speed;
+    }
+
+    @Override
+    public void setServerFlySpeed(float speed) {
+        this.flySpeed = speed;
+    }
+}

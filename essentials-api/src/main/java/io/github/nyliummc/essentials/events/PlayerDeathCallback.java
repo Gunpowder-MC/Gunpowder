@@ -22,15 +22,24 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.module.claims.dataholders
+package io.github.nyliummc.essentials.events;
 
-import net.minecraft.util.math.ChunkPos
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.World
-import java.util.*
+import io.github.nyliummc.essentials.api.builders.TeleportRequest;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
 
-data class StoredClaim(
-        val owner: UUID,
-        val chunk: ChunkPos,
-        val dimension: RegistryKey<World>
-)
+/**
+ * Called after a player dies.
+ */
+public interface PlayerDeathCallback {
+    Event<PlayerDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerDeathCallback.class, (listeners) -> (player, source) -> {
+        for (PlayerDeathCallback l : listeners) {
+            l.trigger(player, source);
+        }
+    });
+
+    void trigger(ServerPlayerEntity player, DamageSource source);
+}

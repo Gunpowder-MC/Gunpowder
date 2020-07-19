@@ -36,13 +36,15 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.time.LocalDateTime
 import io.github.nyliummc.essentials.api.module.market.modelhandlers.MarketEntryHandler as APIMarketEntryHandler
 
 object MarketEntryHandler : APIMarketEntryHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     private val cache = mutableListOf<StoredMarketEntry>()
 
     init {
@@ -50,7 +52,7 @@ object MarketEntryHandler : APIMarketEntryHandler {
     }
 
     private fun loadEntries() {
-        transaction {
+        db.transaction {
             cache.addAll(MarketEntryTable.selectAll().map {
                 StoredMarketEntry(
                         it[MarketEntryTable.user],
@@ -59,7 +61,7 @@ object MarketEntryHandler : APIMarketEntryHandler {
                         it[MarketEntryTable.expiresAt]
                 )
             }.toList())
-        }
+        }.get()
     }
 
     // TODO: Move these two to util funcs
@@ -78,7 +80,7 @@ object MarketEntryHandler : APIMarketEntryHandler {
 
     override fun createEntry(e: StoredMarketEntry) {
         cache.add(e)
-        transaction {
+        db.transaction {
             MarketEntryTable.insert {
                 it[user] = e.uuid
                 it[item] = saveItemStack(e.item)
@@ -127,9 +129,10 @@ object MarketEntryHandler : APIMarketEntryHandler {
         }
     }
 
+    // TODO: Delete expired entries and return items to owner somehow
     override fun deleteEntry(e: StoredMarketEntry) {
         cache.remove(e)
-        transaction {
+        db.transaction {
             MarketEntryTable.deleteWhere {
                 MarketEntryTable.expiresAt.eq(e.expire)
             }

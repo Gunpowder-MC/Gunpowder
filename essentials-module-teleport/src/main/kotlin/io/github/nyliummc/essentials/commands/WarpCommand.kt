@@ -112,6 +112,10 @@ object WarpCommand {
             dimension(warp.dimension)
         }.execute(teleportDelay.toLong())
 
+        if (teleportDelay > 0) {
+            context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
+        }
+
         return 1
     }
 

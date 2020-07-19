@@ -22,15 +22,28 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api.module.claims.dataholders
+package io.github.nyliummc.essentials.mixin.base;
 
-import net.minecraft.util.math.ChunkPos
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.World
-import java.util.*
+import com.mojang.authlib.GameProfile;
+import io.github.nyliummc.essentials.events.PlayerDeathCallback;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-data class StoredClaim(
-        val owner: UUID,
-        val chunk: ChunkPos,
-        val dimension: RegistryKey<World>
-)
+@Mixin(ServerPlayerEntity.class)
+public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity {
+    public ServerPlayerEntityMixin_Base(World world, BlockPos blockPos, GameProfile gameProfile) {
+        super(world, blockPos, gameProfile);
+    }
+
+    @Inject(method="onDeath", at=@At("HEAD"))
+    void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
+        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object)this, source);
+    }
+}

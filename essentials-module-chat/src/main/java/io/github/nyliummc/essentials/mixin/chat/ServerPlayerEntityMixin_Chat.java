@@ -24,10 +24,21 @@
 
 package io.github.nyliummc.essentials.mixin.chat;
 
+import com.mojang.authlib.GameProfile;
+import io.github.nyliummc.essentials.api.EssentialsMod;
+import io.github.nyliummc.essentials.api.module.chat.dataholders.StoredNickname;
+import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 abstract class ServerPlayerEntityMixin_Chat extends PlayerEntityMixin_Chat {
@@ -39,5 +50,14 @@ abstract class ServerPlayerEntityMixin_Chat extends PlayerEntityMixin_Chat {
     @SuppressWarnings("OverwriteModifiers") // javax is drunk
     public Text getPlayerListName() { // getPlayerListName
         return this.getDisplayName();
+    }
+
+    @Inject(method="<init>", at=@At("RETURN"))
+    void setNickname(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
+        StoredNickname nick = EssentialsMod.getInstance().getRegistry().getModelHandler(NicknameHandler.class).getUser(this.uuid);
+        if (!nick.getNickname().isEmpty()) {
+            this.setCustomName(new LiteralText(nick.getNickname()));
+            this.setCustomNameVisible(true);
+        }
     }
 }
