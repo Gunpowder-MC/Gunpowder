@@ -3,6 +3,7 @@
 Bugs fixed:
 
 - (all) Fix accesswidener not being remapped
+- (module-chat) Fix nicknames being reset on join or respawn
 - (module-utilities) Fix chat spam when sleeping
 
 New Features:
