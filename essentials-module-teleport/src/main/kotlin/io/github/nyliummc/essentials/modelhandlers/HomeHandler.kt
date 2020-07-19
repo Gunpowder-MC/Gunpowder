@@ -34,11 +34,13 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
 
 object HomeHandler : APIHomeHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     private val cache: MutableMap<UUID, MutableMap<String, StoredHome>> = mutableMapOf()
     val homeLimit by lazy {
         EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).maxHomes
@@ -49,7 +51,7 @@ object HomeHandler : APIHomeHandler {
     }
 
     private fun loadEntries() {
-        transaction {
+        db.transaction {
             val homes = HomeTable.selectAll()
             val owners = homes.map { it[HomeTable.owner] }.toList()
             owners.forEach { owner ->
@@ -63,7 +65,7 @@ object HomeHandler : APIHomeHandler {
                             )
                 }.toMap().toMutableMap()
             }
-        }
+        }.get()
     }
 
     override fun getHome(user: UUID, home: String): StoredHome? {
@@ -86,7 +88,7 @@ object HomeHandler : APIHomeHandler {
         c[home.name] = home
         cache[home.user] = c
 
-        transaction {
+        db.transaction {
             HomeTable.insert {
                 it[owner] = home.user
                 it[name] = home.name
@@ -109,7 +111,7 @@ object HomeHandler : APIHomeHandler {
 
         c.remove(home)
         cache[player] = c
-        transaction {
+        db.transaction {
             HomeTable.deleteWhere {
                 HomeTable.owner.eq(player).and(HomeTable.name.eq(home))
             }

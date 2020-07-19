@@ -24,6 +24,7 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaim
 import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAuthorized
 import io.github.nyliummc.essentials.models.ClaimAuthorizedTable
@@ -38,23 +39,20 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import io.github.nyliummc.essentials.api.module.claims.modelhandlers.ClaimHandler as APIClaimHandler
 
 object ClaimHandler : APIClaimHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     private val claimMap = mutableMapOf<RegistryKey<World>, MutableMap<ChunkPos, StoredClaim>>();
     private val claimAuthorizedMap = mutableMapOf<StoredClaim, MutableList<StoredClaimAuthorized>>();
 
     init {
         loadAllClaims()
-
-        ClaimTable.selectAll().forEach {
-            val chunk = ChunkPos(it[ClaimTable.chunkX], it[ClaimTable.chunkZ]);
-            val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(it[ClaimTable.dimension]))
-            claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = StoredClaim(it[ClaimTable.owner], chunk, dimension)
-        }
     }
 
     private fun loadAllClaims() {
         val claimsTemp = mutableMapOf<Int, StoredClaim>()
 
-        transaction {
+        db.transaction {
             ClaimAuthorizedTable.selectAll().forEach {
                 val claim = claimsTemp.getOrPut(it[ClaimAuthorizedTable.claim]) {
                     val c = ClaimTable.select { ClaimTable.id.eq(it[ClaimAuthorizedTable.claim]) }.first()
@@ -66,7 +64,7 @@ object ClaimHandler : APIClaimHandler {
                 }
                 claimAuthorizedMap[claim]!!.add(StoredClaimAuthorized(claim, it[ClaimAuthorizedTable.user]))
             }
-        }
+        }.get()
     }
 
     override fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {
@@ -78,7 +76,7 @@ object ClaimHandler : APIClaimHandler {
             return false
         }
 
-        transaction {
+        db.transaction {
             val c = ClaimTable.insert {
                 it[chunkX] = data.chunk.startX shr 4
                 it[chunkZ] = data.chunk.startZ shr 4
@@ -108,7 +106,7 @@ object ClaimHandler : APIClaimHandler {
         claimAuthorizedMap.remove(stored)
         claimMap[dimension]!!.remove(chunk)
 
-        transaction {
+        db.transaction {
             ClaimTable.deleteWhere {
                 ClaimTable.chunkX.eq(chunk.startX shr 4)
                         .and(ClaimTable.chunkZ.eq(chunk.startZ shr 4))
@@ -130,7 +128,7 @@ object ClaimHandler : APIClaimHandler {
 
         claimAuthorizedMap[data.claim]!!.add(data);
 
-        transaction {
+        db.transaction {
             val c = ClaimTable.select {
                 ClaimTable.chunkX.eq(data.claim.chunk.startX)
                         .and(ClaimTable.chunkZ.eq(data.claim.chunk.startZ shr 4))
@@ -150,7 +148,7 @@ object ClaimHandler : APIClaimHandler {
         if (claimAuthorizedMap[data.claim]!!.contains(data)) {
             claimAuthorizedMap[data.claim]!!.remove(data)
 
-            transaction {
+            db.transaction {
                 val c = ClaimTable.select {
                     ClaimTable.chunkX.eq(data.claim.chunk.startX)
                             .and(ClaimTable.chunkZ.eq(data.claim.chunk.startZ shr 4))

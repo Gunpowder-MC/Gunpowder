@@ -24,6 +24,7 @@
 
 package io.github.nyliummc.essentials.modelhandlers
 
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.module.teleport.dataholders.StoredWarp
 import io.github.nyliummc.essentials.models.WarpTable
 import net.minecraft.util.Identifier
@@ -31,10 +32,12 @@ import net.minecraft.util.math.Vec3i
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
 
 object WarpHandler : APIWarpHandler {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     val cache = mutableMapOf<String, StoredWarp>()
 
     init {
@@ -42,14 +45,14 @@ object WarpHandler : APIWarpHandler {
     }
 
     private fun loadEntries() {
-        transaction {
+        db.transaction {
             cache.putAll(WarpTable.selectAll().map {
                 it[WarpTable.name] to StoredWarp(
                         it[WarpTable.name],
                         Vec3i(it[WarpTable.x], it[WarpTable.y], it[WarpTable.z]),
                         Identifier(it[WarpTable.dimension]))
             }.toMap())
-        }
+        }.get()
     }
 
     override fun getWarp(name: String): StoredWarp? {
@@ -62,7 +65,7 @@ object WarpHandler : APIWarpHandler {
 
     override fun delWarp(warp: String): Boolean {
         if (cache.containsKey(warp)) {
-            transaction {
+            db.transaction {
                 WarpTable.deleteWhere {
                     WarpTable.name.eq(warp)
                 }
@@ -76,7 +79,7 @@ object WarpHandler : APIWarpHandler {
     override fun newWarp(warp: StoredWarp): Boolean {
         if (!cache.containsKey(warp.name)) {
             cache[warp.name] = warp
-            transaction {
+            db.transaction {
                 WarpTable.insert {
                     it[WarpTable.name] = warp.name
                     it[WarpTable.x] = warp.location.x
