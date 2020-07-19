@@ -30,7 +30,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 object ContainerUtil {
     /**
-     * Get a SyncID for containers
+     * Get a Sync ID for containers.
      */
     @JvmStatic
     fun getSyncId(player: ServerPlayerEntity): Int {

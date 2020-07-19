@@ -36,7 +36,7 @@ interface ChestGui {
          * Creates a ChestGui
          *
          * @param callback Block in scope of a {@link io.github.nyliummc.essentials.api.builders.ChestGui.Builder}
-         * @return A Screenhandler that can be sent to the client
+         * @return A ScreenHandler that can be sent to the client
          */
         @JvmStatic
         fun builder(callback: Builder.() -> Unit): ScreenHandler {
@@ -64,12 +64,12 @@ interface ChestGui {
 
     interface Builder {
         /**
-         * Set the player to sync the GUI with
+         * Set the player to sync the GUI with.
          */
         fun player(player: ServerPlayerEntity)
 
         /**
-         * Add an item as button
+         * Add an item as button.
          *
          * @param x the column in the chest
          * @param y the row in the chest

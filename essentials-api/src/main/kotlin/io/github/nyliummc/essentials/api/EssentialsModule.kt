@@ -24,6 +24,9 @@
 
 package io.github.nyliummc.essentials.api
 
+/**
+ * Interface a registered module should implement.
+ */
 interface EssentialsModule {
     val name: String
     val toggleable: Boolean

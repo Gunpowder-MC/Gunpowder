@@ -43,13 +43,13 @@ interface Text {
 
     interface Builder {
         /**
-         * Add text
+         * Add text.
          */
         fun text(text: String)
         fun text(text: MCText)
 
         /**
-         * Add styled text
+         * Add styled text.
          */
         fun text(text: String, callback: StyleBuilder.() -> Unit)
         fun text(text: MCText, callback: StyleBuilder.() -> Unit)
@@ -60,20 +60,23 @@ interface Text {
 
     interface StyleBuilder {
         /**
-         * Run a command when clicked
+         * Run a command when clicked.
          */
         fun onClickCommand(command: String)
 
         /**
-         * Text to show when hovering
+         * Tooltip to show when hovering.
          */
         fun onHoverText(tooltip: String)
 
         /**
-         * Color of text
+         * Color of text.
+         * TODO: RGB support since 1.16
          */
         fun color(color: Formatting)
 
+
+        // Various effects
         fun bold()
         fun italic()
         fun strikethrough()
@@ -81,12 +84,12 @@ interface Text {
         fun obfuscated()
 
         /**
-         * What to do when clicked
+         * Add an event handler when clicking this text.
          */
         fun onClickEvent(event: ClickEvent)
 
         /**
-         * What to do when hovering
+         * Add an event handler when hovering over this text.
          */
         fun onHoverEvent(event: HoverEvent)
     }

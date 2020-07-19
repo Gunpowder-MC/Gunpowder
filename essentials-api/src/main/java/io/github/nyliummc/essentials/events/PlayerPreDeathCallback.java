@@ -30,6 +30,10 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 
+/**
+ * Called before a player dies; Allows cancelling.
+ * All callbacks are always called, but cannot force execution if another returned ActionResult.FAIL.
+ */
 public interface PlayerPreDeathCallback {
     Event<PlayerPreDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerPreDeathCallback.class, (listeners) -> (player, source) -> {
         ActionResult shouldPass = ActionResult.PASS;

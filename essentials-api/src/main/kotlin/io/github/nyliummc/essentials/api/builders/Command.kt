@@ -48,7 +48,8 @@ interface Command {
 
     interface Builder {
         /**
-         * The name of the command with aliases. starts a block of {@link io.github.nyliummc.essentials.api.builders.Command.CommandBuilder}
+         * The name of the command with aliases.
+         * Starts a block of {@link io.github.nyliummc.essentials.api.builders.Command.CommandBuilder}.
          */
         fun command(vararg names: String, builder: CommandBuilder.() -> Unit)
 
@@ -58,29 +59,29 @@ interface Command {
 
     interface CommandBuilder {
         /**
-         * Set requirements for running this function
+         * Set requirements for running this function.
          */
         fun requires(checkFunction: (ServerCommandSource) -> Boolean)
 
         /**
-         * Argument parameter, see {@link io.github.nyliummc.essentials.api.builders.Command.ArgumentBuilder}
+         * Argument parameter, see {@link io.github.nyliummc.essentials.api.builders.Command.ArgumentBuilder}.
          */
         fun argument(name: String, type: ArgumentType<*>, builder: ArgumentBuilder.() -> Unit)
 
         /**
-         * Literal argument
+         * Literal argument.
          */
         fun literal(vararg literals: String, builder: ArgumentBuilder.() -> Unit)
 
         /**
-         * Executing code
+         * Code or function to execute on this command.
          */
         fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
     }
 
     interface ArgumentBuilder : CommandBuilder {
         /**
-         * Add suggestions for this argument
+         * Suggestion provider for this callback.
          */
         fun suggests(callback: (CommandContext<ServerCommandSource>, SuggestionsBuilder) -> CompletableFuture<Suggestions>)
     }
