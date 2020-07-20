@@ -280,7 +280,7 @@ remapSourcesJar {
 // Curseforge upload
 
 curseforge {
-    apply from: 'curseforge.gradle'
+    apply from: 'secrets.gradle'
     apiKey = project.apiKey
     project {
         id = "350123"
