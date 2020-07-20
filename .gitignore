@@ -48,4 +48,4 @@ Thumbs.db # Random generated file
 hs_err_pid*
 
 # CF key
-curseforge.gradle
+secrets.gradle
