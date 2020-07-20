@@ -166,6 +166,9 @@ object TPACommand {
                 dimension(it.targetLocationEntity.world)
             }.execute(config.teleportDelay.toLong())
             it.requester().sendMessage(LiteralText("TPA accepted"), false)
+            if (config.teleportDelay > 0) {
+                it.teleportingEntity.sendMessage(LiteralText("Teleporting in ${config.teleportDelay.toLong()} seconds..."), false)
+            }
         }
         return 1
     }

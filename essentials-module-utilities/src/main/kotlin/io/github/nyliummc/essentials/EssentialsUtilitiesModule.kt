@@ -33,10 +33,12 @@ import io.github.nyliummc.essentials.ext.precision
 import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.network.MessageType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Util
 import net.minecraft.world.World
+import kotlin.math.roundToInt
 import kotlin.streams.toList
 
 
@@ -49,6 +51,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
 
     override fun registerCommands() {
+        essentials.registry.registerCommand(EnderchestCommand::register)
         essentials.registry.registerCommand(FlightCommand::register)
         essentials.registry.registerCommand(GodCommand::register)
         essentials.registry.registerCommand(HatCommand::register)
@@ -56,6 +59,8 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(HealCommand::register)
         essentials.registry.registerCommand(SpeedCommand::register)
         essentials.registry.registerCommand(TPSCommand::register)
+        essentials.registry.registerCommand(TrashCommand::register)
+        // essentials.registry.registerCommand(WorkbenchCommand::register)
     }
 
     override fun registerConfigs() {
@@ -78,7 +83,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             players.removeIf { obj: PlayerEntity -> obj.isSpectator }
 
-            if (players.isEmpty()) {
+            if (players.isEmpty() || treshold <= 0) {
                 (world as SleepSetter).setSleeping(false)
                 return@EndWorldTick
             }
@@ -92,13 +97,13 @@ class EssentialsUtilitiesModule : EssentialsModule {
 
             sleepingPlayers.filter { !sleeping.contains(it) }.forEach {
                 sleeping.add(it as ServerPlayerEntity)
-                world.server.sendSystemMessage(
-                        LiteralText("${it.displayName.asString()} is now sleeping. (${percentage.precision(2)}, ${"%.2f".format(treshold)} needed)"), Util.NIL_UUID)
+                world.server.playerManager.broadcastChatMessage(
+                        LiteralText("${it.displayName.asString()} is now sleeping. (${(percentage * 100).roundToInt()}%, ${(treshold * 100).roundToInt()} needed)"), MessageType.SYSTEM, Util.NIL_UUID)
             }
 
             (world as SleepSetter).setSleeping(shouldSkip)
             if (shouldSkip) {
-                // world.server.playerManager.sendToAll(LiteralText("Good morning!"))
+                world.server.playerManager.broadcastChatMessage(LiteralText("Good morning!"), MessageType.SYSTEM, Util.NIL_UUID)
                 sleeping.clear()
             }
         })

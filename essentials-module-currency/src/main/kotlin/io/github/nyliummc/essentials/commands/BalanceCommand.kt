@@ -25,6 +25,8 @@
 package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.FloatArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
@@ -32,6 +34,7 @@ import io.github.nyliummc.essentials.api.module.currency.modelhandlers.BalanceHa
 import net.minecraft.command.arguments.GameProfileArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
+import kotlin.math.roundToInt
 
 object BalanceCommand {
     private val handler by lazy {
@@ -45,6 +48,30 @@ object BalanceCommand {
 
                 argument("player", GameProfileArgumentType.gameProfile()) {
                     executes(::getTargetBalance)
+
+                    literal("set") {
+                        requires { it.hasPermissionLevel(4) }
+
+                        argument("amount", FloatArgumentType.floatArg(0.0F)) {
+                            executes(::adminSet)
+                        }
+                    }
+
+                    literal("add") {
+                        requires { it.hasPermissionLevel(4) }
+
+                        argument("amount", FloatArgumentType.floatArg(0.0F)) {
+                            executes(::adminAdd)
+                        }
+                    }
+
+                    literal("remove") {
+                        requires { it.hasPermissionLevel(4) }
+
+                        argument("amount", FloatArgumentType.floatArg(0.0F)) {
+                            executes(::adminRemove)
+                        }
+                    }
                 }
 
                 literal("top") {
@@ -52,6 +79,57 @@ object BalanceCommand {
                 }
             }
         }
+    }
+
+    fun adminSet(context: CommandContext<ServerCommandSource>): Int {
+        val amount = (FloatArgumentType.getFloat(context, "amount") * 100).roundToInt() / 100.0 // only 2 decimal places
+        val player = GameProfileArgumentType.getProfileArgument(context, "player").first()
+
+        handler.modifyUser(player.id) {
+            it.balance = amount.toBigDecimal()
+            it
+        }
+
+        context.source.sendFeedback(
+                LiteralText("Set balance of player ${player.name} to $amount"),
+                false)
+
+        return 1
+    }
+
+    fun adminAdd(context: CommandContext<ServerCommandSource>): Int {
+        val amount = (FloatArgumentType.getFloat(context, "amount") * 100).roundToInt() / 100.0 // only 2 decimal places
+        val player = GameProfileArgumentType.getProfileArgument(context, "player").first()
+
+        handler.modifyUser(player.id) {
+            it.balance.add(amount.toBigDecimal())
+            it
+        }
+
+        context.source.sendFeedback(
+                LiteralText("Added $amount to balance of player ${player.name}"),
+                false)
+
+        return 1
+    }
+
+    fun adminRemove(context: CommandContext<ServerCommandSource>): Int {
+        val amount = (FloatArgumentType.getFloat(context, "amount") * 100).roundToInt() / 100.0 // only 2 decimal places
+        val player = GameProfileArgumentType.getProfileArgument(context, "player").first()
+
+        handler.modifyUser(player.id) {
+            it.balance.add(amount.toBigDecimal())
+            if (it.balance < (0).toBigDecimal()) {
+                it.balance = (0).toBigDecimal();
+            }
+            it
+        }
+
+        context.source.sendFeedback(
+                LiteralText("Added $amount to balance of player ${player.name}"),
+                false)
+
+        return 1
     }
 
     fun getBalanceTop(context: CommandContext<ServerCommandSource>): Int {

@@ -22,28 +22,27 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.mixin.utilities;
+package io.github.nyliummc.essentials.events;
 
-import io.github.nyliummc.essentials.mixin.cast.SpeedSetter;
-import net.minecraft.entity.player.PlayerAbilities;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
 
-@Mixin(PlayerAbilities.class)
-public abstract class PlayerAbilitiesAccessor implements SpeedSetter {
-    @Shadow
-    private float walkSpeed;
+public interface PlayerPreDeathCallback {
+    Event<PlayerPreDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerPreDeathCallback.class, (listeners) -> (player, source) -> {
+        ActionResult shouldPass = ActionResult.PASS;
+        for (PlayerPreDeathCallback l : listeners) {
+            ActionResult r = l.trigger(player, source);
 
-    @Shadow
-    private float flySpeed;
+            if (r == ActionResult.FAIL) {
+                shouldPass = ActionResult.FAIL;
 
-    @Override
-    public void setServerWalkSpeed(float speed) {
-        this.walkSpeed = speed;
-    }
+            }
+        }
+        return shouldPass;
+    });
 
-    @Override
-    public void setServerFlySpeed(float speed) {
-        this.flySpeed = speed;
-    }
+    ActionResult trigger(ServerPlayerEntity player, DamageSource source);
 }

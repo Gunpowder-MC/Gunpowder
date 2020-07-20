@@ -26,17 +26,27 @@ package io.github.nyliummc.essentials.entities
 
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.configs.EssentialsConfig
+import it.unimi.dsi.fastutil.objects.ObjectLists
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.Supplier
+import kotlin.concurrent.thread
 import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsDatabase
 
 object EssentialsDatabase : APIEssentialsDatabase {
-    fun disconnect() {
-        try {
-            TransactionManager.closeAndUnregister(db)
-        } catch (e: UninitializedPropertyAccessException) {
-            // Ignore; Server closed before DB was created, no issues here
+    var running = false
+    var queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
+    private val databaseThread = thread(start=true, name="Essentials Database Thread") {
+        while (running) {
+            val pair = queue.poll() ?: continue
+            val value =transaction {
+                pair.first.invoke(this)
+            }
+            pair.second.complete(value)
         }
     }
 
@@ -45,6 +55,14 @@ object EssentialsDatabase : APIEssentialsDatabase {
 
     // Not configurable
     private val databaseName = "essentials"
+
+    fun disconnect() {
+        try {
+            TransactionManager.closeAndUnregister(db)
+        } catch (e: UninitializedPropertyAccessException) {
+            // Ignore; Server closed before DB was created, no issues here
+        }
+    }
 
     fun loadDatabase() {
         val dbc = config.database
@@ -84,5 +102,11 @@ object EssentialsDatabase : APIEssentialsDatabase {
                 throw AssertionError("Invalid db type")
             }
         }
+    }
+
+    override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {
+        val fut = CompletableFuture<T>()
+        queue.add(Pair(callback as Transaction.() -> Any, fut as CompletableFuture<Any>))
+        return fut
     }
 }

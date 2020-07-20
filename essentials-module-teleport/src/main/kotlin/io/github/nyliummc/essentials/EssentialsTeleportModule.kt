@@ -28,11 +28,13 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.TeleportConfig
+import io.github.nyliummc.essentials.events.PlayerDeathCallback
 import io.github.nyliummc.essentials.events.PlayerTeleportCallback
 import io.github.nyliummc.essentials.modelhandlers.HomeHandler
 import io.github.nyliummc.essentials.modelhandlers.WarpHandler
 import io.github.nyliummc.essentials.models.HomeTable
 import io.github.nyliummc.essentials.models.WarpTable
+import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler
@@ -56,7 +58,10 @@ class EssentialsTeleportModule : EssentialsModule {
     }
 
     override fun registerEvents() {
-        PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
+        PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, _ ->
+            BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.world, player.rotationClient)
+        })
+        PlayerDeathCallback.EVENT.register(PlayerDeathCallback { player, _ ->
             BackCommand.lastPosition[player.uuid] = BackCommand.LastPosition(player.pos, player.world, player.rotationClient)
         })
     }

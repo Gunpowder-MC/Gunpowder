@@ -26,42 +26,28 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
-import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.api.builders.TeleportRequest
-import io.github.nyliummc.essentials.configs.TeleportConfig
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.screen.CraftingScreenHandler
+import net.minecraft.screen.ScreenHandlerContext
+import net.minecraft.screen.ScreenHandlerFactory
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
-import net.minecraft.util.math.Vec3i
-import net.minecraft.world.dimension.DimensionType
+import net.minecraft.text.TranslatableText
 
-object SpawnCommand {
-    val teleportDelay by lazy {
-        EssentialsMod.instance.registry.getConfig(TeleportConfig::class.java).teleportDelay
-    }
-
+object WorkbenchCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("spawn") {
-                executes(::execute)
+            command("workbench", "wb") {
+                executes(::openWorkbench)
             }
         }
     }
 
-    fun execute(context: CommandContext<ServerCommandSource>): Int {
-        val player = context.source.player
-        val props = context.source.world.levelProperties
-
-        TeleportRequest.builder {
-            player(player)
-            dimension(DimensionType.OVERWORLD_REGISTRY_KEY)
-            destination(Vec3i(props.spawnX, props.spawnY, props.spawnZ))
-        }.execute(teleportDelay.toLong())
-
-        if (teleportDelay > 0) {
-            context.source.sendFeedback(LiteralText("Teleporting in ${teleportDelay.toLong()} seconds..."), false)
-        }
-
+    private fun openWorkbench(context: CommandContext<ServerCommandSource>): Int {
+        // TODO: Instantly closes
+        context.source.player.openHandledScreen(SimpleNamedScreenHandlerFactory(ScreenHandlerFactory { i: Int, playerInventory: PlayerInventory?, _: PlayerEntity? -> CraftingScreenHandler(i, playerInventory, ScreenHandlerContext.create(context.source.player.world, context.source.player.blockPos)) }, TranslatableText("container.crafting")))
         return 1
     }
 }
