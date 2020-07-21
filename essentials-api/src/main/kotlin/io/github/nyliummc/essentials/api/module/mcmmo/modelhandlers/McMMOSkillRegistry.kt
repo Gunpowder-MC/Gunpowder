@@ -12,7 +12,7 @@ interface McMMOSkillRegistry {
     }
 
     fun registerSkill(skillName: String): SkillKey
-    fun registerSkillUpCallback(skill: SkillKey, callback: (StoredMcMMOSkill)->Unit)
+    fun registerSkillUpCallback(skill: SkillKey, callback: (StoredMcMMOSkill) -> Unit)
 
     fun getKey(skillName: String): SkillKey
 }

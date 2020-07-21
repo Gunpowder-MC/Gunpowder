@@ -42,15 +42,18 @@ public abstract class ServerWorldMixin_Utilities extends World implements SleepS
     @Shadow
     private boolean allPlayersSleeping;
 
-    @Shadow public abstract void method_29199(long l);
-
-    @Shadow protected abstract void wakeSleepingPlayers();
-
-    @Shadow protected abstract void resetWeather();
-
     protected ServerWorldMixin_Utilities(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, RegistryKey<DimensionType> registryKey2, DimensionType dimensionType, Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
         super(mutableWorldProperties, registryKey, registryKey2, dimensionType, profiler, bl, bl2, l);
     }
+
+    @Shadow
+    public abstract void method_29199(long l);
+
+    @Shadow
+    protected abstract void wakeSleepingPlayers();
+
+    @Shadow
+    protected abstract void resetWeather();
 
     @Override
     public void setSleeping(boolean sleeping) {

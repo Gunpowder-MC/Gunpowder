@@ -41,12 +41,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin_Claims {
-    @Inject(method="interactBlock", at=@At(value="INVOKE",target="Lnet/minecraft/block/BlockState;onUse(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;"), cancellable = true)
+    @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onUse(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;"), cancellable = true)
     void preventInteraction(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         ChunkPos chunk = new ChunkPos(hitResult.getBlockPos());
         ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
         if (handler.isChunkClaimed(chunk)) {
-            if (handler.getClaimAllowed(chunk).stream().noneMatch((it)->it.getUser().equals(player.getUuid()))) {
+            if (handler.getClaimAllowed(chunk).stream().noneMatch((it) -> it.getUser().equals(player.getUuid()))) {
                 cir.setReturnValue(ActionResult.FAIL);
             }
         }

@@ -48,7 +48,7 @@ public abstract class ServerPlayerEntityMixin_Datapacks_Voodoo extends PlayerEnt
     public boolean isFireImmune() {
         if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getNetheriteFireImmune()) {
             int netheriteItems = 0;
-            Item[] items = new Item[] {Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS};
+            Item[] items = new Item[]{Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS};
             for (ItemStack it : getArmorItems()) {
                 if (Arrays.stream(items).anyMatch((a) -> a == it.getItem())) {
                     netheriteItems += 1;

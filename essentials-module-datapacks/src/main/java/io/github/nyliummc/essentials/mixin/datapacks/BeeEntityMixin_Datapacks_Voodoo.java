@@ -46,7 +46,7 @@ public class BeeEntityMixin_Datapacks_Voodoo {
         if (EssentialsMod.getInstance().getRegistry().getConfig(DatapacksConfig.class).getVoodooBeard().getApiaristSuit()) {
             if (target instanceof PlayerEntity) {
                 int chainmailItems = 0;
-                Item[] items = new Item[] {Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS};
+                Item[] items = new Item[]{Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS};
                 for (ItemStack it : target.getArmorItems()) {
                     if (Arrays.stream(items).anyMatch((a) -> a == it.getItem())) {
                         chainmailItems += 1;

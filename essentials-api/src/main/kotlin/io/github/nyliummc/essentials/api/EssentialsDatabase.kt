@@ -31,5 +31,5 @@ import java.util.concurrent.CompletableFuture
 interface EssentialsDatabase {
     val db: Database
 
-    fun <T> transaction(callback: Transaction.()->T): CompletableFuture<T>
+    fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T>
 }

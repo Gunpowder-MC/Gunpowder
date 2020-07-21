@@ -24,9 +24,12 @@
 
 package io.github.nyliummc.essentials.models
 
+import io.github.nyliummc.essentials.api.models.PlayerTable
 import org.jetbrains.exposed.sql.Table
 
 object NicknameTable : Table() {
-    val user = uuid("user")
+    val user = reference("user", PlayerTable.id).uniqueIndex()
     val nickname = varchar("nickname", 255)
+
+    override val primaryKey = PrimaryKey(user)
 }

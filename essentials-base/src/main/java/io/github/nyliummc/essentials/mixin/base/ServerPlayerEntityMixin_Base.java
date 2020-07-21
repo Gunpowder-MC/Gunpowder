@@ -42,8 +42,8 @@ public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity {
         super(world, blockPos, gameProfile);
     }
 
-    @Inject(method="onDeath", at=@At("HEAD"))
+    @Inject(method = "onDeath", at = @At("HEAD"))
     void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
-        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object)this, source);
+        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object) this, source);
     }
 }

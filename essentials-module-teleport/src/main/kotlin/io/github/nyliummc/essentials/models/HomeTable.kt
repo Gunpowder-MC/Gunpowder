@@ -24,13 +24,16 @@
 
 package io.github.nyliummc.essentials.models
 
+import io.github.nyliummc.essentials.api.models.PlayerTable
 import org.jetbrains.exposed.sql.Table
 
 object HomeTable : Table() {
-    val owner = uuid("owner")
+    val owner = reference("owner", PlayerTable.id)
     val name = text("homeName")
     val x = integer("x")
     val y = integer("y")
     val z = integer("z")
     val dimension = varchar("dimension", 255)
+
+    override val primaryKey = PrimaryKey(owner, name)
 }

@@ -29,7 +29,6 @@ import io.github.nyliummc.essentials.api.module.chat.dataholders.StoredNickname
 import io.github.nyliummc.essentials.models.NicknameTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import java.util.*
 import io.github.nyliummc.essentials.api.module.chat.modelhandlers.NicknameHandler as APINicknameHandler

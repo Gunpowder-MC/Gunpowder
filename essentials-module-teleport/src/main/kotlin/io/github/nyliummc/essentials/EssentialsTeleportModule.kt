@@ -34,7 +34,6 @@ import io.github.nyliummc.essentials.modelhandlers.HomeHandler
 import io.github.nyliummc.essentials.modelhandlers.WarpHandler
 import io.github.nyliummc.essentials.models.HomeTable
 import io.github.nyliummc.essentials.models.WarpTable
-import net.fabricmc.fabric.api.event.server.ServerStartCallback
 import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.HomeHandler as APIHomeHandler
 import io.github.nyliummc.essentials.api.module.teleport.modelhandlers.WarpHandler as APIWarpHandler

@@ -34,7 +34,6 @@ import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.ScreenHandlerFactory
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.stat.Stats
 import net.minecraft.text.LiteralText
 
 object TrashCommand {

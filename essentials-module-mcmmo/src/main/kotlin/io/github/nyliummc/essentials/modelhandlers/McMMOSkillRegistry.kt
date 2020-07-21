@@ -15,7 +15,7 @@ import io.github.nyliummc.essentials.api.module.mcmmo.modelhandlers.McMMOSkillRe
 
 object McMMOSkillRegistry : APISkillRegistry {
     private val skillCache = mutableMapOf<UUID, MutableMap<APISkillRegistry.SkillKey, StoredMcMMOSkill>>()
-    private val callbackMap = mutableMapOf<APISkillRegistry.SkillKey, MutableList<(StoredMcMMOSkill)->Unit>>()
+    private val callbackMap = mutableMapOf<APISkillRegistry.SkillKey, MutableList<(StoredMcMMOSkill) -> Unit>>()
 
     init {
         loadAllSkills()
@@ -24,18 +24,17 @@ object McMMOSkillRegistry : APISkillRegistry {
     private fun loadAllSkills() {
         transaction {
             UserSkillTable.selectAll().forEach { row ->
-                if (callbackMap.keys.none { (it as SkillKey).name == row[UserSkillTable.skill] }) {
-                    callbackMap[SkillKey(row[UserSkillTable.skill])] = mutableListOf()
-                }
-                val key = getKey(row[UserSkillTable.skill])
-                skillCache.getOrPut(row[UserSkillTable.user]){mutableMapOf()}[key] = StoredMcMMOSkill(row[UserSkillTable.user], key, row[UserSkillTable.exp], row[UserSkillTable.level])
+                val skillName = row[UserSkillTable.skill]
+                val key = getKey(skillName)
+                skillCache.getOrPut(row[UserSkillTable.user]) { mutableMapOf() }[key] =
+                        StoredMcMMOSkill(row[UserSkillTable.user], key, row[UserSkillTable.exp], row[UserSkillTable.level])
             }
         }
     }
 
     class SkillKey(val name: String) : APISkillRegistry.SkillKey {
         override fun getUser(user: UUID): StoredMcMMOSkill {
-            return skillCache.getOrPut(user){mutableMapOf()}.getOrPut(this) {
+            return skillCache.getOrPut(user) { mutableMapOf() }.getOrPut(this) {
                 transaction {
                     UserSkillTable.insert {
                         it[UserSkillTable.user] = user
@@ -99,13 +98,15 @@ object McMMOSkillRegistry : APISkillRegistry {
     }
 
     override fun registerSkill(skillName: String): APISkillRegistry.SkillKey {
-        return callbackMap.keys.firstOrNull { (it as SkillKey).name == skillName } ?: SkillKey(skillName).also {
-            // TODO Register in reference DB and add to maps
+        return callbackMap.keys.firstOrNull { (it as SkillKey).name == skillName } ?: run {
+            val key = SkillKey(skillName)
+            callbackMap[key] = mutableListOf()
+            key
         }
     }
 
     override fun registerSkillUpCallback(skill: APISkillRegistry.SkillKey, callback: (StoredMcMMOSkill) -> Unit) {
-        callbackMap.getOrPut(skill){mutableListOf()}.add(callback)
+        callbackMap.getOrPut(skill) { mutableListOf() }.add(callback)
     }
 
     override fun getKey(skillName: String): APISkillRegistry.SkillKey {
@@ -118,13 +119,13 @@ object McMMOSkillRegistry : APISkillRegistry {
         val n = (currentLevel + 1).toDouble()
         return when {
             n <= 15 -> {
-                (n.pow(3.0) * ((floor((n+1)/3)+ 24) / 50))
+                (n.pow(3.0) * ((floor((n + 1) / 3) + 24) / 50))
             }
             n <= 36 -> {
-                (n.pow(3.0) * ((n+14)/50))
+                (n.pow(3.0) * ((n + 14) / 50))
             }
             else -> {
-                (n.pow(3.0) * ((floor(n/2)+32)/50))
+                (n.pow(3.0) * ((floor(n / 2) + 32) / 50))
             }
         }.roundToInt()
     }

@@ -24,9 +24,12 @@
 
 package io.github.nyliummc.essentials.models
 
+import io.github.nyliummc.essentials.api.models.PlayerTable
 import org.jetbrains.exposed.sql.Table
 
 object BalanceTable : Table() {
-    val user = uuid("user")
+    val user = reference("user", PlayerTable.id).uniqueIndex()
     val balance = decimal("balance", 99, 2)
+
+    override val primaryKey = PrimaryKey(user)
 }

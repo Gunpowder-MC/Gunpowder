@@ -52,7 +52,7 @@ abstract class ServerPlayerEntityMixin_Chat extends PlayerEntityMixin_Chat {
         return this.getDisplayName();
     }
 
-    @Inject(method="<init>", at=@At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN"))
     void setNickname(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
         StoredNickname nick = EssentialsMod.getInstance().getRegistry().getModelHandler(NicknameHandler.class).getUser(this.uuid);
         if (!nick.getNickname().isEmpty()) {

@@ -32,4 +32,6 @@ object WarpTable : Table() {
     val y = integer("y")
     val z = integer("z")
     val dimension = varchar("dimension", 255)
+
+    override val primaryKey = PrimaryKey(name)
 }

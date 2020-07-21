@@ -24,11 +24,12 @@
 
 package io.github.nyliummc.essentials.models
 
+import io.github.nyliummc.essentials.api.models.PlayerTable
 import org.jetbrains.exposed.sql.Table
 
 object ClaimTable : Table() {
-    val id = integer("id").autoIncrement()
-    val owner = uuid("owner")
+    val id = integer("id").autoIncrement().uniqueIndex()
+    val owner = reference("owner", PlayerTable.id)
     val chunkX = integer("x")
     val chunkZ = integer("z")
     val dimension = varchar("dim", 255)

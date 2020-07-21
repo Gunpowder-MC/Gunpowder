@@ -36,9 +36,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin_Base {
-    @Shadow public abstract boolean isDead();
+    @Shadow
+    public abstract boolean isDead();
 
-    @Redirect(method="damage", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
+    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
     public boolean triggerPlayerPreDeathCallback(LivingEntity livingEntity, DamageSource source, float f) {
         if (livingEntity instanceof ServerPlayerEntity) {
             ActionResult r = PlayerPreDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) livingEntity, source);
