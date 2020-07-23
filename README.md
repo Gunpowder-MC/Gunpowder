@@ -176,3 +176,20 @@ This mod is available under the [MIT license](LICENSE).
 
 ## Contributing
 More information will be provided soon. Contributions should follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Extending
+If you want to use fabric, add the following to your build.gradle:
+
+```gradle
+dependencies {
+    modImplementation "io.github.nyliummc:essentials-api:${essentials_version}+${minecraft_version}"
+    // add modRuntimes for other modules; DO NOT COMPILE AGAINST THEM
+}
+
+repositories {
+    maven {
+        name = "Essentials"
+        url = "https://maven.martmists.com"
+    }
+}
+```

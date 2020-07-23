@@ -1,3 +1,18 @@
+## Essentials 0.2.5
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+
 ## Essentials 0.2.4
 
 Bugs fixed:

@@ -53,8 +53,8 @@ public class BucketItemMixin_Claims extends Item {
         HitResult target = rayTrace(world, user, RayTraceContext.FluidHandling.ANY);
         ChunkPos chunk = new ChunkPos(new BlockPos(target.getPos()));
         ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
-        if (handler.isChunkClaimed(chunk)) {
-            if (handler.getClaimAllowed(chunk).stream().noneMatch((it) -> it.getUser().equals(user.getUuid()))) {
+        if (handler.isChunkClaimed(chunk, world.getRegistryKey())) {
+            if (handler.getClaimAllowed(chunk, world.getRegistryKey()).stream().noneMatch((it) -> it.getUser().equals(user.getUuid()))) {
                 cir.setReturnValue(TypedActionResult.fail(user.getStackInHand(hand)));
             }
         }

@@ -44,7 +44,7 @@ public class PistonBlockMixin_Claims {
     private static void isMoveable(BlockState state, World world, BlockPos pos, Direction motionDir, boolean canBreak, Direction pistonDir, CallbackInfoReturnable<Boolean> cir) {
         ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
         ChunkPos chunk = new ChunkPos(pos);
-        if (handler.isChunkClaimed(chunk)) {
+        if (handler.isChunkClaimed(chunk, world.getRegistryKey())) {
             cir.setReturnValue(false);
         }
     }

@@ -30,20 +30,31 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.MutableWorldProperties;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.function.Supplier;
+
 @Mixin(ServerWorld.class)
-public class ServerWorldMixin_Claims {
+public abstract class ServerWorldMixin_Claims extends World {
+    protected ServerWorldMixin_Claims(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey, RegistryKey<DimensionType> registryKey2, DimensionType dimensionType, Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
+        super(mutableWorldProperties, registryKey, registryKey2, dimensionType, profiler, bl, bl2, l);
+    }
+
     @Inject(method = "canPlayerModifyAt", at = @At("RETURN"), cancellable = true)
     void claimCheck(PlayerEntity player, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) {
             ChunkPos chunk = new ChunkPos(pos);
             ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
-            if (handler.isChunkClaimed(chunk)) {
-                cir.setReturnValue(handler.getClaimAllowed(chunk).stream().anyMatch((auth) -> auth.getUser().equals(player.getUuid())));
+            if (handler.isChunkClaimed(chunk, getRegistryKey())) {
+                cir.setReturnValue(handler.getClaimAllowed(chunk, getRegistryKey()).stream().anyMatch((auth) -> auth.getUser().equals(player.getUuid())));
             }
         }
     }
