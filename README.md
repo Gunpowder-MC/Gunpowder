@@ -155,7 +155,7 @@ Module for everything related to teleports such as homes and warps
 Includes a bunch of commands and miscellaneous features that don't belong to any specific module.
 
 ##### Commands
-- /flight 
+- /fly 
     - Allows toggling a player's ability to fly.
 - /god 
     - Makes a player invulnerable
@@ -169,6 +169,12 @@ Includes a bunch of commands and miscellaneous features that don't belong to any
     - Allows a player's walking and flying speed to be changed
 - /tps 
     - Prints the server's current tick rate in ticks per second
+- /workbench
+    - Opens a crafting table
+- /enderchest
+    - Opens your ender chest
+- /trash
+    - Opens a trash can
 </details>
 
 ## License

@@ -7,7 +7,7 @@ Bugs fixed:
 
 New Features:
 
-- None
+- (module-utilities) Add /workbench
 
 Improvements:
 

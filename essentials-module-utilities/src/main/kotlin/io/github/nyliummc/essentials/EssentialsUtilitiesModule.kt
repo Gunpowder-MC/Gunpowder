@@ -61,7 +61,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(TPSCommand::register)
         essentials.registry.registerCommand(TrashCommand::register)
         // essentials.registry.registerCommand(VanishCommand::register)  // Not fully functional
-        // essentials.registry.registerCommand(WorkbenchCommand::register)  // Closes on open
+        essentials.registry.registerCommand(WorkbenchCommand::register)
     }
 
     override fun registerConfigs() {
