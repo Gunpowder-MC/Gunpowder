@@ -22,20 +22,10 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mixin.cast;
 
-/**
- * Interface a registered module should implement.
- */
-interface EssentialsModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
+public interface PlayerVanish {
+    boolean isVanished();
 
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
+    void setVanished(boolean enabled);
 }

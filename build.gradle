@@ -277,36 +277,62 @@ remapSourcesJar {
     enabled = false
 }
 
-// Curseforge upload
+if (file('secrets.gradle').exists()) {
+    apply from: 'secrets.gradle'
+    // project.ext.apiKey = cf token
+    // project.ext.mavenToken = maven token
 
-curseforge {
-    apply from: 'curseforge.gradle'
-    apiKey = project.apiKey
-    project {
-        id = "350123"
-        releaseType = "release"
-        changelogType = "markdown"
-        changelog = file("CHANGELOG.md").readLines().join("\n")
-        addGameVersion project.minecraft
-        addGameVersion "Fabric"
-        addGameVersion "Java 8"
-
-        subprojects { sub ->
-            // Add built modules
-            if (sub.name.contains("-base")) {
-                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-            } else if (sub.name.contains("-api")) {
-                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
-            } else {
-                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+    // Maven publish
+    publishing {
+        repositories {
+            maven {
+                url = "https://maven.martmists.com/releases"
+                credentials {
+                    username = 'admin'
+                    password = project.mavenToken
+                }
             }
         }
 
-        afterEvaluate {
-            uploadTask.dependsOn(remapJar)
+        publications {
+            mavenJava(MavenPublication) {
+                // TODO: Artifacts
+            }
         }
     }
-    options {
-        forgeGradleIntegration = false
+
+    // Curseforge upload
+    curseforge {
+
+        apiKey = project.apiKey
+        project {
+            id = "350123"
+            releaseType = "release"
+            changelogType = "markdown"
+            changelog = file("CHANGELOG.md").readLines().join("\n")
+            addGameVersion project.minecraft
+            addGameVersion "Fabric"
+            addGameVersion "Java 8"
+
+            subprojects { sub ->
+                // Add built modules
+                if (sub.name.contains("-base")) {
+                    mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+                } else if (sub.name.contains("-api")) {
+                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
+                } else {
+                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+                }
+            }
+
+            afterEvaluate {
+                uploadTask.dependsOn(remapJar)
+            }
+        }
+        options {
+            forgeGradleIntegration = false
+        }
     }
+
 }
+

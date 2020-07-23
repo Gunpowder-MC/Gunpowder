@@ -22,31 +22,36 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.events;
+package io.github.nyliummc.essentials.mixin.utilities;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.damage.DamageSource;
+import io.github.nyliummc.essentials.api.EssentialsMod;
+import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * Called before a player dies; Allows cancelling.
- * All callbacks are always called, but cannot force execution if another returned ActionResult.FAIL.
- */
-public interface PlayerPreDeathCallback {
-    Event<PlayerPreDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerPreDeathCallback.class, (listeners) -> (player, source) -> {
-        ActionResult shouldPass = ActionResult.PASS;
-        for (PlayerPreDeathCallback l : listeners) {
-            ActionResult r = l.trigger(player, source);
+@Mixin(ServerPlayerEntity.class)
+public class ServerPlayerEntityMixin_Utilities implements PlayerVanish {
+    private boolean vanished = false;
 
-            if (r == ActionResult.FAIL) {
-                shouldPass = ActionResult.FAIL;
+    @Override
+    public boolean isVanished() {
+        return vanished;
+    }
 
+    @Override
+    public void setVanished(boolean enabled) {
+        vanished = enabled;
+
+        EssentialsMod.getInstance().getServer().getPlayerManager().getPlayerList().stream().forEach((p) -> {
+            p.server.forcePlayerSampleUpdate();
+            if (p != (Object) this) {
+                if (enabled) {
+                    p.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.REMOVE_PLAYER, (ServerPlayerEntity) (Object) this));
+                } else {
+                    p.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, (ServerPlayerEntity) (Object) this));
+                }
             }
-        }
-        return shouldPass;
-    });
-
-    ActionResult trigger(ServerPlayerEntity player, DamageSource source);
+        });
+    }
 }

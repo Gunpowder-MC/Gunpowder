@@ -30,15 +30,43 @@ import org.jetbrains.exposed.sql.Table
 import java.util.function.Supplier
 
 interface EssentialsRegistry {
+    /**
+     * Register a command; This should be a consumer taking a CommandDispatcher<ServerCommandSource>
+     */
     fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
+
+    /**
+     * Register an Exposed table object. Creating the columns in the database is handled internally.
+     */
     fun registerTable(tab: Table)
 
+    /**
+     * Get the working config for the registered config class.
+     */
     fun <T> getConfig(clz: Class<T>): T
+
+    /**
+     * Get the Builder implementation for an API builder.
+     */
     fun <T> getBuilder(clz: Class<T>): T
+
+    /**
+     * Get the ModelHandler implementation for an API modelhandler.
+     */
     fun <T> getModelHandler(clz: Class<T>): T
 
-    // O used to remove the need for casts on dev-end
+    /**
+     * Register a Builder to provide an API builder.
+     */
     fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
+
+    /**
+     * Register a model handler to provide an API model handler.
+     */
     fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
+
+    /**
+     * Register a config with a default, being either the path of a resource or a config object.
+     */
     fun registerConfig(filename: String, cfg: Class<*>, default: Any)
 }

@@ -22,20 +22,24 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.mixin.utilities;
 
-/**
- * Interface a registered module should implement.
- */
-interface EssentialsModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import net.minecraft.network.Packet;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
+@Mixin(ServerPlayNetworkHandler.class)
+public class ServerPlayNetworkHandlerMixin_Utilities {
+    @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"), cancellable = true)
+    void noEmptyPlayerPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> listener, CallbackInfo ci) {
+        if (packet instanceof PlayerListS2CPacket && ((PlayerListS2CPacket) packet).getEntries().size() == 0) {
+            ci.cancel();
+        }
+    }
 }
