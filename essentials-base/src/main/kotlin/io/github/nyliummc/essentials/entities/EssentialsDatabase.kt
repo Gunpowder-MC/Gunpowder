@@ -37,7 +37,7 @@ import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsData
 import org.jetbrains.exposed.sql.transactions.transaction as transactionInner
 
 object EssentialsDatabase : APIEssentialsDatabase {
-    var running = false
+    var running = true
     var queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
     private val databaseThread = thread(start = true, name = "Essentials Database Thread") {
         while (running) {

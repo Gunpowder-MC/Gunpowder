@@ -1,4 +1,4 @@
-## Essentials 0.2.5
+## Essentials 0.2.6
 
 Bugs fixed:
 
@@ -13,6 +13,24 @@ Improvements:
 - None
 
 
+---
+## Essentials 0.2.5
+
+Bugs fixed:
+
+- (base) Fixed Database thread not running.
+- (module-claims) Fixed database constraint for SQLite
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+
+---
 ## Essentials 0.2.4
 
 Bugs fixed:
@@ -33,6 +51,7 @@ Improvements:
 - None
 
 
+---
 ## Essentials 0.2.3
 
 Bugs fixed:

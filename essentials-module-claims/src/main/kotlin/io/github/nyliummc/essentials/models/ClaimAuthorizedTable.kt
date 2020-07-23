@@ -31,4 +31,6 @@ import org.jetbrains.exposed.sql.Table
 object ClaimAuthorizedTable : Table() {
     val claim = reference("claimId", ClaimTable.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE)
     val user = reference("user", PlayerTable.id)
+
+    override val primaryKey = PrimaryKey(claim)
 }

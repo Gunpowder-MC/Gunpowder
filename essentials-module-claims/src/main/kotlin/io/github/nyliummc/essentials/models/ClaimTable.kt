@@ -33,4 +33,6 @@ object ClaimTable : Table() {
     val chunkX = integer("x")
     val chunkZ = integer("z")
     val dimension = varchar("dim", 255)
+
+    override val primaryKey = PrimaryKey(id)
 }

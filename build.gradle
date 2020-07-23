@@ -313,7 +313,7 @@ if (file('secrets.gradle').exists()) {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
                         if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: ''
                         } else {
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-maven.jar"), classifier: ''
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
@@ -334,7 +334,7 @@ if (file('secrets.gradle').exists()) {
             id = "350123"
             releaseType = "release"
             changelogType = "markdown"
-            changelog = file("CHANGELOG.md").readLines().join("\n")
+            changelog = file("CHANGELOG.md").readLines().join("\n").split("---")[0]
             addGameVersion project.minecraft
             addGameVersion "Fabric"
             addGameVersion "Java 8"
