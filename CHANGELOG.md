@@ -2,7 +2,7 @@
 
 Bugs fixed:
 
-- None
+- /tps now correctly shows MSPT in the MSPT column instead of TPS 
 
 New Features:
 
