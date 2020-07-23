@@ -313,7 +313,7 @@ if (file('secrets.gradle').exists()) {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
                         if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: ''
                         } else {
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-maven.jar"), classifier: ''
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
@@ -344,7 +344,7 @@ if (file('secrets.gradle').exists()) {
                 if (sub.name.contains("-base")) {
                     mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
                 } else if (sub.name.contains("-api")) {
-                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
+                    // Do nothing
                 } else {
                     addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
                 }
