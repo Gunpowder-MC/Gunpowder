@@ -32,4 +32,5 @@ object MarketEntryTable : Table() {
     val item = blob("itemstack")
     val price = decimal("price", 99, 2)
     val expiresAt = datetime("expires")
+    override val primaryKey = PrimaryKey(user, expiresAt)
 }

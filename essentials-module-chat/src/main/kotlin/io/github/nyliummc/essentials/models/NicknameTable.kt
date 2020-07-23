@@ -29,4 +29,6 @@ import org.jetbrains.exposed.sql.Table
 object NicknameTable : Table() {
     val user = uuid("user")
     val nickname = varchar("nickname", 255)
+
+    override val primaryKey = PrimaryKey(user)
 }
