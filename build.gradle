@@ -344,7 +344,7 @@ if (file('secrets.gradle').exists()) {
                 if (sub.name.contains("-base")) {
                     mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
                 } else if (sub.name.contains("-api")) {
-                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
+                    // Do nothing
                 } else {
                     addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
                 }
