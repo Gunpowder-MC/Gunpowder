@@ -2,7 +2,8 @@
 
 Bugs fixed:
 
-- (module-utilities) /tps now correctly shows MSPT in the MSPT column instead of TPS 
+- (base) Fixed database recursion caused by scope
+- (module-utilities) /tps now correctly shows MSPT in the MSPT column instead of TPS  
 
 New Features:
 
@@ -10,7 +11,7 @@ New Features:
 
 Improvements:
 
-- None
+- (api) Add support for java.util.function types for callbacks
 
 
 ---
@@ -18,7 +19,7 @@ Improvements:
 
 Bugs fixed:
 
-- (base) Fixed Database thread not running.
+- (base) Fixed Database thread not running
 - (module-claims) Fixed database constraint for SQLite
 
 New Features:

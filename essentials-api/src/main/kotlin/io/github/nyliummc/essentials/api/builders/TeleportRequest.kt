@@ -35,6 +35,8 @@ import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
+import java.util.function.Consumer
+import java.util.function.Function
 
 interface TeleportRequest {
     val player: ServerPlayerEntity
@@ -45,6 +47,7 @@ interface TeleportRequest {
 
     companion object {
         @JvmStatic
+        fun builder(callback: Consumer<Builder>) = builder(callback::accept)
         fun builder(callback: Builder.() -> Unit): TeleportRequest {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
@@ -93,6 +96,7 @@ interface TeleportRequest {
         /**
          * Callback to run after teleporting (not required).
          */
+        fun onComplete(callback: Runnable) = onComplete(callback::run)
         fun onComplete(callback: () -> Unit)
 
         @Deprecated("Used internally, do not use.")

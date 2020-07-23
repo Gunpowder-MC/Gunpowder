@@ -29,6 +29,7 @@ import io.github.nyliummc.essentials.configs.EssentialsConfig
 import it.unimi.dsi.fastutil.objects.ObjectLists
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 import java.util.concurrent.CompletableFuture
@@ -43,7 +44,7 @@ object EssentialsDatabase : APIEssentialsDatabase {
     private val databaseThread = thread(start=true, name="Essentials Database Thread") {
         while (running) {
             val pair = queue.poll() ?: continue
-            val value =transaction {
+            val value = dbTransaction {  // Because recursion
                 pair.first.invoke(this)
             }
             pair.second.complete(value)
