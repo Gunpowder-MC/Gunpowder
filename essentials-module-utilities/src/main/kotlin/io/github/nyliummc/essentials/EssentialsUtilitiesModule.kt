@@ -56,10 +56,11 @@ class EssentialsUtilitiesModule : EssentialsModule {
         essentials.registry.registerCommand(HatCommand::register)
         essentials.registry.registerCommand(HeadCommand::register)
         essentials.registry.registerCommand(HealCommand::register)
-        essentials.registry.registerCommand(SpeedCommand::register)
+        // essentials.registry.registerCommand(SpeedCommand::register)  // See comments on object
         essentials.registry.registerCommand(TPSCommand::register)
         essentials.registry.registerCommand(TrashCommand::register)
-        // essentials.registry.registerCommand(WorkbenchCommand::register)
+        // essentials.registry.registerCommand(VanishCommand::register)  // Not fully functional
+        // essentials.registry.registerCommand(WorkbenchCommand::register)  // Closes on open
     }
 
     override fun registerConfigs() {

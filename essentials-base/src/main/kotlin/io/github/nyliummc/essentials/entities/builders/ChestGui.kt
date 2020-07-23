@@ -29,8 +29,10 @@ import io.github.nyliummc.essentials.entities.mc.ChestGuiContainer
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
+import java.lang.Exception
 import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
 
 object ChestGui : APIChestGui {
@@ -42,6 +44,7 @@ object ChestGui : APIChestGui {
         private var icon: ItemStack = ItemStack.EMPTY
         private var player: PlayerEntity? = null
         private var syncId: Int = 0
+        private var size: Int = 6
 
         override fun player(player: ServerPlayerEntity) {
             this.syncId = ContainerUtil.getSyncId(player)
@@ -64,8 +67,24 @@ object ChestGui : APIChestGui {
             this.icon = icon
         }
 
+        override fun size(rows: Int) {
+            if (rows < 1 || rows > 6) {
+                throw Exception("Invalid number of rows, must be between 1 and 6!")
+            }
+            this.size = rows
+        }
+
         override fun build(): ScreenHandler {
-            return ChestGuiContainer(syncId, player!!.inventory).apply {
+            val type = when (size) {
+                1 -> ScreenHandlerType.GENERIC_9X1
+                2 -> ScreenHandlerType.GENERIC_9X2
+                3 -> ScreenHandlerType.GENERIC_9X3
+                4 -> ScreenHandlerType.GENERIC_9X4
+                5 -> ScreenHandlerType.GENERIC_9X5
+                6 -> ScreenHandlerType.GENERIC_9X6
+                else -> null
+            }
+            return ChestGuiContainer(type!!, syncId, player!!.inventory).apply {
                 setBackground(icon)
                 setButtons(buttons)
                 createInventory()

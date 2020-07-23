@@ -30,7 +30,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
- * Called after a player dies.
+ * Called after a player dies and was not cancelled by PlayerPreDeathCallback.
  */
 public interface PlayerDeathCallback {
     Event<PlayerDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerDeathCallback.class, (listeners) -> (player, source) -> {

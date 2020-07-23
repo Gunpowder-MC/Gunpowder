@@ -35,6 +35,9 @@ import java.util.concurrent.CompletableFuture
 
 interface Command {
     companion object {
+        /**
+         * Command creation DSL, see {@link io.github.nyliummc.essentials.api.builders.Command.Builder}
+         */
         @JvmStatic
         fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Builder.() -> Unit) {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
@@ -44,6 +47,10 @@ interface Command {
     }
 
     interface Builder {
+        /**
+         * The name of the command with aliases.
+         * Starts a block of {@link io.github.nyliummc.essentials.api.builders.Command.CommandBuilder}.
+         */
         fun command(vararg names: String, builder: CommandBuilder.() -> Unit)
 
         @Deprecated("Used internally, do not use.")
@@ -51,13 +58,31 @@ interface Command {
     }
 
     interface CommandBuilder {
+        /**
+         * Set requirements for running this function.
+         */
         fun requires(checkFunction: (ServerCommandSource) -> Boolean)
+
+        /**
+         * Argument parameter, see {@link io.github.nyliummc.essentials.api.builders.Command.ArgumentBuilder}.
+         */
         fun argument(name: String, type: ArgumentType<*>, builder: ArgumentBuilder.() -> Unit)
+
+        /**
+         * Literal argument.
+         */
         fun literal(vararg literals: String, builder: ArgumentBuilder.() -> Unit)
+
+        /**
+         * Code or function to execute on this command.
+         */
         fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
     }
 
     interface ArgumentBuilder : CommandBuilder {
+        /**
+         * Suggestion provider for this callback.
+         */
         fun suggests(callback: (CommandContext<ServerCommandSource>, SuggestionsBuilder) -> CompletableFuture<Suggestions>)
     }
 }

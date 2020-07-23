@@ -22,20 +22,23 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials
 
-/**
- * Interface a registered module should implement.
- */
-interface EssentialsModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
+import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.commands.ClaimCommand
+import io.github.nyliummc.essentials.configs.SimpleClaimsConfig
 
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
+class EssentialsSimpleClaimsModule : EssentialsModule {
+    override val name = "simpleclaims"
+    override val toggleable = true
+    val essentials: EssentialsMod = EssentialsMod.instance
+
+    override fun registerCommands() {
+        essentials.registry.registerCommand(ClaimCommand::register)
+    }
+
+    override fun registerConfigs() {
+        essentials.registry.registerConfig("essentials-claims.yaml", SimpleClaimsConfig::class.java, "essentials-claims.yaml")
+    }
 }

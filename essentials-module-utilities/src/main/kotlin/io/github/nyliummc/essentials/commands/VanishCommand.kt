@@ -22,20 +22,29 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.commands
 
-/**
- * Interface a registered module should implement.
- */
-interface EssentialsModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
+import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.context.CommandContext
+import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.mixin.cast.PlayerVanish
+import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
 
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
+object VanishCommand {
+    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+        Command.builder(dispatcher) {
+            command("vanish") {
+                requires { it.hasPermissionLevel(4) }
+                executes(::vanish)
+            }
+        }
+    }
+
+    private fun vanish(context: CommandContext<ServerCommandSource>): Int {
+        val player = context.source.player as PlayerVanish
+        player.isVanished = !player.isVanished;
+        context.source.player.sendMessage(LiteralText(if (player.isVanished) "Vanished, poof!" else "No longer vanished!"), false)
+        return 1
+    }
 }

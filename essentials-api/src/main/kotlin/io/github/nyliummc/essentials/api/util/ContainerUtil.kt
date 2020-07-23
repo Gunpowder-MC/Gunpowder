@@ -29,9 +29,12 @@ import net.fabricmc.fabric.mixin.container.ServerPlayerEntityAccessor
 import net.minecraft.server.network.ServerPlayerEntity
 
 object ContainerUtil {
+    /**
+     * Get a Sync ID for containers.
+     */
     @JvmStatic
     fun getSyncId(player: ServerPlayerEntity): Int {
-        var syncId: Int
+        val syncId: Int
 
         when (player) {
             is ServerPlayerEntitySyncHook -> {

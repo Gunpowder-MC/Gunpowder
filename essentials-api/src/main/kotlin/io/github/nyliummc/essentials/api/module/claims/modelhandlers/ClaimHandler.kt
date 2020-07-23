@@ -29,6 +29,7 @@ import io.github.nyliummc.essentials.api.module.claims.dataholders.StoredClaimAu
 import net.minecraft.util.math.ChunkPos
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
+import java.util.*
 
 interface ClaimHandler {
     fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean
@@ -40,4 +41,5 @@ interface ClaimHandler {
     fun getClaimAllowed(chunk: ChunkPos, dimension: RegistryKey<World>): List<StoredClaimAuthorized>
     fun addClaimAllowed(data: StoredClaimAuthorized): Boolean
     fun removeClaimAllowed(data: StoredClaimAuthorized): Boolean
+    fun getClaims(uuid: UUID): List<StoredClaim>
 }

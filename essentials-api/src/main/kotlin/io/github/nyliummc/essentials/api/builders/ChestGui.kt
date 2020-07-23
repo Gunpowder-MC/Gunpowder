@@ -32,6 +32,12 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 interface ChestGui {
     companion object {
+        /**
+         * Creates a ChestGui
+         *
+         * @param callback Block in scope of a {@link io.github.nyliummc.essentials.api.builders.ChestGui.Builder}
+         * @return A ScreenHandler that can be sent to the client
+         */
         @JvmStatic
         fun builder(callback: Builder.() -> Unit): ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
@@ -39,6 +45,12 @@ interface ChestGui {
             return builder.build()
         }
 
+        /**
+         * Creates a ChestGui Factory
+         *
+         * @param callback Block in scope of a {@link io.github.nyliummc.essentials.api.builders.ChestGui.Builder}
+         * @return a (ServerPlayerEntity) -> ScreenHandler lambda
+         */
         @JvmStatic
         fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
@@ -51,9 +63,31 @@ interface ChestGui {
     }
 
     interface Builder {
+        /**
+         * Set the player to sync the GUI with.
+         */
         fun player(player: ServerPlayerEntity)
+
+        /**
+         * Add an item as button.
+         *
+         * @param x the column in the chest
+         * @param y the row in the chest
+         * @param icon the ItemStack to display
+         * @param clickCallback the callback to execute when clicked
+         */
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit)
+
+        /**
+         * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
+         */
         fun emptyIcon(icon: ItemStack)
+
+        /**
+         * Sets the amount of rows used in the gui. 6 by default.
+         * Must be at least 1 and at most 6.
+         */
+        fun size(rows: Int)
 
         @Deprecated("Used internally, do not use.")
         fun build(): ScreenHandler

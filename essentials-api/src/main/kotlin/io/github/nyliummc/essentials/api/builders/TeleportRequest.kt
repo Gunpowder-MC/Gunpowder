@@ -52,29 +52,47 @@ interface TeleportRequest {
         }
     }
 
+    /**
+     * Time (in seconds) after which to execute the teleport.
+     */
     fun execute(seconds: Long) {
         execute(seconds, ChronoUnit.SECONDS)
     }
 
+    /**
+     * Time after which to execute the teleport.
+     */
     fun execute(time: Long, unit: TemporalUnit)
 
     interface Builder {
+        /**
+         * Player to teleport.
+         */
         fun player(player: ServerPlayerEntity)
+
+        /**
+         * Direction the player faces (not required).
+         */
         fun facing(facing: Vec2f)
+
+        /**
+         * Dimension to teleport to (not required)
+         */
         fun dimension(dimension: Identifier)
-        fun dimension(dimension: RegistryKey<DimensionType>) {
-            dimension(dimension.value)
-        }
+        fun dimension(dimension: RegistryKey<DimensionType>) = dimension(dimension.value)
+        fun dimension(dimension: World) = dimension(dimension.dimensionRegistryKey)
 
-        fun dimension(dimension: World) {
-            dimension(dimension.dimensionRegistryKey)
-        }
-
+        /**
+         * Coordinates to teleport to.
+         */
         fun destination(destination: Vec3d)
         fun destination(destination: Vec3i) {
             destination(Vec3d.of(destination))
         }
 
+        /**
+         * Callback to run after teleporting (not required).
+         */
         fun onComplete(callback: () -> Unit)
 
         @Deprecated("Used internally, do not use.")

@@ -22,20 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.api
+package io.github.nyliummc.essentials.configs
 
-/**
- * Interface a registered module should implement.
- */
-interface EssentialsModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
-
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
-}
+data class SimpleClaimsConfig(
+        val maxClaimChunks: Int,
+        val price: Double
+)

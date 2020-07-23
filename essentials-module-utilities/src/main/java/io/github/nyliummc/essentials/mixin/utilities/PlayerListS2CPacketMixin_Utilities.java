@@ -22,30 +22,34 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.mixin.claims;
+package io.github.nyliummc.essentials.mixin.utilities;
 
 import io.github.nyliummc.essentials.api.EssentialsMod;
-import io.github.nyliummc.essentials.api.module.claims.modelhandlers.ClaimHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PistonBlock;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PistonBlock.class)
-public class PistonBlockMixin_Claims {
+import java.util.List;
 
-    @Inject(method = "isMovable", at = @At("HEAD"), cancellable = true)
-    private static void isMoveable(BlockState state, World world, BlockPos pos, Direction motionDir, boolean canBreak, Direction pistonDir, CallbackInfoReturnable<Boolean> cir) {
-        ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
-        ChunkPos chunk = new ChunkPos(pos);
-        if (handler.isChunkClaimed(chunk, world.getRegistryKey())) {
-            cir.setReturnValue(false);
+@Mixin(PlayerListS2CPacket.class)
+public class PlayerListS2CPacketMixin_Utilities {
+    @Shadow
+    @Final
+    private List<PlayerListS2CPacket.Entry> entries;
+
+    @Shadow
+    private PlayerListS2CPacket.Action action;
+
+    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
+    void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
+        if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
+            this.entries.removeIf((it) -> ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(it.getProfile().getId())).isVanished());
         }
     }
 }

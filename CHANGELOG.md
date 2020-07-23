@@ -1,3 +1,18 @@
+## Essentials 0.2.5
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+
 ## Essentials 0.2.4
 
 Bugs fixed:
@@ -11,6 +26,7 @@ New Features:
 - (api) Add PlayerDeathCallback
 - (api) Add PlayerPreDeathCallback
 - (module-teleport) Add death support to /back
+- (module-simpleclaims) Add simple chunk claiming
 
 Improvements:
 

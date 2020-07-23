@@ -35,6 +35,8 @@ import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 import io.github.nyliummc.essentials.api.module.claims.modelhandlers.ClaimHandler as APIClaimHandler
 
 object ClaimHandler : APIClaimHandler {
@@ -163,5 +165,9 @@ object ClaimHandler : APIClaimHandler {
             return true
         }
         return false
+    }
+
+    override fun getClaims(uuid: UUID): List<StoredClaim> {
+        return claimMap.values.map { m -> m.values.filter { it.owner == uuid }.toList() }.toList().flatten()
     }
 }

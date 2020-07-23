@@ -160,11 +160,23 @@ allprojects { currentProject ->
             from currentProject.sourceSets.main.allSource.srcDirs
         }
 
+        task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+            afterEvaluate {
+                input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+                archiveName = "${archivesBaseName}-${version}-maven.jar"
+                addNestedDependencies = false
+            }
+        }
+
         remapJar {
             enabled = false
         }
 
         remapShadowJar {
+
+        }
+
+        remapSourcesJar {
             doLast {
                 delete fileTree("${project.buildDir}/") {
                     include "resources/**/*.json"
@@ -225,8 +237,10 @@ for (Project it : subprojects) {
         it.shadowJar.dependsOn(it.compileKotlin)
         it.shadowJar.dependsOn(it.processResources)
         it.sourcesJar.dependsOn(it.shadowJar)
+        it.remapShadowJar.dependsOn(it.remapMavenJar)
         it.remapShadowJar.dependsOn(it.sourcesJar)
-        last = it.remapShadowJar as Task
+        it.remapSourcesJar.dependsOn(it.remapShadowJar)
+        last = it.remapSourcesJar as Task
     }
 }
 build.dependsOn(last)
@@ -277,36 +291,73 @@ remapSourcesJar {
     enabled = false
 }
 
-// Curseforge upload
-
-curseforge {
+if (file('secrets.gradle').exists()) {
     apply from: 'secrets.gradle'
-    apiKey = project.apiKey
-    project {
-        id = "350123"
-        releaseType = "release"
-        changelogType = "markdown"
-        changelog = file("CHANGELOG.md").readLines().join("\n")
-        addGameVersion project.minecraft
-        addGameVersion "Fabric"
-        addGameVersion "Java 8"
+    // project.ext.apiKey = cf token
+    // project.ext.mavenToken = maven token
 
-        subprojects { sub ->
-            // Add built modules
-            if (sub.name.contains("-base")) {
-                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-            } else if (sub.name.contains("-api")) {
-                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
-            } else {
-                addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+    // Maven publish
+    subprojects { p ->
+        publishing {
+            repositories {
+                maven {
+                    url = "https://maven.martmists.com/releases"
+                    credentials {
+                        username = 'admin'
+                        password = project.mavenToken
+                    }
+                }
+            }
+
+            publications {
+                mavenJava(MavenPublication) {
+                    afterEvaluate {
+                        if (p.name.contains("-api")) {
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
+                        } else {
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-maven.jar"), classifier: ''
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources.jar"), classifier: 'sources'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources-dev.jar"), classifier: 'sources-dev'
+                        }
+                    }
+                }
             }
         }
+    }
 
-        afterEvaluate {
-            uploadTask.dependsOn(remapJar)
+    // Curseforge upload
+    curseforge {
+
+        apiKey = project.apiKey
+        project {
+            id = "350123"
+            releaseType = "release"
+            changelogType = "markdown"
+            changelog = file("CHANGELOG.md").readLines().join("\n")
+            addGameVersion project.minecraft
+            addGameVersion "Fabric"
+            addGameVersion "Java 8"
+
+            subprojects { sub ->
+                // Add built modules
+                if (sub.name.contains("-base")) {
+                    mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+                } else if (sub.name.contains("-api")) {
+                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}-dev.jar")
+                } else {
+                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
+                }
+            }
+
+            afterEvaluate {
+                uploadTask.dependsOn(remapJar)
+            }
+        }
+        options {
+            forgeGradleIntegration = false
         }
     }
-    options {
-        forgeGradleIntegration = false
-    }
+
 }
+

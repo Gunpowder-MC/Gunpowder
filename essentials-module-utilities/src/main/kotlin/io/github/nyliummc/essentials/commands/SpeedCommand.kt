@@ -114,6 +114,7 @@ object SpeedCommand {
 
     private fun setSpeed(player: ServerPlayerEntity, speed: Double) {
         // TODO: Use PAL once it supports this
+        // NOTE: Seems to require entity attributes
         (player.abilities as SpeedSetter).setServerFlySpeed(speed.toFloat())
         (player.abilities as SpeedSetter).setServerWalkSpeed(2 * speed.toFloat())
         player.sendAbilitiesUpdate()

@@ -35,18 +35,21 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin_Claims {
+    @Shadow public ServerPlayerEntity player;
+
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onUse(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;"), cancellable = true)
     void preventInteraction(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         ChunkPos chunk = new ChunkPos(hitResult.getBlockPos());
         ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
-        if (handler.isChunkClaimed(chunk)) {
-            if (handler.getClaimAllowed(chunk).stream().noneMatch((it) -> it.getUser().equals(player.getUuid()))) {
+        if (handler.isChunkClaimed(chunk, world.getRegistryKey())) {
+            if (handler.getClaimAllowed(chunk, world.getRegistryKey()).stream().noneMatch((it) -> it.getUser().equals(player.getUuid()))) {
                 cir.setReturnValue(ActionResult.FAIL);
             }
         }

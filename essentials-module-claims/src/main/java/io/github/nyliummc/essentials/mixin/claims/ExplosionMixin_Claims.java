@@ -30,6 +30,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,7 +45,7 @@ public class ExplosionMixin_Claims {
         if (original) {
             ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
             ChunkPos chunk = new ChunkPos(pos);
-            return !handler.isChunkClaimed(chunk);
+            return !handler.isChunkClaimed(chunk, ((World)world).getRegistryKey());
         }
         return false;
     }
