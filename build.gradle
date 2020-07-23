@@ -334,7 +334,7 @@ if (file('secrets.gradle').exists()) {
             id = "350123"
             releaseType = "release"
             changelogType = "markdown"
-            changelog = file("CHANGELOG.md").readLines().join("\n")
+            changelog = file("CHANGELOG.md").readLines().join("\n").split("---")[0]
             addGameVersion project.minecraft
             addGameVersion "Fabric"
             addGameVersion "Java 8"
