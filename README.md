@@ -104,6 +104,29 @@ Public Market module
 </details>
 
 <details>
+<summary>SimpleClaims</summary>
+<h5>Description</h5>
+
+Adds an implementation to claim chunks. If module-currency is installed, claiming can cost money.
+
+##### Commands
+
+- /claim
+    - Claim this chunk
+- /claim confirm
+    - Confirm claiming this chunk if module-currency is installed
+- /claim owner
+    - Get the owner of this chunk
+- /claim add \<player>
+    - Allow a player to access this chunk
+- /claim remove \<player>
+    - Remove access to this chunk from a player
+- /claim delete
+    - Delete this chunk from being claimed
+
+</details>
+
+<details>
 <summary>Teleport</summary>
 <h5>Description</h5>
 

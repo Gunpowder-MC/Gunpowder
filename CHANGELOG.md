@@ -11,6 +11,7 @@ New Features:
 - (api) Add PlayerDeathCallback
 - (api) Add PlayerPreDeathCallback
 - (module-teleport) Add death support to /back
+- (module-simpleclaims) Add simple chunk claiming
 
 Improvements:
 
