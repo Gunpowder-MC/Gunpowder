@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "essentials-module-simpleclaims",
+  "version": "${version}",
+  "name": "Essentials SimpleClaims",
+  "description": "The SimpleClaims module for Essentials",
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/essentials/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "essentials:modules": [
+      "io.github.nyliummc.essentials.EssentialsSimpleClaimsModule"
+    ]
+  },
+  "depends": {
+    "essentials-base": "${version}",
+    "essentials-module-claims": "${version}",
+    "fabricloader": ">=0.8.9",
+    "fabric": "*"
+  },
+  "suggests": {
+    "essentials-module-currency": "${version}"
+  },
+  "breaks": {
+    "essentials-module-towny": "${version}"
+  }
+}
