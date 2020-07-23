@@ -1,5 +1,6 @@
 package io.github.nyliummc.essentials.modelhandlers
 
+import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.module.mcmmo.dataholders.StoredMcMMOSkill
 import io.github.nyliummc.essentials.models.UserSkillTable
 import org.jetbrains.exposed.sql.and
@@ -14,6 +15,9 @@ import kotlin.math.roundToInt
 import io.github.nyliummc.essentials.api.module.mcmmo.modelhandlers.McMMOSkillRegistry as APISkillRegistry
 
 object McMMOSkillRegistry : APISkillRegistry {
+    private val db by lazy {
+        EssentialsMod.instance.database
+    }
     private val skillCache = mutableMapOf<UUID, MutableMap<APISkillRegistry.SkillKey, StoredMcMMOSkill>>()
     private val callbackMap = mutableMapOf<APISkillRegistry.SkillKey, MutableList<(StoredMcMMOSkill) -> Unit>>()
 
@@ -35,7 +39,7 @@ object McMMOSkillRegistry : APISkillRegistry {
     class SkillKey(val name: String) : APISkillRegistry.SkillKey {
         override fun getUser(user: UUID): StoredMcMMOSkill {
             return skillCache.getOrPut(user) { mutableMapOf() }.getOrPut(this) {
-                transaction {
+                db.transaction {
                     UserSkillTable.insert {
                         it[UserSkillTable.user] = user
                         it[UserSkillTable.skill] = this@SkillKey.name
@@ -51,7 +55,7 @@ object McMMOSkillRegistry : APISkillRegistry {
             val u = getUser(user)
             u.skillExp += amount
             checkExp(u)
-            transaction {
+            db.transaction {
                 UserSkillTable.update({ UserSkillTable.user.eq(user).and(UserSkillTable.skill.eq(this@SkillKey.name)) }) {
                     it[UserSkillTable.exp] = u.skillExp
                     it[UserSkillTable.level] = u.skillLevel
@@ -63,7 +67,7 @@ object McMMOSkillRegistry : APISkillRegistry {
             val u = getUser(user)
             u.skillExp = amount
             checkExp(u)
-            transaction {
+            db.transaction {
                 UserSkillTable.update({ UserSkillTable.user.eq(user).and(UserSkillTable.skill.eq(this@SkillKey.name)) }) {
                     it[UserSkillTable.exp] = u.skillExp
                     it[UserSkillTable.level] = u.skillLevel
@@ -75,7 +79,7 @@ object McMMOSkillRegistry : APISkillRegistry {
             val lv = if (level > 100) 100 else level
             val u = getUser(user)
             u.skillLevel = lv
-            transaction {
+            db.transaction {
                 UserSkillTable.update({ UserSkillTable.user.eq(user).and(UserSkillTable.skill.eq(this@SkillKey.name)) }) {
                     it[UserSkillTable.level] = u.skillLevel
                 }
