@@ -182,7 +182,7 @@ If you want to use fabric, add the following to your build.gradle:
 
 ```gradle
 dependencies {
-    modImplementation "io.github.nyliummc:essentials-api:${essentials_version}+${minecraft_version}"
+    implementation "io.github.nyliummc:essentials-api:${essentials_version}+${minecraft_version}"
     // add modRuntimes for other modules; DO NOT COMPILE AGAINST THEM
 }
 
