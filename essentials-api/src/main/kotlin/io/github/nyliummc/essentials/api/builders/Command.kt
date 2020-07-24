@@ -32,6 +32,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.github.nyliummc.essentials.api.EssentialsMod
 import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 interface Command {
     companion object {
@@ -39,6 +40,7 @@ interface Command {
          * Command creation DSL, see {@link io.github.nyliummc.essentials.api.builders.Command.Builder}
          */
         @JvmStatic
+        fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Consumer<Builder>) = builder(dispatcher, callback::accept)
         fun builder(dispatcher: CommandDispatcher<ServerCommandSource>, callback: Builder.() -> Unit) {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             builder.setDispatcher(dispatcher)
@@ -51,6 +53,7 @@ interface Command {
          * The name of the command with aliases.
          * Starts a block of {@link io.github.nyliummc.essentials.api.builders.Command.CommandBuilder}.
          */
+        fun command(vararg names: String, builder: Consumer<CommandBuilder>) = command(*names, builder=builder::accept)
         fun command(vararg names: String, builder: CommandBuilder.() -> Unit)
 
         @Deprecated("Used internally, do not use.")
@@ -66,11 +69,13 @@ interface Command {
         /**
          * Argument parameter, see {@link io.github.nyliummc.essentials.api.builders.Command.ArgumentBuilder}.
          */
+        fun argument(name: String, type: ArgumentType<*>, builder: Consumer<ArgumentBuilder>) = argument(name, type, builder::accept)
         fun argument(name: String, type: ArgumentType<*>, builder: ArgumentBuilder.() -> Unit)
 
         /**
          * Literal argument.
          */
+        fun literal(vararg literals: String, builder: Consumer<ArgumentBuilder>) = literal(*literals, builder=builder::accept)
         fun literal(vararg literals: String, builder: ArgumentBuilder.() -> Unit)
 
         /**

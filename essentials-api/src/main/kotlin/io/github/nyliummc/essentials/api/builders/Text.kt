@@ -28,12 +28,14 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.util.Formatting
+import java.util.function.Consumer
 import net.minecraft.text.Text as MCText
 
 
 interface Text {
     companion object {
         @JvmStatic
+        fun builder(callback: Consumer<Builder>) = builder(callback::accept)
         fun builder(callback: Builder.() -> Unit): MCText {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
@@ -51,6 +53,8 @@ interface Text {
         /**
          * Add styled text.
          */
+        fun text(text: String, callback: Consumer<StyleBuilder>) = text(text, callback::accept)
+        fun text(text: MCText, callback: Consumer<StyleBuilder>) = text(text, callback::accept)
         fun text(text: String, callback: StyleBuilder.() -> Unit)
         fun text(text: MCText, callback: StyleBuilder.() -> Unit)
 

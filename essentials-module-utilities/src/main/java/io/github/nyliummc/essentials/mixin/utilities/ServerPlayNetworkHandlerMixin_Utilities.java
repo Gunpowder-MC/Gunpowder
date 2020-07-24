@@ -38,8 +38,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayNetworkHandlerMixin_Utilities {
     @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"), cancellable = true)
     void noEmptyPlayerPacket(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> listener, CallbackInfo ci) {
-        if (packet instanceof PlayerListS2CPacket && ((PlayerListS2CPacket) packet).getEntries().size() == 0) {
-            ci.cancel();
-        }
+        // Disabled as getEntries is client-only
+        //if (packet instanceof PlayerListS2CPacket && ((PlayerListS2CPacket) packet).getEntries().size() == 0) {
+        //    ci.cancel();
+        //}
     }
 }

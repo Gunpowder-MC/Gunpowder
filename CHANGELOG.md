@@ -1,4 +1,4 @@
-## Essentials 0.2.6
+## Essentials 0.2.7
 
 Bugs fixed:
 
@@ -14,11 +14,29 @@ Improvements:
 
 
 ---
+## Essentials 0.2.6
+
+Bugs fixed:
+
+- (base) Fixed database recursion caused by scope
+- (module-utilities) Packet mixin commented out for the time being.
+- (module-utilities) /tps now correctly shows MSPT in the MSPT column instead of TPS  
+
+New Features:
+
+- (module-utilities) Add /workbench
+
+Improvements:
+
+- (api) Add support for java.util.function types for callbacks
+
+
+---
 ## Essentials 0.2.5
 
 Bugs fixed:
 
-- (base) Fixed Database thread not running.
+- (base) Fixed Database thread not running
 - (module-claims) Fixed database constraint for SQLite
 
 New Features:

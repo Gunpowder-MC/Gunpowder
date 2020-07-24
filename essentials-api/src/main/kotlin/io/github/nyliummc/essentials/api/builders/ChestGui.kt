@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
+import java.util.function.Consumer
 
 interface ChestGui {
     companion object {
@@ -39,6 +40,7 @@ interface ChestGui {
          * @return A ScreenHandler that can be sent to the client
          */
         @JvmStatic
+        fun builder(callback: Consumer<Builder>) = builder(callback::accept)
         fun builder(callback: Builder.() -> Unit): ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
@@ -52,6 +54,7 @@ interface ChestGui {
          * @return a (ServerPlayerEntity) -> ScreenHandler lambda
          */
         @JvmStatic
+        fun factory(callback: Consumer<Builder>) = factory(callback::accept)
         fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> ScreenHandler {
             val builder = EssentialsMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
@@ -76,6 +79,7 @@ interface ChestGui {
          * @param icon the ItemStack to display
          * @param clickCallback the callback to execute when clicked
          */
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: Consumer<SlotActionType>) = button(x, y, icon, clickCallback::accept)
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit)
 
         /**

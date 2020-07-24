@@ -49,5 +49,5 @@ class TPSTracker(val id: String) {
     }
 
     fun getTps(): Double = history.average()
-    fun getMspt(): Double = history.average()
+    fun getMspt(): Double = msptHistory.average()
 }
