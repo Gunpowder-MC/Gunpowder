@@ -27,12 +27,14 @@ package io.github.nyliummc.essentials.api
 import com.mojang.brigadier.CommandDispatcher
 import net.minecraft.server.command.ServerCommandSource
 import org.jetbrains.exposed.sql.Table
+import java.util.function.Consumer
 import java.util.function.Supplier
 
 interface EssentialsRegistry {
     /**
      * Register a command; This should be a consumer taking a CommandDispatcher<ServerCommandSource>
      */
+    fun registerCommand(callback: Consumer<CommandDispatcher<ServerCommandSource>>) = registerCommand(callback::accept)
     fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit)
 
     /**
