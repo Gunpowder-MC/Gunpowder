@@ -53,7 +53,7 @@ object InvseeCommand {
     private fun execute(context: CommandContext<ServerCommandSource>): Int {
         val player = EntityArgumentType.getPlayer(context, "player")
 
-        player.openHandledScreen(SimpleNamedScreenHandlerFactory(ScreenHandlerFactory { i: Int, playerInventory: PlayerInventory?, _: PlayerEntity? ->
+        context.source.player.openHandledScreen(SimpleNamedScreenHandlerFactory(ScreenHandlerFactory { i: Int, playerInventory: PlayerInventory?, _: PlayerEntity? ->
             GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X4, i, playerInventory, player.inventory, 4)
         }, LiteralText("${player.entityName}'s Inventory")))
 
