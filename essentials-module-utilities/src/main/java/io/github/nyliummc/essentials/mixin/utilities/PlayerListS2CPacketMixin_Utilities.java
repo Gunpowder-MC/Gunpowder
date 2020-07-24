@@ -48,6 +48,7 @@ public class PlayerListS2CPacketMixin_Utilities {
 
     @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
     void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
+        if (true) return;
         if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
             this.entries.removeIf((it) -> ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(it.getProfile().getId())).isVanished());
         }
