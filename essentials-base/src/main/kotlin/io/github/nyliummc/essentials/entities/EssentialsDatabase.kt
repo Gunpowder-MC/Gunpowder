@@ -39,14 +39,23 @@ import kotlin.concurrent.thread
 import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsDatabase
 
 object EssentialsDatabase : APIEssentialsDatabase {
-    var running = true
-    var queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
-    private val databaseThread = thread(start=true, name="Essentials Database Thread") {
+    @Volatile private var running = true
+    private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
+    private val databaseThread = thread(start=true, isDaemon=false, name="Essentials Database Thread") {
         while (running) {
-            val pair = queue.poll() ?: continue
-            val value = dbTransaction {  // Because recursion
-                pair.first.invoke(this)
+            val pair = queue.poll()
+            if (pair == null) {
+                Thread.sleep(20)  // 20ms to not lag thread
+                continue
             }
+            println("Database thread got a task")
+            val value = dbTransaction {  // Because recursion
+                println("Calling function")
+                val x = pair.first.invoke(this)
+                println("Function done")
+                x
+            }
+            println("Setting future ${pair.second.hashCode()}")
             pair.second.complete(value)
         }
     }
@@ -58,6 +67,8 @@ object EssentialsDatabase : APIEssentialsDatabase {
     private val databaseName = "essentials"
 
     fun disconnect() {
+        running = false
+        databaseThread.join()
         try {
             TransactionManager.closeAndUnregister(db)
         } catch (e: UninitializedPropertyAccessException) {
@@ -107,6 +118,7 @@ object EssentialsDatabase : APIEssentialsDatabase {
 
     override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {
         val fut = CompletableFuture<T>()
+        println("Waiting for future ${fut.hashCode()}")
         queue.add(Pair(callback as Transaction.() -> Any, fut as CompletableFuture<Any>))
         return fut
     }

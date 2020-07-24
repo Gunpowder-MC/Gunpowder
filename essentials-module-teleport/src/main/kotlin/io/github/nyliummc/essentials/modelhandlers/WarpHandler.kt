@@ -45,14 +45,15 @@ object WarpHandler : APIWarpHandler {
     }
 
     private fun loadEntries() {
-        db.transaction {
-            cache.putAll(WarpTable.selectAll().map {
+        val temp = db.transaction {
+            WarpTable.selectAll().map {
                 it[WarpTable.name] to StoredWarp(
                         it[WarpTable.name],
                         Vec3i(it[WarpTable.x], it[WarpTable.y], it[WarpTable.z]),
                         Identifier(it[WarpTable.dimension]))
-            }.toMap())
+            }.toMap()
         }.get()
+        cache.putAll(temp)
     }
 
     override fun getWarp(name: String): StoredWarp? {
