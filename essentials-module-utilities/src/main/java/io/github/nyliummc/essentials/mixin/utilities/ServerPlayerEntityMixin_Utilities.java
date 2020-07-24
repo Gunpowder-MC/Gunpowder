@@ -41,6 +41,8 @@ public class ServerPlayerEntityMixin_Utilities implements PlayerVanish {
 
     @Override
     public void setVanished(boolean enabled) {
+        if (true) return;
+
         vanished = enabled;
 
         EssentialsMod.getInstance().getServer().getPlayerManager().getPlayerList().stream().forEach((p) -> {
