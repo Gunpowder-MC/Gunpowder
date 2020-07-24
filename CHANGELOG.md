@@ -1,8 +1,25 @@
+## Essentials 0.2.7
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+
+---
 ## Essentials 0.2.6
 
 Bugs fixed:
 
 - (base) Fixed database recursion caused by scope
+- (module-utilities) Packet mixin commented out for the time being.
 - (module-utilities) /tps now correctly shows MSPT in the MSPT column instead of TPS  
 
 New Features:
