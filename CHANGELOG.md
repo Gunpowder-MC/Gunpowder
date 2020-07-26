@@ -1,8 +1,24 @@
-## Essentials 0.2.7
+## Essentials 0.2.8
 
 Bugs fixed:
 
 - None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+
+---
+## Essentials 0.2.7
+
+Bugs fixed:
+
+- (base) Fix database hanging issues
 
 New Features:
 
