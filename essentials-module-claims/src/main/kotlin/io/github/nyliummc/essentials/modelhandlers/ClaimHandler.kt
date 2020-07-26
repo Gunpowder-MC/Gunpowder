@@ -60,7 +60,7 @@ object ClaimHandler : APIClaimHandler {
                     val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(c[ClaimTable.dimension]))
                     val chunk = ChunkPos(c[ClaimTable.chunkX], c[ClaimTable.chunkZ])
                     val cl = StoredClaim(c[ClaimTable.owner], chunk, dimension)
-                    claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = cl
+                    claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = cl  // FIXME: Hangs DB Thread sometimes?
                     cl
                 }
                 claimAuthorizedMap[claim]!!.add(StoredClaimAuthorized(claim, it[ClaimAuthorizedTable.user]))
