@@ -27,6 +27,7 @@ package io.github.nyliummc.essentials.api
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 interface EssentialsDatabase {
     val db: Database
@@ -34,5 +35,6 @@ interface EssentialsDatabase {
     /**
      * Alternative to Exposed's `transaction`, runs the transaction on a separate thread.
      */
+    fun transaction(callback: Consumer<Transaction>) = transaction(callback::accept)
     fun <T> transaction(callback: Transaction.()->T): CompletableFuture<T>
 }
