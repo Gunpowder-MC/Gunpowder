@@ -24,33 +24,13 @@
 
 package io.github.nyliummc.essentials.mixin.utilities;
 
-import io.github.nyliummc.essentials.api.EssentialsMod;
-import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import org.spongepowered.asm.mixin.Final;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
-import java.util.Objects;
-
-@Mixin(PlayerListS2CPacket.class)
-public class PlayerListS2CPacketMixin_Utilities {
-    @Shadow
-    @Final
-    private List<PlayerListS2CPacket.Entry> entries;
-
-    @Shadow
-    private PlayerListS2CPacket.Action action;
-
-    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
-    void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
-        if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
-            this.entries.removeIf((it) -> ((PlayerVanish) Objects.requireNonNull(EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(it.getProfile().getId()))).isVanished());
-        }
-    }
+@Mixin(ThreadedAnvilChunkStorage.class)
+public interface ThreadedAnvilChunkStorageAccessor_Utilities {
+    @Accessor("entityTrackers")
+    Int2ObjectMap<EntityTrackerAccessor_Utilities> getEntityTrackers();
 }

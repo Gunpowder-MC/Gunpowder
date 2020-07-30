@@ -22,29 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.commands
+package io.github.nyliummc.essentials.mixin.utilities;
 
-import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.context.CommandContext
-import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.mixin.cast.PlayerVanish
-import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
+import net.minecraft.server.network.EntityTrackerEntry;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-object VanishCommand {
-    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        Command.builder(dispatcher) {
-            command("vanish") {
-                requires { it.hasPermissionLevel(4) }
-                executes(::vanish)
-            }
-        }
-    }
-
-    private fun vanish(context: CommandContext<ServerCommandSource>): Int {
-        val player = context.source.player as PlayerVanish
-        player.isVanished = !player.isVanished;
-        context.source.player.sendMessage(LiteralText(if (player.isVanished) "Vanished, poof!" else "No longer vanished!"), false)
-        return 1
-    }
+@Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage$EntityTracker")
+public interface EntityTrackerAccessor_Utilities {
+    @Accessor("entry")
+    EntityTrackerEntry getEntry();
 }
