@@ -26,7 +26,6 @@ package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.exceptions.CommandSyntaxException
 import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.mixin.cast.PlayerVanish
 import net.minecraft.server.command.ServerCommandSource
@@ -41,25 +40,11 @@ object VanishCommand {
                 literal("toggle") {
                     executes(::toggleVanish)
                 }
-                executes {
-                    val player = it.source.player
-                    player.sendMessage(
-                            LiteralText(
-                                    if ((player as PlayerVanish).isVanished)
-                                        "You are vanished."
-                                    else
-                                        "You're not vanished."
-                            ).formatted(Formatting.AQUA),
-                            true
-                    )
-                    1
-                }
+                executes (::displayVanishInfo)
             }
         }
     }
 
-    //todo server ping -> players; hide vanished
-    @Throws(CommandSyntaxException::class)
     private fun toggleVanish(ctx: CommandContext<ServerCommandSource>): Int {
         val player = ctx.source.player as PlayerVanish
         player.isVanished = !player.isVanished
@@ -70,7 +55,21 @@ object VanishCommand {
                         if (player.isVanished)
                             "Puff! You have vanished from the world."
                         else
-                            "You are now unvanished."
+                            "You are now no longer vanished."
+                ).formatted(Formatting.AQUA),
+                true
+        )
+        return 1
+    }
+
+    private fun displayVanishInfo(ctx: CommandContext<ServerCommandSource>): Int {
+        val player = ctx.source.player
+        player.sendMessage(
+                LiteralText(
+                        if ((player as PlayerVanish).isVanished)
+                            "You are vanished."
+                        else
+                            "You're not vanished."
                 ).formatted(Formatting.AQUA),
                 true
         )
