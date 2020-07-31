@@ -29,7 +29,6 @@ import io.github.nyliummc.essentials.api.EssentialsModule
 import io.github.nyliummc.essentials.commands.*
 import io.github.nyliummc.essentials.configs.UtilitiesConfig
 import io.github.nyliummc.essentials.entities.TPSTracker
-import io.github.nyliummc.essentials.ext.precision
 import io.github.nyliummc.essentials.mixin.cast.SleepSetter
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.player.PlayerEntity
@@ -61,7 +60,7 @@ class EssentialsUtilitiesModule : EssentialsModule {
         // essentials.registry.registerCommand(SpeedCommand::register)  // See comments on object
         essentials.registry.registerCommand(TPSCommand::register)
         essentials.registry.registerCommand(TrashCommand::register)
-        // essentials.registry.registerCommand(VanishCommand::register)  // Not fully functional
+        essentials.registry.registerCommand(VanishCommand::register);
         essentials.registry.registerCommand(WorkbenchCommand::register)
     }
 

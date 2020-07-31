@@ -4,11 +4,14 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.UtilitiesModulePlugin",
   "mixins": [
+    "EntityTrackerAccessor_Utilities",
+    "ListCommandMixin_Utilities",
     "PlayerAbilitiesAccessor_Utilities",
     "PlayerListS2CPacketMixin_Utilities",
     "ServerPlayerEntityMixin_Utilities",
     "ServerPlayNetworkHandlerMixin_Utilities",
-    "ServerWorldMixin_Utilities"
+    "ServerWorldMixin_Utilities",
+    "ThreadedAnvilChunkStorageAccessor_Utilities"
   ],
   "client": [
   ],

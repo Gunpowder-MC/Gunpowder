@@ -24,35 +24,12 @@
 
 package io.github.nyliummc.essentials.mixin.utilities;
 
-import io.github.nyliummc.essentials.api.EssentialsMod;
-import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.server.network.EntityTrackerEntry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
-
-@Mixin(PlayerListS2CPacket.class)
-public class PlayerListS2CPacketMixin_Utilities {
-    @Shadow
-    @Final
-    private List<PlayerListS2CPacket.Entry> entries;
-
-    @Shadow
-    private PlayerListS2CPacket.Action action;
-
-    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At(value = "HEAD"))
-    void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
-        if (this.entries.iterator().hasNext() && this.action.equals(PlayerListS2CPacket.Action.ADD_PLAYER)) {
-            this.entries.removeIf(entry ->
-                ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId())).isVanished()
-            );
-        }
-
-    }
+@Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage$EntityTracker")
+public interface EntityTrackerAccessor_Utilities {
+    @Accessor("entry")
+    EntityTrackerEntry getEntry();
 }
