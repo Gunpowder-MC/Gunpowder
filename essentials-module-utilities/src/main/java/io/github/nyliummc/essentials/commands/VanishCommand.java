@@ -26,18 +26,22 @@ package io.github.nyliummc.essentials.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.github.nyliummc.essentials.api.EssentialsMod;
 import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
 import io.github.nyliummc.essentials.mixin.utilities.EntityTrackerAccessor_Utilities;
 import io.github.nyliummc.essentials.mixin.utilities.ThreadedAnvilChunkStorageAccessor_Utilities;
 import net.fabricmc.fabric.impl.networking.server.EntityTrackerStreamAccessor;
+import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.text.LiteralText;
-
-import java.util.Objects;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -66,18 +70,22 @@ public class VanishCommand {
         );
     }
 
+    //todo edit "/list" command info
+    //todo server ping -> players
+    //todo PlayerListS2CPacket -> NPE when player joins
     private static int toggleVanish(ServerCommandSource src) throws CommandSyntaxException {
         ServerPlayerEntity player = src.getPlayer();
 
         // Storing vanished status in boolean to ease the use
-        final boolean isVanished = ((PlayerVanish) player).isVanished();
+        boolean isVanished = ((PlayerVanish) player).isVanished();
 
         player.setInvisible(!isVanished);
         ((PlayerVanish) player).setVanished(!isVanished);
 
         // Sending player ADD/REMOVE packet
         // This updates the tablist
-        Objects.requireNonNull(player.getServer()).getPlayerManager().sendToAll(
+        PlayerManager playerManager = EssentialsMod.getInstance().getServer().getPlayerManager();
+        playerManager.sendToAll(
                 new PlayerListS2CPacket(
                         isVanished ? PlayerListS2CPacket.Action.ADD_PLAYER : PlayerListS2CPacket.Action.REMOVE_PLAYER,
                         player
@@ -88,6 +96,7 @@ public class VanishCommand {
         EntityTrackerAccessor_Utilities trackerEntry = ((ThreadedAnvilChunkStorageAccessor_Utilities) storage).getEntityTrackers().get(player.getEntityId());
 
         // Starting / stopping the player tracking
+        // This actually removes the player (otherwise hacked clients still see the it with certain hacks)
         ((EntityTrackerStreamAccessor) trackerEntry).fabric_getTrackingPlayers().forEach(
                 tracking -> {
                     if (isVanished)
@@ -96,6 +105,15 @@ public class VanishCommand {
                         trackerEntry.getEntry().stopTracking(tracking);
                 }
         );
+
+        // Faking leave - join message
+        TranslatableText msg = new TranslatableText(
+                isVanished?
+                    "multiplayer.player.joined" :
+                    "multiplayer.player.left",
+                player.getDisplayName()
+        );
+        playerManager.broadcastChatMessage(msg.formatted(Formatting.YELLOW), MessageType.SYSTEM, Util.NIL_UUID);
 
         // Sending info to player
         player.sendMessage(

@@ -47,10 +47,13 @@ public class PlayerListS2CPacketMixin_Utilities {
     @Shadow
     private PlayerListS2CPacket.Action action;
 
+    //todo
     @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
     void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
         if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
-            this.entries.removeIf((it) -> ((PlayerVanish) Objects.requireNonNull(EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(it.getProfile().getId()))).isVanished());
+            this.entries.removeIf(entry ->
+                ((PlayerVanish) Objects.requireNonNull(EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId()))).isVanished()
+            );
         }
     }
 }
