@@ -24,8 +24,18 @@
 
 package io.github.nyliummc.essentials.mixin.utilities;
 
+import io.github.nyliummc.essentials.api.EssentialsMod;
 import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
+import net.fabricmc.fabric.impl.networking.server.EntityTrackerStreamAccessor;
+import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ServerPlayerEntity.class)
@@ -39,17 +49,43 @@ public class ServerPlayerEntityMixin_Utilities implements PlayerVanish {
 
     @Override
     public void setVanished(boolean enabled) {
+        ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
         vanished = enabled;
 
-        /*EssentialsMod.getInstance().getServer().getPlayerManager().getPlayerList().forEach((p) -> {
-            p.server.forcePlayerSampleUpdate();
-            if (p != (Object) this) {
-                if (enabled) {
-                    p.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.REMOVE_PLAYER, (ServerPlayerEntity) (Object) this));
-                } else {
-                    p.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, (ServerPlayerEntity) (Object) this));
+        player.setInvisible(enabled);
+
+        // Sending player ADD/REMOVE packet
+        // This updates the tablist
+        final PlayerManager playerManager = EssentialsMod.getInstance().getServer().getPlayerManager();
+        playerManager.sendToAll(
+                new PlayerListS2CPacket(
+                        enabled ? PlayerListS2CPacket.Action.REMOVE_PLAYER : PlayerListS2CPacket.Action.ADD_PLAYER,
+                        player
+                )
+        );
+
+        ThreadedAnvilChunkStorage storage = ((ServerChunkManager) player.world.getChunkManager()).threadedAnvilChunkStorage;
+        EntityTrackerAccessor_Utilities trackerEntry = ((ThreadedAnvilChunkStorageAccessor_Utilities) storage).getEntityTrackers().get(player.getEntityId());
+
+        // Starting / stopping the player tracking
+        // This actually removes the player (otherwise hacked clients still see the it with certain hacks)
+        ((EntityTrackerStreamAccessor) trackerEntry).fabric_getTrackingPlayers().forEach(
+                tracking -> {
+                    if (enabled)
+                        trackerEntry.getEntry().stopTracking(tracking);
+                    else
+                        trackerEntry.getEntry().startTracking(tracking);
+
                 }
-            }
-        });*/
+        );
+
+        // Faking leave - join message
+        TranslatableText msg = new TranslatableText(
+                enabled?
+                        "multiplayer.player.left":
+                        "multiplayer.player.joined",
+                player.getDisplayName()
+        );
+        playerManager.broadcastChatMessage(msg.formatted(Formatting.YELLOW), MessageType.SYSTEM, Util.NIL_UUID);
     }
 }

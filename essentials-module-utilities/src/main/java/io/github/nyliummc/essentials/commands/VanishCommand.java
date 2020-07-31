@@ -26,22 +26,10 @@ package io.github.nyliummc.essentials.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.github.nyliummc.essentials.api.EssentialsMod;
 import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
-import io.github.nyliummc.essentials.mixin.utilities.EntityTrackerAccessor_Utilities;
-import io.github.nyliummc.essentials.mixin.utilities.ThreadedAnvilChunkStorageAccessor_Utilities;
-import net.fabricmc.fabric.impl.networking.server.EntityTrackerStreamAccessor;
-import net.minecraft.network.MessageType;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -70,57 +58,17 @@ public class VanishCommand {
         );
     }
 
-    //todo edit "/list" command info
-    //todo server ping -> players
-    //todo PlayerListS2CPacket -> NPE when player joins
+    //todo server ping -> players; hide vanished
     private static int toggleVanish(ServerCommandSource src) throws CommandSyntaxException {
-        ServerPlayerEntity player = src.getPlayer();
+        PlayerVanish player = (PlayerVanish) src.getPlayer();
 
-        // Storing vanished status in boolean to ease the use
-        boolean isVanished = ((PlayerVanish) player).isVanished();
-
-        player.setInvisible(!isVanished);
-        ((PlayerVanish) player).setVanished(!isVanished);
-
-        // Sending player ADD/REMOVE packet
-        // This updates the tablist
-        PlayerManager playerManager = EssentialsMod.getInstance().getServer().getPlayerManager();
-        playerManager.sendToAll(
-                new PlayerListS2CPacket(
-                        isVanished ? PlayerListS2CPacket.Action.ADD_PLAYER : PlayerListS2CPacket.Action.REMOVE_PLAYER,
-                        player
-                )
-        );
-
-        ThreadedAnvilChunkStorage storage = ((ServerChunkManager) player.world.getChunkManager()).threadedAnvilChunkStorage;
-        EntityTrackerAccessor_Utilities trackerEntry = ((ThreadedAnvilChunkStorageAccessor_Utilities) storage).getEntityTrackers().get(player.getEntityId());
-
-        // Starting / stopping the player tracking
-        // This actually removes the player (otherwise hacked clients still see the it with certain hacks)
-        ((EntityTrackerStreamAccessor) trackerEntry).fabric_getTrackingPlayers().forEach(
-                tracking -> {
-                    if (isVanished)
-                        trackerEntry.getEntry().startTracking(tracking);
-                    else
-                        trackerEntry.getEntry().stopTracking(tracking);
-                }
-        );
-
-        // Faking leave - join message
-        TranslatableText msg = new TranslatableText(
-                isVanished?
-                    "multiplayer.player.joined" :
-                    "multiplayer.player.left",
-                player.getDisplayName()
-        );
-        playerManager.broadcastChatMessage(msg.formatted(Formatting.YELLOW), MessageType.SYSTEM, Util.NIL_UUID);
-
+        player.setVanished(!player.isVanished());
         // Sending info to player
-        player.sendMessage(
+        src.getPlayer().sendMessage(
                 new LiteralText(
-                        isVanished ?
-                                "§6You are now unvanished." :
-                                "§6Puff! You have vanished from the world."
+                        player.isVanished() ?
+                                "§6Puff! You have vanished from the world.":
+                                "§6You are now unvanished."
                 ),
                 true
         );

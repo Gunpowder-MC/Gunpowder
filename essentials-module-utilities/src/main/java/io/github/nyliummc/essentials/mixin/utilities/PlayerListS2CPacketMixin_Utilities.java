@@ -36,7 +36,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.Objects;
 
 @Mixin(PlayerListS2CPacket.class)
 public class PlayerListS2CPacketMixin_Utilities {
@@ -47,13 +46,13 @@ public class PlayerListS2CPacketMixin_Utilities {
     @Shadow
     private PlayerListS2CPacket.Action action;
 
-    //todo
-    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("HEAD"))
+    @Inject(method = "write(Lnet/minecraft/network/PacketByteBuf;)V", at = @At(value = "HEAD"))
     void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
-        if (this.action != PlayerListS2CPacket.Action.REMOVE_PLAYER) {
+        if (this.entries.iterator().hasNext() && this.action.equals(PlayerListS2CPacket.Action.ADD_PLAYER)) {
             this.entries.removeIf(entry ->
-                ((PlayerVanish) Objects.requireNonNull(EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId()))).isVanished()
+                ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId())).isVanished()
             );
         }
+
     }
 }
