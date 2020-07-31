@@ -21,57 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.nyliummc.essentials.commands
 
-package io.github.nyliummc.essentials.commands;
+import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.exceptions.CommandSyntaxException
+import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.mixin.cast.PlayerVanish
+import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
+import net.minecraft.util.Formatting
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.github.nyliummc.essentials.mixin.cast.PlayerVanish;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-
-import static net.minecraft.server.command.CommandManager.literal;
-
-public class VanishCommand {
-
-
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(literal("vanish")
-            .requires(source -> source.hasPermissionLevel(4))
-            .then(literal("toggle")
-                    .executes(ctx -> toggleVanish(ctx.getSource()))
-            )
-            .executes(ctx -> {
-                    ServerPlayerEntity player = ctx.getSource().getPlayer();
-                    player.sendMessage(
-                            new LiteralText(
-                                    ((PlayerVanish) player).isVanished() ?
-                                        "§6You are vanished." :
-                                        "§6You're not vanished."
-                            ),
-                            true
-                    );
-                    return 1;
+object VanishCommand {
+    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
+        Command.builder(dispatcher) {
+            command("vanish") {
+                requires { it.hasPermissionLevel(4) }
+                literal("toggle") {
+                    executes(::toggleVanish)
                 }
-            )
-        );
+                executes {
+                    val player = it.source.player
+                    player.sendMessage(
+                            LiteralText(
+                                    if ((player as PlayerVanish).isVanished)
+                                        "You are vanished."
+                                    else
+                                        "You're not vanished."
+                            ).formatted(Formatting.AQUA),
+                            true
+                    )
+                    1
+                }
+            }
+        }
     }
 
     //todo server ping -> players; hide vanished
-    private static int toggleVanish(ServerCommandSource src) throws CommandSyntaxException {
-        PlayerVanish player = (PlayerVanish) src.getPlayer();
+    @Throws(CommandSyntaxException::class)
+    private fun toggleVanish(ctx: CommandContext<ServerCommandSource>): Int {
+        val player = ctx.source.player as PlayerVanish
+        player.isVanished = !player.isVanished
 
-        player.setVanished(!player.isVanished());
         // Sending info to player
-        src.getPlayer().sendMessage(
-                new LiteralText(
-                        player.isVanished() ?
-                                "§6Puff! You have vanished from the world.":
-                                "§6You are now unvanished."
-                ),
+        ctx.source.player.sendMessage(
+                LiteralText(
+                        if (player.isVanished)
+                            "Puff! You have vanished from the world."
+                        else
+                            "You are now unvanished."
+                ).formatted(Formatting.AQUA),
                 true
-        );
-        return 1;
+        )
+        return 1
     }
 }
