@@ -45,7 +45,7 @@ public class ExplosionMixin_Claims {
         if (original) {
             ClaimHandler handler = EssentialsMod.getInstance().getRegistry().getModelHandler(ClaimHandler.class);
             ChunkPos chunk = new ChunkPos(pos);
-            return !handler.isChunkClaimed(chunk, ((World)world).getRegistryKey());
+            return !handler.isChunkClaimed(chunk, ((World) world).getRegistryKey());
         }
         return false;
     }

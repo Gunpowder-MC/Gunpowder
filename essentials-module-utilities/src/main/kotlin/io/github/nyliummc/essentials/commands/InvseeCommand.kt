@@ -27,7 +27,6 @@ package io.github.nyliummc.essentials.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import io.github.nyliummc.essentials.api.builders.Command
-import net.minecraft.block.EnderChestBlock
 import net.minecraft.command.arguments.EntityArgumentType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory

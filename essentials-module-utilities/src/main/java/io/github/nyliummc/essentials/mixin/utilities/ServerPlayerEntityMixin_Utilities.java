@@ -81,8 +81,8 @@ public class ServerPlayerEntityMixin_Utilities implements PlayerVanish {
 
         // Faking leave - join message
         TranslatableText msg = new TranslatableText(
-                enabled?
-                        "multiplayer.player.left":
+                enabled ?
+                        "multiplayer.player.left" :
                         "multiplayer.player.joined",
                 player.getDisplayName()
         );

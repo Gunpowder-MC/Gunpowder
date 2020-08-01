@@ -50,7 +50,7 @@ public class PlayerListS2CPacketMixin_Utilities {
     void skipVanished(PacketByteBuf buf, CallbackInfo ci) {
         if (this.entries.iterator().hasNext() && this.action.equals(PlayerListS2CPacket.Action.ADD_PLAYER)) {
             this.entries.removeIf(entry ->
-                ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId())).isVanished()
+                    ((PlayerVanish) EssentialsMod.getInstance().getServer().getPlayerManager().getPlayer(entry.getProfile().getId())).isVanished()
             );
         }
 

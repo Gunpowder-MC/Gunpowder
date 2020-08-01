@@ -40,7 +40,7 @@ object VanishCommand {
                 literal("toggle") {
                     executes(::toggleVanish)
                 }
-                executes (::displayVanishInfo)
+                executes(::displayVanishInfo)
             }
         }
     }

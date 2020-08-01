@@ -28,18 +28,19 @@ import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.configs.EssentialsConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
 import io.github.nyliummc.essentials.api.EssentialsDatabase as APIEssentialsDatabase
+import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 object EssentialsDatabase : APIEssentialsDatabase {
-    @Volatile private var running = true
+    @Volatile
+    private var running = true
     private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
-    private val databaseThread = thread(start=true, isDaemon=false, name="Essentials Database Thread") {
+    private val databaseThread = thread(start = true, isDaemon = false, name = "Essentials Database Thread") {
         while (running) {
             val pair = queue.poll()
             if (pair == null) {

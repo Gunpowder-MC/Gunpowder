@@ -36,7 +36,6 @@ import net.minecraft.world.dimension.DimensionType
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
 import java.util.function.Consumer
-import java.util.function.Function
 
 interface TeleportRequest {
     val player: ServerPlayerEntity

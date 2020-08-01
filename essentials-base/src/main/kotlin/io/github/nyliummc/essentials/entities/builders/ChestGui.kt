@@ -32,7 +32,6 @@ import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
-import java.lang.Exception
 import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
 
 object ChestGui : APIChestGui {
