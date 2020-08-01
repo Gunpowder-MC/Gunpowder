@@ -6,7 +6,7 @@ Bugs fixed:
 
 New Features:
 
-- None
+- (module-utilities) Added /vanish
 
 Improvements:
 
