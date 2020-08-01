@@ -2,7 +2,7 @@
 
 Bugs fixed:
 
-- None
+- (module-utilities) /invsee now works from any distance, even across dimensions.
 
 New Features:
 

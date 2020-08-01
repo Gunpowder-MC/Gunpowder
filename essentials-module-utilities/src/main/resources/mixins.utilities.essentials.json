@@ -7,6 +7,7 @@
     "EntityTrackerAccessor_Utilities",
     "ListCommandMixin_Utilities",
     "PlayerAbilitiesAccessor_Utilities",
+    "PlayerInventoryMixin_Utilities",
     "PlayerListS2CPacketMixin_Utilities",
     "ServerPlayerEntityMixin_Utilities",
     "ServerPlayNetworkHandlerMixin_Utilities",
