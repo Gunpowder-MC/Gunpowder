@@ -7,6 +7,7 @@ Bugs fixed:
 New Features:
 
 - (module-utilities) Added /vanish
+- (module-utilities) Added /ping
 
 Improvements:
 

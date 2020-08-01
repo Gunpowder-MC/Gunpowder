@@ -162,6 +162,8 @@ Includes a bunch of commands and miscellaneous features that don't belong to any
     - Heals a player
 - /invsee [player]
     - Opens a player's inventory
+- /ping
+    - Get your ping
 - /speed 
     - Allows a player's walking and flying speed to be changed
 - /tps 
