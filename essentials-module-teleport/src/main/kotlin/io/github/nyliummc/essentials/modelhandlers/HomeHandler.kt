@@ -51,11 +51,11 @@ object HomeHandler : APIHomeHandler {
     }
 
     private fun loadEntries() {
-        db.transaction {
+        val temp = db.transaction {
             val homes = HomeTable.selectAll()
             val owners = homes.map { it[HomeTable.owner] }.toList()
-            owners.forEach { owner ->
-                cache[owner] = homes.filter { it[HomeTable.owner] == owner }.map {
+            owners.map { owner ->
+                owner to homes.filter { it[HomeTable.owner] == owner }.map {
                     it[HomeTable.name] to
                             StoredHome(
                                     owner,
@@ -64,8 +64,9 @@ object HomeHandler : APIHomeHandler {
                                     Identifier(it[HomeTable.dimension])
                             )
                 }.toMap().toMutableMap()
-            }
+            }.toMap()
         }.get()
+        cache.putAll(temp)
     }
 
     override fun getHome(user: UUID, home: String): StoredHome? {

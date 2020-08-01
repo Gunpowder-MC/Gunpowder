@@ -1,4 +1,4 @@
-## Essentials 0.2.7
+## Essentials 0.2.8
 
 Bugs fixed:
 
@@ -6,7 +6,23 @@ Bugs fixed:
 
 New Features:
 
+- (module-utilities) Added /vanish
+
+Improvements:
+
 - None
+
+
+---
+## Essentials 0.2.7
+
+Bugs fixed:
+
+- (base) Fix database hanging issues
+
+New Features:
+
+- (module-utilities) Added /invsee
 
 Improvements:
 

@@ -22,27 +22,15 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.entities;
+package io.github.nyliummc.essentials.mixin.utilities;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.Property;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public class BlockStateUtil {
-    protected static <T extends Comparable<T>> String getPropertyValue(BlockState state, Property<T> property) {
-        return property.name(state.get(property));
-    }
-
-    protected static String propertiesToString(BlockState state) {
-        StringBuilder result = new StringBuilder();
-        int count = 0;
-
-        for (Property<?> property : state.getProperties()) {
-            if ((count++) > 0) {
-                result.append(',');
-            }
-            result.append(property.getName()).append('=').append(getPropertyValue(state, property));
-        }
-
-        return result.toString();
-    }
+@Mixin(ThreadedAnvilChunkStorage.class)
+public interface ThreadedAnvilChunkStorageAccessor_Utilities {
+    @Accessor("entityTrackers")
+    Int2ObjectMap<EntityTrackerAccessor_Utilities> getEntityTrackers();
 }

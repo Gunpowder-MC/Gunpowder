@@ -30,21 +30,49 @@ import io.github.nyliummc.essentials.api.builders.Command
 import io.github.nyliummc.essentials.mixin.cast.PlayerVanish
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Formatting
 
 object VanishCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
             command("vanish") {
                 requires { it.hasPermissionLevel(4) }
-                executes(::vanish)
+                literal("toggle") {
+                    executes(::toggleVanish)
+                }
+                executes (::displayVanishInfo)
             }
         }
     }
 
-    private fun vanish(context: CommandContext<ServerCommandSource>): Int {
-        val player = context.source.player as PlayerVanish
-        player.isVanished = !player.isVanished;
-        context.source.player.sendMessage(LiteralText(if (player.isVanished) "Vanished, poof!" else "No longer vanished!"), false)
+    private fun toggleVanish(ctx: CommandContext<ServerCommandSource>): Int {
+        val player = ctx.source.player as PlayerVanish
+        player.isVanished = !player.isVanished
+
+        // Sending info to player
+        ctx.source.player.sendMessage(
+                LiteralText(
+                        if (player.isVanished)
+                            "Puff! You have vanished from the world."
+                        else
+                            "You are now no longer vanished."
+                ).formatted(Formatting.AQUA),
+                true
+        )
+        return 1
+    }
+
+    private fun displayVanishInfo(ctx: CommandContext<ServerCommandSource>): Int {
+        val player = ctx.source.player
+        player.sendMessage(
+                LiteralText(
+                        if ((player as PlayerVanish).isVanished)
+                            "You are vanished."
+                        else
+                            "You're not vanished."
+                ).formatted(Formatting.AQUA),
+                true
+        )
         return 1
     }
 }

@@ -22,27 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.mixin.dynmap;
+package io.github.nyliummc.essentials.mixin.utilities;
 
-import io.github.nyliummc.essentials.EssentialsDynmapModule;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
-import org.dynmap.common.DynmapListenerManager;
+import net.minecraft.server.network.EntityTrackerEntry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(Block.class)
-public class BlockMixin_Dynmap {
-    @Shadow
-    private BlockState defaultState;
-
-    @Inject(method = "onBroken", at = @At("RETURN"))
-    void event(WorldAccess world, BlockPos pos, BlockState state, CallbackInfo ci) {
-        EssentialsDynmapModule.core.listenerManager.processBlockEvent(DynmapListenerManager.EventType.BLOCK_BREAK, this.defaultState.getMaterial().toString(), world.toString(), pos.getX(), pos.getY(), pos.getZ());
-    }
+@Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage$EntityTracker")
+public interface EntityTrackerAccessor_Utilities {
+    @Accessor("entry")
+    EntityTrackerEntry getEntry();
 }

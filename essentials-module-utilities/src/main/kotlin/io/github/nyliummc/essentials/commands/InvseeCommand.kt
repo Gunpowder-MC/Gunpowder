@@ -25,37 +25,37 @@
 package io.github.nyliummc.essentials.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
-import io.github.nyliummc.essentials.EssentialsDynmapModule
 import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.entities.FabricDynmapOnlinePlayer
+import net.minecraft.block.EnderChestBlock
+import net.minecraft.command.arguments.EntityArgumentType
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.ScreenHandlerFactory
+import net.minecraft.screen.ScreenHandlerType
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
 
-object DynmapCommand {
+object InvseeCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("dynmap") {
-                // TODO sometime, a long time from now, in a galaxy far, far away: Implement full command tree
-
-                literal("help") {
-                    executes {
-                        EssentialsDynmapModule.core.processCommand(FabricDynmapOnlinePlayer(it.source.player), "dynmap", "dynmap", arrayOf("help"))
-                        return@executes 1
-                    }
-                }
-
-                argument("args", StringArgumentType.greedyString()) {
-                    executes(::runDynmapCommand)
+            command("invsee") {
+                requires { it.hasPermissionLevel(4) }
+                argument("player", EntityArgumentType.player()) {
+                    executes(::execute)
                 }
             }
         }
     }
 
-    private fun runDynmapCommand(context: CommandContext<ServerCommandSource>): Int {
-        val args = StringArgumentType.getString(context, "args").split(" ")
+    private fun execute(context: CommandContext<ServerCommandSource>): Int {
+        val player = EntityArgumentType.getPlayer(context, "player")
 
-        EssentialsDynmapModule.core.processCommand(FabricDynmapOnlinePlayer(context.source.player), "dynmap", "dynmap", args.toTypedArray())
+        context.source.player.openHandledScreen(SimpleNamedScreenHandlerFactory(ScreenHandlerFactory { i: Int, playerInventory: PlayerInventory?, _: PlayerEntity? ->
+            GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X4, i, playerInventory, player.inventory, 4)
+        }, LiteralText("${player.entityName}'s Inventory")))
 
         return 1
     }
