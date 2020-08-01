@@ -51,13 +51,12 @@ object BalanceHandler : APIBalanceHandler {
     }
 
     private fun loadAllUsers() {
-        db.transaction {
-            val items = BalanceTable.selectAll().map {
+        val items = db.transaction {
+            BalanceTable.selectAll().map {
                 it[BalanceTable.user] to StoredBalance(it[BalanceTable.user], it[BalanceTable.balance])
             }.toMap()
-
-            cache.putAll(items)
         }.get()
+        cache.putAll(items)
     }
 
     override fun getUser(user: UUID): StoredBalance {
