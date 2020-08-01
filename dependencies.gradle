@@ -31,9 +31,6 @@ ext {
             jackson_yaml          : "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$project.fasterxml_jackson_version",
             snakeyaml             : "org.yaml:snakeyaml:$project.snakeyaml_version",
 
-            // Dynmap
-            dynmap                : "https://dynmap.us/builds/dynmap/DynmapCore-${project.dynmap_version}.jar",
-
             // Dependency Injection
             guice                 : "com.google.inject:guice:$project.guice",
             aop                   : "aopalliance:aopalliance:$project.aop",
