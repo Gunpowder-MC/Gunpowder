@@ -32,10 +32,7 @@ import com.mojang.brigadier.CommandDispatcher
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.commands.InfoCommand
 import io.github.nyliummc.essentials.configs.EssentialsConfig
-import io.github.nyliummc.essentials.entities.builders.ChestGui
-import io.github.nyliummc.essentials.entities.builders.Command
-import io.github.nyliummc.essentials.entities.builders.TeleportRequest
-import io.github.nyliummc.essentials.entities.builders.Text
+import io.github.nyliummc.essentials.entities.builders.*
 import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
@@ -47,6 +44,7 @@ import java.util.function.Supplier
 import io.github.nyliummc.essentials.api.EssentialsRegistry as APIEssentialsRegistry
 import io.github.nyliummc.essentials.api.builders.ChestGui as APIChestGui
 import io.github.nyliummc.essentials.api.builders.Command as APICommand
+import io.github.nyliummc.essentials.api.builders.SidebarInfo as APISidebarInfo
 import io.github.nyliummc.essentials.api.builders.TeleportRequest as APITeleportRequest
 import io.github.nyliummc.essentials.api.builders.Text as APIText
 
@@ -69,6 +67,7 @@ object EssentialsRegistry : APIEssentialsRegistry {
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
         builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
+        builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
