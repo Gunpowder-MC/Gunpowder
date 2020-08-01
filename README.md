@@ -83,13 +83,6 @@ Included:
 </details>
 
 <details>
-<summary>Dynmap</summary>
-<h5>Description</h5>
-
-Implementation of Dynmap for Essentials. WIP and unreleased.
-</details>
-
-<details>
 <summary>Market</summary>
 <h5>Description</h5>
 
