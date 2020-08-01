@@ -38,4 +38,5 @@ interface EssentialsModule {
      * Register Database-related stuff here for now
      */
     fun onInitialize() {}
+    fun onReload() {}
 }

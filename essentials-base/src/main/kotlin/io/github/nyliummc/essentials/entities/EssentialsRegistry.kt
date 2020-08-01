@@ -36,6 +36,7 @@ import io.github.nyliummc.essentials.entities.builders.ChestGui
 import io.github.nyliummc.essentials.entities.builders.Command
 import io.github.nyliummc.essentials.entities.builders.TeleportRequest
 import io.github.nyliummc.essentials.entities.builders.Text
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
@@ -72,7 +73,9 @@ object EssentialsRegistry : APIEssentialsRegistry {
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
-        CommandRegistry.INSTANCE.register(false, callback)
+        CommandRegistrationCallback.EVENT.register(CommandRegistrationCallback { disp, b ->
+            callback(disp)
+        })
     }
 
 

@@ -50,6 +50,18 @@ abstract class AbstractEssentialsMod : EssentialsMod {
 
     var modules: MutableList<EssentialsModule> = mutableListOf()
 
+    internal fun reload() {
+        // TODO:
+        // - Maybe reload jars?
+        // - Unregister commands
+        // - Register commands
+        // - Find a solution for reloading configs, which are lazy props rn
+
+        modules.forEach {
+            it.onReload()
+        }
+    }
+
     fun initialize() {
         FabricLoader.getInstance().allMods.filter { it.metadata.name.contains("essentials") }.forEach { LanguageHack.activate(it.metadata.name) }
 
