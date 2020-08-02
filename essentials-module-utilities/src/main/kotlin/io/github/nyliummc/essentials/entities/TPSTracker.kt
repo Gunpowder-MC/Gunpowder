@@ -44,7 +44,7 @@ class TPSTracker(val id: String) {
         }
         val tps = intervalTicks * 1_000_000.0 / timeSpent
         history.add(min(tps, 20.0))
-        msptHistory.add(timeSpent)
+        msptHistory.add(timeSpent / 1000)
         lastTime = startTime
     }
 
