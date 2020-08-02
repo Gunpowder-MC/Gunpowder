@@ -29,7 +29,7 @@ import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.util.Formatting
 import java.util.function.Consumer
-import net.minecraft.text.BaseText as MCText
+import net.minecraft.text.MutableText as MCText
 
 
 interface Text {

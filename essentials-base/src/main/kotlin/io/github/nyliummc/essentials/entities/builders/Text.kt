@@ -29,7 +29,7 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import io.github.nyliummc.essentials.api.builders.Text as APIText
-import net.minecraft.text.BaseText as MCText
+import net.minecraft.text.MutableText as MCText
 
 object Text : APIText {
 
