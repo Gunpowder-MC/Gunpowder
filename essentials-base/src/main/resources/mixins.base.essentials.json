@@ -5,7 +5,8 @@
   "plugin": "io.github.nyliummc.essentials.mixin.plugin.BaseModulePlugin",
   "mixins": [
     "LanguageMixin_Base",
-    "LivingEntityMixin_Base"
+    "LivingEntityMixin_Base",
+    "ServerPlayerEntityMixin_Base"
   ],
   "client": [
   ],

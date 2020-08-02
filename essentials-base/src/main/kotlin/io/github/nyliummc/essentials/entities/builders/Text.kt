@@ -29,7 +29,7 @@ import net.minecraft.text.HoverEvent
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import io.github.nyliummc.essentials.api.builders.Text as APIText
-import net.minecraft.text.Text as MCText
+import net.minecraft.text.MutableText as MCText
 
 object Text : APIText {
 
@@ -68,43 +68,63 @@ object Text : APIText {
 
     class StyleBuilder(var text: MCText) : APIText.StyleBuilder {
         override fun onClickCommand(command: String) {
-            text.style.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+            text.styled {
+                it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+            }
         }
 
         override fun onClickEvent(event: ClickEvent) {
-            text.style.withClickEvent(event)
+            text.styled {
+                it.withClickEvent(event)
+            }
         }
 
         override fun onHoverText(tooltip: String) {
-            text.style.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, LiteralText(tooltip))
+            text.styled {
+                it.setHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, LiteralText(tooltip)))
+            }
         }
 
         override fun onHoverEvent(event: HoverEvent) {
-            text.style.hoverEvent = event
+            text.styled {
+                it.setHoverEvent(event)
+            }
         }
 
         override fun color(color: Formatting) {
-            text.style.withColor(color)
+            text.styled {
+                it.withColor(color)
+            }
         }
 
         override fun bold() {
-            text.style.withBold(true)
+            text.styled {
+                it.withBold(true)
+            }
         }
 
         override fun italic() {
-            text.style.withItalic(true)
+            text.styled {
+                it.withItalic(true)
+            }
         }
 
         override fun strikethrough() {
-            text.style.withFormatting(Formatting.STRIKETHROUGH)
+            text.styled {
+                it.withFormatting(Formatting.STRIKETHROUGH)
+            }
         }
 
         override fun underlined() {
-            text.style.withFormatting(Formatting.UNDERLINE)
+            text.styled {
+                it.withFormatting(Formatting.UNDERLINE)
+            }
         }
 
         override fun obfuscated() {
-            text.style.withFormatting(Formatting.OBFUSCATED)
+            text.styled {
+                it.withFormatting(Formatting.OBFUSCATED)
+            }
         }
 
     }
