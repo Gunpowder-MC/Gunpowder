@@ -34,6 +34,7 @@ import net.minecraft.util.math.ChunkPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
+import net.minecraft.world.dimension.DimensionType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -51,21 +52,24 @@ object ClaimHandler : APIClaimHandler {
     }
 
     private fun loadAllClaims() {
-        val claimsTemp = mutableMapOf<Int, StoredClaim>()
+        val auths = db.transaction {
+            val claims = ClaimTable.selectAll().map {
+                val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(it[ClaimTable.dimension]))
+                val chunk = ChunkPos(it[ClaimTable.chunkX], it[ClaimTable.chunkZ])
+                val cl = StoredClaim(it[ClaimTable.owner], chunk, dimension)
+                Pair(cl, it[ClaimTable.id])
+            }.toList()
 
-        db.transaction {
-            ClaimAuthorizedTable.selectAll().forEach {
-                val claim = claimsTemp.getOrPut(it[ClaimAuthorizedTable.claim]) {
-                    val c = ClaimTable.select { ClaimTable.id.eq(it[ClaimAuthorizedTable.claim]) }.first()
-                    val dimension = RegistryKey.of(Registry.DIMENSION, Identifier(c[ClaimTable.dimension]))
-                    val chunk = ChunkPos(c[ClaimTable.chunkX], c[ClaimTable.chunkZ])
-                    val cl = StoredClaim(c[ClaimTable.owner], chunk, dimension)
-                    claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] = cl  // FIXME: Hangs DB Thread sometimes?
-                    cl
-                }
-                claimAuthorizedMap[claim]!!.add(StoredClaimAuthorized(claim, it[ClaimAuthorizedTable.user]))
-            }
+            ClaimAuthorizedTable.selectAll().map {
+                val claim = claims.first { c -> c.second == it[ClaimAuthorizedTable.claim] }.first
+                StoredClaimAuthorized(claim, it[ClaimAuthorizedTable.user])
+            }.toList()
         }.get()
+
+        auths.forEach {
+            claimMap.getOrPut(it.claim.dimension, ::mutableMapOf).putIfAbsent(it.claim.chunk, it.claim)
+            claimAuthorizedMap.getOrPut(it.claim, ::mutableListOf).add(it)
+        }
     }
 
     override fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {

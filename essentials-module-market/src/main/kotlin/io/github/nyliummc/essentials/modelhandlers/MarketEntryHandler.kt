@@ -52,16 +52,17 @@ object MarketEntryHandler : APIMarketEntryHandler {
     }
 
     private fun loadEntries() {
-        db.transaction {
-            cache.addAll(MarketEntryTable.selectAll().map {
+        val items = db.transaction {
+            MarketEntryTable.selectAll().map {
                 StoredMarketEntry(
                         it[MarketEntryTable.user],
                         loadItemStack(it[MarketEntryTable.item]),
                         it[MarketEntryTable.price],
                         it[MarketEntryTable.expiresAt]
                 )
-            }.toList())
+            }.toList()
         }.get()
+        cache.addAll(items)
     }
 
     // TODO: Move these two to util funcs
