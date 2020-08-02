@@ -51,6 +51,11 @@ object ClaimHandler : APIClaimHandler {
         loadAllClaims()
     }
 
+    // Used for checks
+    private fun getClaim(dimension: RegistryKey<World>, pos: ChunkPos): StoredClaim? {
+        return claimMap.getOrPut(dimension, ::mutableMapOf).entries.firstOrNull { it.key.hashCode() == pos.hashCode() }?.value
+    }
+
     private fun loadAllClaims() {
         val auths = db.transaction {
             val claims = ClaimTable.selectAll().map {
@@ -73,11 +78,11 @@ object ClaimHandler : APIClaimHandler {
     }
 
     override fun isChunkClaimed(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {
-        return claimMap.getOrPut(dimension, ::mutableMapOf)[chunk] != null
+        return getClaim(dimension, chunk) != null
     }
 
     override fun createClaim(data: StoredClaim): Boolean {
-        if (claimMap.getOrPut(data.dimension, ::mutableMapOf)[data.chunk] != null) {
+        if (getClaim(data.dimension, data.chunk) != null) {
             return false
         }
 
@@ -99,17 +104,17 @@ object ClaimHandler : APIClaimHandler {
     }
 
     override fun getClaim(chunk: ChunkPos, dimension: RegistryKey<World>): StoredClaim {
-        return claimMap[dimension]!![chunk]!!
+        return getClaim(dimension, chunk)!!
     }
 
     override fun deleteClaim(chunk: ChunkPos, dimension: RegistryKey<World>): Boolean {
-        if (!claimMap.getOrPut(dimension, ::mutableMapOf).containsKey(chunk)) {
+        if (getClaim(dimension, chunk) == null) {
             return false
         }
 
-        val stored = claimMap[dimension]!![chunk]!!
+        val stored = getClaim(chunk, dimension)
         claimAuthorizedMap.remove(stored)
-        claimMap[dimension]!!.remove(chunk)
+        claimMap[dimension]!!.remove(stored.chunk)
 
         db.transaction {
             ClaimTable.deleteWhere {
@@ -123,7 +128,7 @@ object ClaimHandler : APIClaimHandler {
     }
 
     override fun getClaimAllowed(chunk: ChunkPos, dimension: RegistryKey<World>): List<StoredClaimAuthorized> {
-        return claimAuthorizedMap[claimMap[dimension]!![chunk]!!]!!.toList();
+        return claimAuthorizedMap[getClaim(chunk, dimension)]!!.toList();
     }
 
     override fun addClaimAllowed(data: StoredClaimAuthorized): Boolean {
