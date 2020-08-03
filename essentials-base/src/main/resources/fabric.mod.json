@@ -15,6 +15,7 @@
       "io.github.nyliummc.essentials.mod.client.EssentialsClientMod"
     ]
   },
+  "accessWidener": "essentials_base.accesswidener",
   "depends": {
     "fabricloader": ">=0.8.9",
     "fabric": "*",

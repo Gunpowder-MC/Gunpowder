@@ -40,3 +40,7 @@ sourceSets {
         kotlin.srcDir "${rootProject.rootDir}/essentials-api/src/main/kotlin"
     }
 }
+
+minecraft {
+    accessWidener file("src/main/resources/essentials_base.accesswidener")
+}

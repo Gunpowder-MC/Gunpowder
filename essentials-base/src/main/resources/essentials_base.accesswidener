@@ -1,0 +1,9 @@
+accessWidener v1 named
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage worldGenerationProgressListener Lnet/minecraft/server/WorldGenerationProgressListener;
+accessible field net/minecraft/server/MinecraftServer workerExecutor Ljava/util/concurrent/Executor;
+accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/world/level/storage/LevelStorage$Session;
+accessible field net/minecraft/server/MinecraftServer dimensionTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
+accessible field net/minecraft/server/MinecraftServer worlds Ljava/util/Map;
+accessible field net/minecraft/util/registry/RegistryTracker$Modifiable registry Lnet/minecraft/util/registry/SimpleRegistry;
+accessible field net/minecraft/world/gen/GeneratorOptions field_24827 Lnet/minecraft/util/registry/SimpleRegistry;
+accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZZZZZZILnet/minecraft/util/Identifier;F)V

@@ -28,13 +28,23 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.nyliummc.essentials.api.EssentialsMod
 import io.github.nyliummc.essentials.api.EssentialsModule
+import io.github.nyliummc.essentials.api.builders.Command
+import io.github.nyliummc.essentials.entities.DimensionManager
 import io.github.nyliummc.essentials.entities.EssentialsDatabase
 import io.github.nyliummc.essentials.entities.EssentialsRegistry
 import io.github.nyliummc.essentials.entities.LanguageHack
 import io.github.nyliummc.essentials.injection.AbstractModule
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.tag.BlockTags
+import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.dimension.DimensionType
+import net.minecraft.world.gen.chunk.FlatChunkGenerator
+import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
 import org.apache.logging.log4j.LogManager
+import java.util.*
 
 abstract class AbstractEssentialsMod : EssentialsMod {
     val module = "essentials:modules"
@@ -74,6 +84,20 @@ abstract class AbstractEssentialsMod : EssentialsMod {
             // Thereby accessing the essentials instance BEFORE the server start callbacks have been fired
             module.registerConfigs()
             module.registerCommands()
+        }
+
+        registry.registerCommand {
+            Command.builder(it) {
+                command("testdim") {
+                    executes {
+                        println("Registering custom dim")
+                        val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("essentials:custom"))
+                        DimensionManager.addDimensionType(dtype, DimensionType(OptionalLong.of(2400L), true, false, false, false, false, true, true, true, false, 256, BlockTags.INFINIBURN_OVERWORLD.id, 0.0f))
+                        DimensionManager.addWorld(RegistryKey.of(Registry.DIMENSION, Identifier("essentials:abc")), dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
+                        1
+                    }
+                }
+            }
         }
 
         // TODO: Look into cleanup so we can turn this into internal method references
