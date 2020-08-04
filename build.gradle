@@ -6,7 +6,6 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "com.dorongold.task-tree" version "1.5"
 }
 
 apply from: "dependencies.gradle"  // libs.*
@@ -26,33 +25,26 @@ logger.lifecycle("""
     =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 """)
 
+
+group = "io.github.gunpowder"
 version = project.mod_version + "+" + project.minecraft
 
 // Project config
 
-allprojects { currentProject ->
+license {
+    header = rootProject.file('LICENSE')
+    include '**/*.java'
+    include '**/*.kt'
+    style.java = 'BLOCK_COMMENT'
+    style.kt = 'BLOCK_COMMENT'
+}
+
+allprojects {
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
-
-    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
-        afterEvaluate {
-            input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-            archiveName = "${archivesBaseName}-${version}.jar"
-            addNestedDependencies = true
-            remapAccessWidener = true
-        }
-    }
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    group = "io.github.gunpowder"
-    version = project.mod_version + "+" + project.minecraft
-
-    setBuildDir(rootProject.getBuildDir())
 
     configurations {
         dev
@@ -60,13 +52,12 @@ allprojects { currentProject ->
         modCompile.extendsFrom modShade
     }
 
-    license {
-        header = rootProject.file('LICENSE')
-        include '**/*.java'
-        include '**/*.kt'
-        style.java = 'BLOCK_COMMENT'
-        style.kt = 'BLOCK_COMMENT'
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from project.sourceSets.main.allSource.srcDirs
     }
+
+    setBuildDir(rootProject.getBuildDir())
 
     repositories {
         mavenCentral()
@@ -83,7 +74,7 @@ allprojects { currentProject ->
 
     dependencies {
         // Kotlin Stdlib
-        compileOnly libs.kotlin_stdlib
+        implementation libs.kotlin_stdlib
 
         minecraft(libs.minecraft) {
             transitive = false
@@ -119,131 +110,25 @@ allprojects { currentProject ->
         // TODO: Permissions
     }
 
-    // Jars
-
-    if (currentProject.name.contains("-api")) {
-        jar {
-            classifier = ""
-        }
-
-        shadowJar {
-            enabled = false
-        }
-
-        remapJar {
-            enabled = false
-        }
-    } else {
-        jar {
-            enabled = false
-            classifier = "dev"
-
-            doLast {
-                delete fileTree("${project.buildDir}/") {
-                    include "classes/java/main/*refmap*.json"
-                    include "classes/java/**/*"
-                }
-            }
-        }
-
-        // TODO: Delete jar if present
-
-        shadowJar {
-            enabled = true
-            // Only shadow implementation/modImplementation
-            configurations = [project.configurations.shade]
-            classifier = "dev"
-        }
-
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
-            from currentProject.sourceSets.main.allSource.srcDirs
-        }
-
-        task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
-            afterEvaluate {
-                input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-                archiveName = "${archivesBaseName}-${version}-maven.jar"
-                addNestedDependencies = false
-            }
-        }
-
-        remapJar {
-            enabled = false
-        }
-
-        remapShadowJar {
-
-        }
-
-        remapSourcesJar {
-            doLast {
-                delete fileTree("${project.buildDir}/") {
-                    include "resources/**/*.json"
-                    include "resources/**/*.yaml"
-                    include "resources/**/*.accesswidener"
-                    include "classes/java/main/*refmap*.json"
-                    include "classes/java/**/*"
-                }
-            }
-        }
-    }
-
     // Set version in fabric.mod.json
     processResources {
         inputs.property "version", project.version
 
-        from(currentProject.sourceSets.main.resources.srcDirs) {
+        from(project.sourceSets.main.resources.srcDirs) {
             include "fabric.mod.json"
             expand "version": project.version
         }
 
-        from(currentProject.sourceSets.main.resources.srcDirs) {
+        from(project.sourceSets.main.resources.srcDirs) {
             exclude "fabric.mod.json"
-            include "*.json"
-            include "*.yaml"
-            include "*.accesswidener"
         }
     }
 
-    // Fix some kotlin warnings
+    // Fix some warnings
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
 }
-
-// License shit
-
-task licenseFormatAll
-subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
-
-subprojects {
-    runClient {
-        enabled = false
-    }
-    runServer {
-        enabled = false
-    }
-}
-
-// Build oddities
-
-Task last = null
-for (Project it : subprojects) {
-    if (!it.name.contains("-api")) {
-        if (last != null) {
-            // Ignore this shit, it makes it all work
-            it.compileKotlin.dependsOn(last)
-        }
-        it.shadowJar.dependsOn(it.compileJava)
-        it.shadowJar.dependsOn(it.compileKotlin)
-        it.shadowJar.dependsOn(it.processResources)
-        it.sourcesJar.dependsOn(it.shadowJar)
-        it.remapShadowJar.dependsOn(it.remapMavenJar)
-        it.remapShadowJar.dependsOn(it.sourcesJar)
-        it.remapSourcesJar.dependsOn(it.remapShadowJar)
-        last = it.remapSourcesJar as Task
-    }
-}
-build.dependsOn(last)
 
 dependencies {
     afterEvaluate {
@@ -261,7 +146,17 @@ dependencies {
     }
 }
 
-// Fat jar
+task licenseFormatAll
+subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
+
+subprojects {
+    runClient {
+        enabled = false
+    }
+    runServer {
+        enabled = false
+    }
+}
 
 jar {
     enabled = false
@@ -273,17 +168,9 @@ sourcesJar {
 
 shadowJar {
     enabled = false
-    // Only shadow implementation/modImplementation
-    configurations = [project.configurations.shade]
-    classifier = "dev"
-    //append "src/main/resources/fabric.mod.json"
 }
 
 remapJar {
-    enabled = false
-}
-
-remapShadowJar {
     enabled = false
 }
 
@@ -313,7 +200,8 @@ if (file('secrets.gradle').exists()) {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
                         if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: ''
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources.jar"), classifier: ''
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources-dev.jar"), classifier: 'dev'
                         } else {
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-maven.jar"), classifier: ''
                             artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
@@ -341,17 +229,11 @@ if (file('secrets.gradle').exists()) {
 
             subprojects { sub ->
                 // Add built modules
-                if (sub.name.contains("-base")) {
-                    mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-                } else if (sub.name.contains("-api")) {
-                    // Do nothing
-                } else {
-                    addArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-                }
+                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
             }
 
             afterEvaluate {
-                uploadTask.dependsOn(remapJar)
+                uploadTask.dependsOn(remapSourcesJar)
             }
         }
         options {

@@ -1,1 +1,15 @@
 archivesBaseName = "gunpowder-api"
+
+jar {
+    enabled = false
+}
+
+remapJar {
+    enabled = false
+}
+
+shadowJar {
+    enabled = false
+}
+
+build.dependsOn(sourcesJar, remapSourcesJar)

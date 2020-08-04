@@ -1,9 +1,0 @@
-archivesBaseName = "essentials-module-datapacks"
-
-dependencies {
-    compile project(":essentials-api")
-}
-
-minecraft {
-    accessWidener "src/main/resources/essentials_datapacks.accesswidener"
-}

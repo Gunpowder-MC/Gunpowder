@@ -34,6 +34,40 @@ dependencies {
     include libs.playerabilitylib
 }
 
+task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    afterEvaluate {
+        input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+        archiveName = "${archivesBaseName}-${version}.jar"
+        addNestedDependencies = true
+        remapAccessWidener = true
+    }
+}
+
+jar {
+    enabled = false
+}
+
+remapJar {
+    enabled = false
+}
+
+shadowJar {
+    enabled = true
+    // Only shadow implementation/modImplementation
+    configurations = [project.configurations.shade]
+    classifier = "dev"
+}
+
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+    afterEvaluate {
+        input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+        archiveName = "${archivesBaseName}-${version}-maven.jar"
+        addNestedDependencies = false
+    }
+}
+
+build.dependsOn(shadowJar, remapShadowJar)
+
 sourceSets {
     main {
         java.srcDir "${rootProject.rootDir}/gunpowder-api/src/main/java"
