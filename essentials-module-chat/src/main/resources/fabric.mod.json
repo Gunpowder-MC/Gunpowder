@@ -13,7 +13,7 @@
   "environment": "*",
   "entrypoints": {
     "essentials:modules": [
-      "io.github.nyliummc.essentials.EssentialsChatModule"
+      "GunpowderChatModule"
     ]
   },
   "mixins": [

@@ -2,17 +2,17 @@
   "required": true,
   "package": "io.github.nyliummc.essentials.mixin.utilities",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "io.github.nyliummc.essentials.mixin.plugin.UtilitiesModulePlugin",
+  "plugin": "io.github.gunpowder.mixin.plugin.UtilitiesModulePlugin",
   "mixins": [
-    "EntityTrackerAccessor_Utilities",
-    "ListCommandMixin_Utilities",
-    "PlayerAbilitiesAccessor_Utilities",
+    "io.github.gunpowder.mixin.utilities.EntityTrackerAccessor_Utilities",
+    "io.github.gunpowder.mixin.utilities.ListCommandMixin_Utilities",
+    "io.github.gunpowder.mixin.utilities.PlayerAbilitiesAccessor_Utilities",
     "PlayerInventoryMixin_Utilities",
-    "PlayerListS2CPacketMixin_Utilities",
-    "ServerPlayerEntityMixin_Utilities",
-    "ServerPlayNetworkHandlerMixin_Utilities",
-    "ServerWorldMixin_Utilities",
-    "ThreadedAnvilChunkStorageAccessor_Utilities"
+    "io.github.gunpowder.mixin.utilities.PlayerListS2CPacketMixin_Utilities",
+    "io.github.gunpowder.mixin.utilities.ServerPlayerEntityMixin_Utilities",
+    "io.github.gunpowder.mixin.utilities.ServerPlayNetworkHandlerMixin_Utilities",
+    "io.github.gunpowder.mixin.utilities.ServerWorldMixin_Utilities",
+    "io.github.gunpowder.mixin.utilities.ThreadedAnvilChunkStorageAccessor_Utilities"
   ],
   "client": [
   ],

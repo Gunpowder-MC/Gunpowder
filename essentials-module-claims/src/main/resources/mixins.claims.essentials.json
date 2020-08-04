@@ -2,13 +2,13 @@
   "required": true,
   "package": "io.github.nyliummc.essentials.mixin.claims",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "io.github.nyliummc.essentials.mixin.plugin.ClaimsModulePlugin",
+  "plugin": "io.github.gunpowder.mixin.plugin.ClaimsModulePlugin",
   "mixins": [
-    "BucketItemMixin_Claims",
-    "ExplosionMixin_Claims",
-    "PistonBlockMixin_Claims",
-    "ServerPlayerInteractionManagerMixin_Claims",
-    "ServerWorldMixin_Claims"
+    "io.github.gunpowder.mixin.claims.BucketItemMixin_Claims",
+    "io.github.gunpowder.mixin.claims.ExplosionMixin_Claims",
+    "io.github.gunpowder.mixin.claims.PistonBlockMixin_Claims",
+    "io.github.gunpowder.mixin.claims.ServerPlayerInteractionManagerMixin_Claims",
+    "io.github.gunpowder.mixin.claims.ServerWorldMixin_Claims"
   ],
   "injectors": {
     "defaultRequire": 1

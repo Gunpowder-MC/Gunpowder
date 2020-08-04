@@ -1,14 +1,12 @@
-# Essentials for Fabric
+# Gunpowder
 
-Essentials for Fabric aims to port the popular "Essentials" plugin to Fabric, as well as adding features from other plugins and QoL changes, to provide an all-in-one mod for your server's needs.
-
-Essentials for Fabric is easily extendable using the api module, which is made available on curseforge. A maven may be created if deemed necessary.
+Gunpowder aims to provide an all-in-one API for your server modding needs.
 
 ## Support
 
-If you find a bug or want to suggest a feature, go to the [Issues tab](https://github.com/NyliumMC/Essentials/issues)
+If you find a bug or want to suggest a feature, go to the [Issues tab](https://github.com/Gunpowder-MC/Gunpowder/issues)
 
-If you want to ask for help and/or clarify a bug, or even contribute to the project, you can find us on the [AOF discord in #essentials](https://discord.gg/6rkdm48)
+If you want to ask for help and/or clarify a bug, or even contribute to the project, you can find us on the [AOF discord in #gunpowder](https://discord.gg/6rkdm48)
 
 
 ## Modules
@@ -17,14 +15,14 @@ If you want to ask for help and/or clarify a bug, or even contribute to the proj
 <summary>API</summary>
 <h5>Description</h5>
 
-Essentials-api is the module used for developing your own modules against.
+Gunpowder-api is the module used for developing your own modules against.
 </details>
 
 <details>
 <summary>Base</summary>
 <h5>Description</h5>
 
-Essentials-base is the core implementation of essentials. This is needed for most modules to work.
+Gunpowder-base is the core implementation of Gunpowder. This is needed for most modules to work.
 </details>
 
 <details>
@@ -48,7 +46,7 @@ The Claims module provides the API backend for claiming chunks.
 <summary>Currency</summary>
 <h5>Description</h5>
 
-Module providing the currency handling in essentials as well as some basic commands
+Module providing the currency handling in Gunpowder as well as some basic commands
 
 ##### Commands
 - /balance [player]
@@ -61,7 +59,7 @@ Module providing the currency handling in essentials as well as some basic comma
 <summary>Datapacks</summary>
 <h5>Description</h5>
 
-Essentials-datapacks is a module that aims to port various utility datapacks for better performance.
+Gunpowder-datapacks is a module that aims to port various utility datapacks for better performance.
 Permission has been granted for this by the respective authors, either through explicit permission or following the terms.
 
 Included:
@@ -187,14 +185,13 @@ If you want to use fabric, add the following to your build.gradle:
 
 ```gradle
 dependencies {
-    implementation "io.github.nyliummc:essentials-api:${essentials_version}+${minecraft_version}"
-    // add modRuntimes for other modules; DO NOT COMPILE AGAINST THEM
+    implementation "io.github.gunpowder:gunpowder-api:${gunpowder_version}+${minecraft_version}"
 }
 
 repositories {
     maven {
-        name = "Essentials"
-        url = "https://maven.martmists.com"
+        name = "Gunpowder"
+        url = "https://maven.martmists.com/releases"
     }
 }
 ```

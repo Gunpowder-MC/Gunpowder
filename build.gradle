@@ -13,7 +13,7 @@ apply from: "dependencies.gradle"  // libs.*
 
 logger.lifecycle("""
     =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    Building Essentials
+    Building Gunpowder
     Version: $project.mod_version
     Minecraft Version: $project.minecraft
     Fabric-Loader Version: $project.fabric_loader
@@ -49,7 +49,7 @@ allprojects { currentProject ->
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
-    group = "io.github.nyliummc.essentials"
+    group = "io.github.gunpowder"
     version = project.mod_version + "+" + project.minecraft
 
     setBuildDir(rootProject.getBuildDir())
