@@ -1,4 +1,4 @@
-# Main Essentials Config
+# Main Gunpowder Config
 
 # Database-related stuff
 database:
@@ -13,5 +13,6 @@ database:
   port: 3306
 
   # DB credentials, unused for sqlite
-  username: essentials_user
-  password: essentials_password
+  # Make sure to change these!
+  username: gunpowder_user
+  password: gunpowder_password

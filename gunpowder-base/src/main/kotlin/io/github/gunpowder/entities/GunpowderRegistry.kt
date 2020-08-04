@@ -54,6 +54,7 @@ object GunpowderRegistry : APIGunpowderRegistry {
     private val builders = mutableMapOf<Class<*>, Supplier<*>>()
     private val modelHandlers = mutableMapOf<Class<*>, Supplier<*>>()
     private val configs = mutableMapOf<Class<*>, Pair<String, *>>()
+    private val configCache = mutableMapOf<Class<Any>, Any>()
 
     private val mapper by lazy {
         ObjectMapper(YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)).also {
@@ -87,22 +88,24 @@ object GunpowderRegistry : APIGunpowderRegistry {
     }
 
     override fun <T> getConfig(clz: Class<T>): T {
-        val p = configs[clz]!!
+        return configCache.getOrPut(clz as Class<Any>) {
+            val p = configs[clz]!!
 
-        val configDir = FabricLoader.getInstance().configDirectory.canonicalPath
+            val configDir = FabricLoader.getInstance().configDirectory.canonicalPath
 
-        val f = File("${configDir}/${p.first}")
-        if (!f.exists()) {
-            f.createNewFile()
-            if (p.second is String) {
-                // In case we want to have a template in assets
-                this::class.java.classLoader.getResourceAsStream(p.second as String)!!.copyTo(f.outputStream())
-            } else {
-                mapper.writeValue(f, p.second)
+            val f = File("${configDir}/${p.first}")
+            if (!f.exists()) {
+                f.createNewFile()
+                if (p.second is String) {
+                    // In case we want to have a template in assets
+                    this::class.java.classLoader.getResourceAsStream(p.second as String)!!.copyTo(f.outputStream())
+                } else {
+                    mapper.writeValue(f, p.second)
+                }
             }
-        }
 
-        return mapper.readValue(f, clz)
+            mapper.readValue(f, clz)
+        } as T
     }
 
     override fun <T> getBuilder(clz: Class<T>): T {
