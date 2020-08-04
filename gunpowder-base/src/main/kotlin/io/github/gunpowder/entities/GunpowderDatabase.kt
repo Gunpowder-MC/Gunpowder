@@ -46,14 +46,10 @@ object GunpowderDatabase : APIGunpowderDatabase {
                 Thread.sleep(20)  // 20ms to not lag thread
                 continue
             }
-            println("Database thread got a task")
             val value = dbTransaction {  // Because recursion
-                println("Calling function")
                 val x = pair.first.invoke(this)
-                println("Function done")
                 x
             }
-            println("Setting future ${pair.second.hashCode()}")
             pair.second.complete(value)
         }
     }
@@ -108,7 +104,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
                         dbc.password)
             }
             else -> {
-                println("$mode invalid")
+                GunpowderMod.instance.logger.error("DB mode '$mode' is invalid")
                 throw AssertionError("Invalid db type")
             }
         }
@@ -116,7 +112,6 @@ object GunpowderDatabase : APIGunpowderDatabase {
 
     override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {
         val fut = CompletableFuture<T>()
-        println("Waiting for future ${fut.hashCode()}")
         queue.add(Pair(callback as Transaction.() -> Any, fut as CompletableFuture<Any>))
         return fut
     }

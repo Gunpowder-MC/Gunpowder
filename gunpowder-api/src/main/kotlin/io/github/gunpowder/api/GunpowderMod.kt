@@ -26,12 +26,14 @@ package io.github.gunpowder.api
 
 import com.google.inject.Inject
 import net.minecraft.server.MinecraftServer
+import org.apache.logging.log4j.Logger
 
 interface GunpowderMod {
     val server: MinecraftServer
     val isClient: Boolean
     val registry: GunpowderRegistry
     val database: GunpowderDatabase
+    val logger: Logger
 
     companion object {
         @field:Inject

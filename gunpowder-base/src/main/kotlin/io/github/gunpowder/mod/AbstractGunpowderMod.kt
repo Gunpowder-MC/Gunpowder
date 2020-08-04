@@ -38,8 +38,7 @@ import org.apache.logging.log4j.LogManager
 
 abstract class AbstractGunpowderMod : GunpowderMod {
     val module = "gunpowder:modules"
-    val logger = LogManager.getLogger(GunpowderMod::class.java)
-
+    override val logger = LogManager.getLogger(GunpowderMod::class.java)
     override val registry = GunpowderRegistry
     override val database = GunpowderDatabase
     val injector: Injector
