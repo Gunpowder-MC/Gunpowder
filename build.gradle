@@ -6,6 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "org.jetbrains.dokka" version "1.4.0-rc"
 }
 
 apply from: "dependencies.gradle"  // libs.*
@@ -37,7 +38,10 @@ allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
+
     project.version = rootProject.version
+
+    setBuildDir(rootProject.getBuildDir())
 
     license {
         header = rootProject.file('LICENSE')
@@ -57,8 +61,6 @@ allprojects {
         classifier = 'sources'
         from project.sourceSets.main.allSource.srcDirs
     }
-
-    setBuildDir(rootProject.getBuildDir())
 
     repositories {
         mavenCentral()
