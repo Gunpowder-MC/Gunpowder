@@ -51,7 +51,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     var modules: MutableList<GunpowderModule> = mutableListOf()
 
     fun initialize() {
-        FabricLoader.getInstance().allMods.filter { it.metadata.name.contains("gunpowder") }.forEach { LanguageHack.activate(it.metadata.name) }
+        FabricLoader.getInstance().allMods.filter { itt -> itt.metadata.depends.any { it.modId == "gunpowder-base" } }.forEach { LanguageHack.activate(it.metadata.name) }
 
         logger.info("Starting Gunpowder")
         registry.registerBuiltin()
