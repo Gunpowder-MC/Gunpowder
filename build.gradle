@@ -31,20 +31,21 @@ version = project.mod_version + "+" + project.minecraft
 
 // Project config
 
-license {
-    header = rootProject.file('LICENSE')
-    include '**/*.java'
-    include '**/*.kt'
-    style.java = 'BLOCK_COMMENT'
-    style.kt = 'BLOCK_COMMENT'
-}
-
 allprojects {
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
+    project.version = rootProject.version
+
+    license {
+        header = rootProject.file('LICENSE')
+        include '**/*.java'
+        include '**/*.kt'
+        style.java = 'BLOCK_COMMENT'
+        style.kt = 'BLOCK_COMMENT'
+    }
 
     configurations {
         dev
@@ -200,13 +201,13 @@ if (file('secrets.gradle').exists()) {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
                         if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources-dev.jar"), classifier: 'dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: ''
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'dev'
                         } else {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-maven.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-dev.jar"), classifier: 'dev'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources.jar"), classifier: 'sources'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${p.version}-sources-dev.jar"), classifier: 'sources-dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
+                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
                         }
                     }
                 }
@@ -227,13 +228,10 @@ if (file('secrets.gradle').exists()) {
             addGameVersion "Fabric"
             addGameVersion "Java 8"
 
-            subprojects { sub ->
-                // Add built modules
-                mainArtifact file("${project.buildDir}/libs/$sub.archivesBaseName-${project.version}.jar")
-            }
+            mainArtifact file("${project.buildDir}/libs/gunpowder-base-${project.version}.jar")
 
             afterEvaluate {
-                uploadTask.dependsOn(remapSourcesJar)
+                uploadTask.dependsOn(":gunpowder-base:remapShadowJar")
             }
         }
         options {

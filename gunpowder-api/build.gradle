@@ -12,4 +12,5 @@ shadowJar {
     enabled = false
 }
 
-build.dependsOn(sourcesJar, remapSourcesJar)
+rootProject.build.dependsOn(sourcesJar, remapSourcesJar)
+rootProject.publish.dependsOn(sourcesJar, remapSourcesJar)

@@ -34,15 +34,6 @@ dependencies {
     include libs.playerabilitylib
 }
 
-task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
-    afterEvaluate {
-        input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-        archiveName = "${archivesBaseName}-${version}.jar"
-        addNestedDependencies = true
-        remapAccessWidener = true
-    }
-}
-
 jar {
     enabled = false
 }
@@ -58,15 +49,25 @@ shadowJar {
     classifier = "dev"
 }
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
     afterEvaluate {
-        input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+        input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
+        archiveName = "${archivesBaseName}-${version}.jar"
+        addNestedDependencies = true
+        remapAccessWidener = true
+    }
+}
+
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    afterEvaluate {
+        input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
         archiveName = "${archivesBaseName}-${version}-maven.jar"
         addNestedDependencies = false
     }
 }
 
-build.dependsOn(shadowJar, remapShadowJar)
+rootProject.build.dependsOn(shadowJar, remapShadowJar)
+rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
 
 sourceSets {
     main {
