@@ -13,6 +13,9 @@ If you want to ask for help and/or clarify a bug, or even contribute to the proj
 
 ## Modules
 
+Modules are extentions to the base mod and can be installed by placing the seperate JARs in the mods folder of your server. 
+All the precompiled JARs for all modules can be found under the "Additional Files" section on [Curseforge](https://www.curseforge.com/minecraft/mc-mods/fabric-essentials/files)
+
 <details>
 <summary>API</summary>
 <h5>Description</h5>
