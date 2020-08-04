@@ -22,7 +22,7 @@ If you want to use Gunpowder, add the following to your build.gradle:
 
 ```gradle
 dependencies {
-    implementation "io.github.gunpowder:gunpowder-api:${gunpowder_version}+${minecraft_version}"
+    modApi "io.github.gunpowder:gunpowder-api:${gunpowder_version}+${minecraft_version}"
 }
 
 repositories {
