@@ -1,5 +1,0 @@
-archivesBaseName = "essentials-module-chat"
-
-dependencies {
-    compile project(":essentials-api")
-}

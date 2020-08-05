@@ -9,13 +9,14 @@ pluginManagement {
     }
 }
 
-rootProject.name = "essentials"
+rootProject.name = "gunpowder"
 
 // The base modules
-include 'essentials-api'
-include 'essentials-base'
+include 'gunpowder-api'
+include 'gunpowder-base'
 
 // Modules
+/*
 include 'essentials-module-chat'
 include 'essentials-module-claims'
 include 'essentials-module-currency'
@@ -24,3 +25,4 @@ include 'essentials-module-market'
 include 'essentials-module-simpleclaims'
 include 'essentials-module-teleport'
 include 'essentials-module-utilities'
+*/

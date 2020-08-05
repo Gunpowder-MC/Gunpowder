@@ -2,15 +2,18 @@
 
 Bugs fixed:
 
-- None
+- (all) Fixed various database hangs
+- (base) Fixed the Text builder not applying styles
+- (module-utilities) /invsee now works from any distance, even across dimensions
 
 New Features:
 
 - (module-utilities) Added /vanish
+- (module-utilities) Added /ping
 
 Improvements:
 
-- None
+- (module-utilities) Use milliseconds instead of nanoseconds for /tps
 
 
 ---

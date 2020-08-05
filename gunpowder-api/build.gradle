@@ -1,0 +1,31 @@
+archivesBaseName = "gunpowder-api"
+
+apply plugin: "org.jetbrains.dokka"
+
+jar {
+    enabled = false
+}
+
+remapJar {
+    enabled = false
+}
+
+shadowJar {
+    enabled = false
+}
+
+dokkaHtml {
+    outputDirectory = "${rootProject.rootDir}/docs"
+    dokkaSourceSets {
+        configureEach {
+            moduleDisplayName = "Gunpowder API"
+        }
+    }
+}
+
+dependencies {
+    dokkaHtmlPlugin("org.jetbrains.dokka:javadoc-plugin:1.4.0-rc")
+}
+
+rootProject.build.dependsOn(sourcesJar, remapSourcesJar)
+rootProject.publish.dependsOn(sourcesJar, remapSourcesJar)
