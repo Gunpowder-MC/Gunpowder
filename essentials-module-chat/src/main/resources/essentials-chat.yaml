@@ -1,7 +1,0 @@
-# Essentials Chat Config
-
-# Maximum length for /nickname
-maxNicknameLength: 32
-
-# Enable chat colors with &1 and such
-enableChatColors: true

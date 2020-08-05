@@ -1,5 +1,0 @@
-archivesBaseName = "essentials-module-market"
-
-dependencies {
-    compile project(":essentials-api")
-}

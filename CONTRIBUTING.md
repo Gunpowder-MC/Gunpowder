@@ -1,7 +1,7 @@
 Contributing
 ============
 
-Thank you for your interest in contributing to our Essentials mod. We appricate the effort but to make the inclusion
+Thank you for your interest in contributing to our mod. We appricate the effort but to make the inclusion
 of your features or bug fixes a smooth process, please make note of these guidelines.
 
 * **Please write javadoc.** This only strictly applies to public methods in the API and make sure that your
@@ -39,7 +39,7 @@ Ready to submit? Perform the checklist below:
    commit using `git rebase`?
 7. Have I made my pull request too large? Pull requests should introduce
    small sets of changes at a time. Major changes should be discussed and it is reccomended to 
-   [open an issue](https://github.com/NyliumMC/Essentials/issues/new/choose) prior to starting work.
+   [open an issue](https://github.com/Gunpowder-MC/Gunpowder/issues/new/choose) prior to starting work.
 8. Are my commit messages descriptive?
 
 You should be aware of [`git rebase`](https://learn.github.com/p/rebasing.html).
