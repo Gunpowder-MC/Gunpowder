@@ -77,7 +77,7 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
                 ScoreboardObjectiveUpdateS2CPacket(objective, 0),  // mode = remove
                 ScoreboardDisplayS2CPacket(1, objective),  // 1 = sidebar
                 *lines.mapIndexed { index, pair ->
-                    ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.CHANGE, title.asString(), pair.second.toString() + pair.first, lines.size - index)
+                    ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.CHANGE, title, pair.second.toString() + pair.first, lines.size - index)
                 }.toTypedArray()
             )
 
