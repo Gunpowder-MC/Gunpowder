@@ -1,9 +1,0 @@
-# Essentials SimpleClaims Config
-
-# Maximum number of chunks a user can claim at once
-# Setting this to -1 means no limit
-maxClaimChunks: 10
-
-# Price if essentials-module-currency is loaded.
-# Setting this to a non-zero value will make claiming require confirmation.
-price: 10.00
