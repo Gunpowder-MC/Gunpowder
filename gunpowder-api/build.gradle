@@ -16,6 +16,11 @@ shadowJar {
 
 dokkaHtml {
     outputDirectory = "${rootProject.rootDir}/docs"
+    dokkaSourceSets {
+        configureEach {
+            moduleDisplayName = "Gunpowder API"
+        }
+    }
 }
 
 dependencies {
