@@ -28,12 +28,26 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.Command
+import io.github.gunpowder.api.builders.SidebarInfo
 import io.github.gunpowder.api.builders.Text
 import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
+import kotlin.concurrent.thread
 
 object InfoCommand {
+    private val welcomeFactory = SidebarInfo.factory {
+        title("Gunpowder", Formatting.BOLD)
+        line("Welcome to gunpowder!")
+        line("")
+        line("Modules loaded:")
+        line("- base", Formatting.GREEN)
+        (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
+            line("- ${it.name}", Formatting.GREEN)
+        }
+    }
+
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
             command("info", "gunpowder") {
@@ -43,22 +57,13 @@ object InfoCommand {
     }
 
     private fun showInfo(commandContext: CommandContext<ServerCommandSource>): Int {
-        commandContext.source.sendFeedback(
-                Text.builder {
-                    text("Welcome to Gunpowder!")
-                    text("\nModules loaded:")
-                    text("\n- ")
-                    text("base") {
-                        color(Formatting.GOLD)
-                    }
-                    (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
-                        text("\n- ")
-                        text(it.name) {
-                            color(Formatting.GOLD)
-                        }
-                    }
-                },
-                false)
+        val sidebar = welcomeFactory.invoke(commandContext.source.player)
+
+        thread(start=true) {
+            Thread.sleep(5000)
+            sidebar.remove()
+        }
+
         return 1
     }
 }

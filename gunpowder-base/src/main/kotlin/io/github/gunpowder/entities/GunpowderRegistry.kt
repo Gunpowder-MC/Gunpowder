@@ -32,10 +32,7 @@ import com.mojang.brigadier.CommandDispatcher
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.commands.InfoCommand
 import io.github.gunpowder.configs.GunpowderConfig
-import io.github.gunpowder.entities.builders.ChestGui
-import io.github.gunpowder.entities.builders.Command
-import io.github.gunpowder.entities.builders.TeleportRequest
-import io.github.gunpowder.entities.builders.Text
+import io.github.gunpowder.entities.builders.*
 import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
@@ -47,6 +44,7 @@ import java.util.function.Supplier
 import io.github.gunpowder.api.GunpowderRegistry as APIGunpowderRegistry
 import io.github.gunpowder.api.builders.ChestGui as APIChestGui
 import io.github.gunpowder.api.builders.Command as APICommand
+import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
 import io.github.gunpowder.api.builders.Text as APIText
 
@@ -64,12 +62,14 @@ object GunpowderRegistry : APIGunpowderRegistry {
 
     fun registerBuiltin() {
         configs[GunpowderConfig::class.java] = Pair("gunpowder.yaml", "gunpowder.yaml")
-        registerCommand(InfoCommand::register)
 
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
         builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
+        builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
+
+        registerCommand(InfoCommand::register)
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
