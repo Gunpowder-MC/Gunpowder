@@ -33,7 +33,7 @@ import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.commands.InfoCommand
 import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.builders.*
-import net.fabricmc.fabric.api.registry.CommandRegistry
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 import org.jetbrains.exposed.sql.SchemaUtils

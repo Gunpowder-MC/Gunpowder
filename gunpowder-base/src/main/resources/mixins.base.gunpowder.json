@@ -6,6 +6,7 @@
   "mixins": [
     "LanguageMixin_Base",
     "LivingEntityMixin_Base",
+    "MinecraftServerMixin_Base",
     "ServerPlayerEntityMixin_Base"
   ],
   "client": [
