@@ -33,6 +33,7 @@ import net.minecraft.scoreboard.ScoreboardCriterion
 import net.minecraft.scoreboard.ScoreboardObjective
 import net.minecraft.scoreboard.ServerScoreboard
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
@@ -54,10 +55,16 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
     class Builder : APISidebarInfo.Builder {
         private var title = "Menu"
         private var titleColor = Formatting.RESET
+        private var displayTitle: Text? = null
         private val lines = mutableListOf<Pair<String, Formatting>>()
+
         override fun title(text: String, color: Formatting) {
             title = text
             titleColor = color
+        }
+
+        override fun displayTitle(text: Text) {
+            displayTitle = text
         }
 
         override fun line(text: String, color: Formatting) {
@@ -69,7 +76,7 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
             val objective = ScoreboardObjective(
                     scoreboard, title,
                     ScoreboardCriterion.DUMMY,
-                    LiteralText(titleColor.toString() + title),
+                    displayTitle ?: LiteralText(titleColor.toString() + title),
                     ScoreboardCriterion.RenderType.INTEGER
             )
 

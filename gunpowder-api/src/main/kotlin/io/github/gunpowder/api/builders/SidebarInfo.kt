@@ -34,7 +34,7 @@ import java.util.function.Consumer
 interface SidebarInfo {
     companion object {
         /**
-         *
+         * Create a sidebar factory
          */
         @JvmStatic
         fun factory(callback: Consumer<Builder>) = factory(callback::accept)
@@ -51,6 +51,15 @@ interface SidebarInfo {
          */
         fun title(text: String) = title(text, Formatting.RESET)
         fun title(text: String, color: Formatting)
+
+        /**
+         * Fancy version
+         */
+        fun displayTitle(text: Text)
+
+        /**
+         * Add a line
+         */
         fun line(text: String) = line(text, Formatting.RESET)
         fun line(text: String, color: Formatting)
 
