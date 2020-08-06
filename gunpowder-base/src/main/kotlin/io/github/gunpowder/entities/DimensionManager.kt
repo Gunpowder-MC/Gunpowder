@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) NyliumMC
+ * Copyright (c) GunpowderMC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.entities
+package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
-import io.github.nyliummc.essentials.api.EssentialsMod
+import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.mixin.cast.SyncPlayer
+import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.GameRules
 import net.minecraft.world.World
@@ -48,7 +48,7 @@ import java.util.function.Supplier
  */
 object DimensionManager {
     val server: MinecraftServer
-        get() = EssentialsMod.instance.server
+        get() = GunpowderMod.instance.server
 
     fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
         server.dimensionTracker.addDimensionType(dimensionTypeId, dimensionType)
@@ -85,20 +85,19 @@ object DimensionManager {
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
-        val dimOptKey = RegistryKey.of(Registry.DIMENSION_OPTIONS, worldId.value)
-        generatorOptions.dimensionMap.add(dimOptKey, dimensionOptions)
+        //val dimOptKey = RegistryKey.of(Registry.DIMENSION_OPTIONS, worldId.value)
+        //generatorOptions.dimensionMap.add(dimOptKey, dimensionOptions)
 
         // From AE2:
         // FIXME FABRIC: might not be needed anymore if dimensions will save regardless
-        generatorOptions.dimensionMap.markLoaded(dimOptKey);
+        //generatorOptions.dimensionMap.markLoaded(dimOptKey);
         // Otherwise it wont be saved
         // Ensure the save properties are saved, or the world will potentially be lost
-        // on restart
-        server.session.method_27426(server.dimensionTracker, server.saveProperties, server.playerManager.userData)
+        // on restarta
+        //server.session.method_27426(server.dimensionTracker, server.saveProperties, server.playerManager.userData)
 
         for (player in server.playerManager.playerList) {
-            //player.networkHandler.sendPacket(GameJoinS2CPacket(player.entityId, player.interactionManager.gameMode, player.interactionManager.method_30119(), BiomeAccess.hashSeed(seed), props.isHardcore, server.worldRegistryKeys, server.dimensionTracker, world.dimensionRegistryKey, world.registryKey, server.maxPlayerCount, server.playerManager.viewDistance, world.gameRules.getBoolean(GameRules.REDUCED_DEBUG_INFO), !world.gameRules.getBoolean(GameRules.DO_IMMEDIATE_RESPAWN), world.isDebugWorld, world.isFlat))
-            //server.playerManager.sendWorldInfo(player, world)
+            (player as SyncPlayer).setNeedsSync(true)
         }
 
         return world

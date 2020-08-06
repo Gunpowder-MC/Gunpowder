@@ -34,6 +34,10 @@ dependencies {
     include libs.playerabilitylib
 }
 
+minecraft {
+    accessWidener file("src/main/resources/gunpowder_base.accesswidener")
+}
+
 jar {
     enabled = false
 }

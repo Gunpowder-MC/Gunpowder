@@ -26,18 +26,22 @@ package io.github.gunpowder.mixin.base;
 
 import com.mojang.authlib.GameProfile;
 import io.github.gunpowder.events.PlayerDeathCallback;
+import io.github.gunpowder.mixin.cast.SyncPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity {
+public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity implements SyncPlayer {
     public ServerPlayerEntityMixin_Base(World world, BlockPos blockPos, GameProfile gameProfile) {
         super(world, blockPos, gameProfile);
     }
@@ -45,5 +49,17 @@ public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity {
     @Inject(method="onDeath", at=@At("HEAD"))
     void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
         PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object)this, source);
+    }
+
+    private boolean sync;
+
+    @Override
+    public void setNeedsSync(boolean x) {
+        sync = x;
+    }
+
+    @Override
+    public boolean needsSync() {
+        return sync;
     }
 }

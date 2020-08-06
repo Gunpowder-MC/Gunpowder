@@ -28,18 +28,24 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.nyliummc.essentials.api.builders.Command
-import io.github.nyliummc.essentials.entities.DimensionManager
+import io.github.gunpowder.api.builders.Command
+import io.github.gunpowder.entities.DimensionManager
 import io.github.gunpowder.entities.GunpowderDatabase
 import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.entities.LanguageHack
+import io.github.gunpowder.events.PlayerTeleportCallback
 import io.github.gunpowder.injection.AbstractModule
+import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket
 import net.minecraft.tag.BlockTags
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.GameRules
+import net.minecraft.world.biome.source.BiomeAccess
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.FlatChunkGenerator
 import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
@@ -90,9 +96,9 @@ abstract class AbstractGunpowderMod : GunpowderMod {
                 command("testdim") {
                     executes {
                         println("Registering custom dim")
-                        val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("essentials:custom"))
+                        val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
                         DimensionManager.addDimensionType(dtype, DimensionType(OptionalLong.of(2400L), true, false, false, false, false, true, true, true, false, 256, BlockTags.INFINIBURN_OVERWORLD.id, 0.0f))
-                        DimensionManager.addWorld(RegistryKey.of(Registry.DIMENSION, Identifier("essentials:abc")), dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
+                        DimensionManager.addWorld(RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc")), dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
                         1
                     }
                 }
@@ -112,6 +118,23 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             database.disconnect()
+        })
+
+        PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
+            if (player.world.dimensionRegistryKey.value != request.dimension) {
+                if ((player as SyncPlayer).needsSync()) {
+                    player.networkHandler.sendPacket(GameJoinS2CPacket(
+                            player.entityId, player.interactionManager.gameMode, player.interactionManager.method_30119(),
+                            BiomeAccess.hashSeed(player.serverWorld.seed), player.world.levelProperties.isHardcore, DimensionManager.server.worldRegistryKeys,
+                            DimensionManager.server.playerManager.field_24626, player.world.dimensionRegistryKey, player.world.registryKey,
+                            DimensionManager.server.playerManager.maxPlayerCount, DimensionManager.server.playerManager.viewDistance,
+                            player.world.gameRules.getBoolean(GameRules.REDUCED_DEBUG_INFO),
+                            !player.world.gameRules.getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
+                            player.world.isDebugWorld, player.serverWorld.isFlat))
+                    player.networkHandler.sendPacket(CloseScreenS2CPacket())
+                    player.setNeedsSync(false)
+                }
+            }
         })
     }
 
