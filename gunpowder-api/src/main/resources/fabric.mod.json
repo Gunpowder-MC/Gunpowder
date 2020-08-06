@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "gunpowder-api",
+  "version": "${version}",
+  "name": "Gunpowder API",
+  "description": "The API for Gunpowder",
+  "license": "MIT",
+  "icon": "assets/gunpowder/icon.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.8.9",
+    "fabric": "*"
+  }
+}

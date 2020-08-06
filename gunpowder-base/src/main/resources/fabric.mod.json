@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "gunpowder-base",
+  "version": "${version}",
+  "name": "Gunpowder",
+  "description": "The base implementation of Gunpowder",
+  "license": "MIT",
+  "icon": "assets/gunpowder/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "io.github.gunpowder.mod.server.GunpowderServerMod"
+    ],
+    "client": [
+      "io.github.gunpowder.mod.client.GunpowderClientMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.8.9",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.3.50"
+  }
+}
