@@ -11,7 +11,8 @@ remapJar {
 }
 
 shadowJar {
-    enabled = false
+    enabled = true
+    classifier = "dev"
 }
 
 dokkaHtml {
@@ -27,5 +28,5 @@ dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:javadoc-plugin:1.4.0-rc")
 }
 
-rootProject.build.dependsOn(sourcesJar, remapSourcesJar)
-rootProject.publish.dependsOn(sourcesJar, remapSourcesJar)
+rootProject.build.dependsOn(sourcesJar, remapSourcesJar, shadowJar, remapMavenJar)
+rootProject.publish.dependsOn(sourcesJar, remapSourcesJar, shadowJar, remapMavenJar)

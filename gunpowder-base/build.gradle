@@ -62,14 +62,6 @@ task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadow
     }
 }
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
-    afterEvaluate {
-        input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
-        archiveName = "${archivesBaseName}-${version}-maven.jar"
-        addNestedDependencies = false
-    }
-}
-
 rootProject.build.dependsOn(shadowJar, remapShadowJar)
 rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
 

@@ -62,6 +62,14 @@ allprojects {
         from project.sourceSets.main.allSource.srcDirs
     }
 
+    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+        afterEvaluate {
+            input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
+            archiveName = "${archivesBaseName}-${version}-maven.jar"
+            addNestedDependencies = false
+        }
+    }
+
     repositories {
         mavenCentral()
         jcenter()
@@ -202,15 +210,10 @@ if (file('secrets.gradle').exists()) {
             publications {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
-                        if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'dev'
-                        } else {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
-                        }
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
                     }
                 }
             }
