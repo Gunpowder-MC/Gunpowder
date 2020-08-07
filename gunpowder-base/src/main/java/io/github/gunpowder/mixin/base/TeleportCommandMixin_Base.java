@@ -43,21 +43,12 @@ import java.util.Collection;
 
 @Mixin(TeleportCommand.class)
 public class TeleportCommandMixin_Base {
-    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/entity/Entity;)I", at=@At("HEAD"), cancellable = true)
+    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/entity/Entity;)I", at=@At("HEAD"))
     private static void teleportEvent(ServerCommandSource source, Collection<? extends Entity> targets, Entity destination, CallbackInfoReturnable<Integer> cir) {
-        for (Entity e : targets) {
-            if (e instanceof ServerPlayerEntity) {
-                ActionResult r = PlayerPreTeleportCallback.EVENT.invoker().trigger(
-                    (ServerPlayerEntity) e,
-                    TeleportRequest.builder((b) -> {
-                        b.destination(destination.getPos());
-                        b.dimension(destination.world);
-                        b.player((ServerPlayerEntity) e);
-                    })
-                );
-
-                if (r != ActionResult.FAIL) {
-                    PlayerTeleportCallback.EVENT.invoker().trigger(
+        try {
+            for (Entity e : targets) {
+                if (e instanceof ServerPlayerEntity) {
+                    ActionResult r = PlayerPreTeleportCallback.EVENT.invoker().trigger(
                             (ServerPlayerEntity) e,
                             TeleportRequest.builder((b) -> {
                                 b.destination(destination.getPos());
@@ -65,37 +56,57 @@ public class TeleportCommandMixin_Base {
                                 b.player((ServerPlayerEntity) e);
                             })
                     );
+
+                    if (r != ActionResult.FAIL) {
+                        PlayerTeleportCallback.EVENT.invoker().trigger(
+                                (ServerPlayerEntity) e,
+                                TeleportRequest.builder((b) -> {
+                                    b.destination(destination.getPos());
+                                    b.dimension(destination.world);
+                                    b.player((ServerPlayerEntity) e);
+                                })
+                        );
+                    } else {
+                        targets.remove(e);
+                    }
                 }
             }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
-    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at=@At("HEAD"), cancellable = true)
+    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at=@At("HEAD"))
     private static void teleportEvent2(ServerCommandSource source, Collection<? extends Entity> targets, ServerWorld world, PosArgument location, PosArgument rotation, TeleportCommand.LookTarget facingLocation, CallbackInfoReturnable<Integer> cir) {
-        for (Entity e : targets) {
-            if (e instanceof ServerPlayerEntity) {
-                ActionResult r = PlayerPreTeleportCallback.EVENT.invoker().trigger(
-                        (ServerPlayerEntity) e,
-                        TeleportRequest.builder((b) -> {
-                            b.destination(location.toAbsolutePos(source));
-                            b.dimension(world);
+        try {
+            for (Entity e : targets) {
+                if (e instanceof ServerPlayerEntity) {
+                    TeleportRequest request = TeleportRequest.builder((b) -> {
+                        b.destination(location.toAbsolutePos(source));
+                        b.dimension(world);
+                        if (rotation != null) {
                             b.facing(rotation.toAbsoluteRotation(source));
-                            b.player((ServerPlayerEntity) e);
-                        })
-                );
+                        }
+                        b.player((ServerPlayerEntity) e);
+                    });
 
-                if (r != ActionResult.FAIL) {
-                    PlayerPreTeleportCallback.EVENT.invoker().trigger(
+                    ActionResult r = PlayerPreTeleportCallback.EVENT.invoker().trigger(
                             (ServerPlayerEntity) e,
-                            TeleportRequest.builder((b) -> {
-                                b.destination(location.toAbsolutePos(source));
-                                b.dimension(world);
-                                b.facing(rotation.toAbsoluteRotation(source));
-                                b.player((ServerPlayerEntity) e);
-                            })
+                            request
                     );
+
+                    if (r != ActionResult.FAIL) {
+                        PlayerPreTeleportCallback.EVENT.invoker().trigger(
+                                (ServerPlayerEntity) e,
+                                request
+                        );
+                    } else {
+                        targets.remove(e);
+                    }
                 }
             }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 }

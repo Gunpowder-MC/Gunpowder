@@ -3,9 +3,12 @@ accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage worldGener
 accessible field net/minecraft/server/MinecraftServer workerExecutor Ljava/util/concurrent/Executor;
 accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/world/level/storage/LevelStorage$Session;
 accessible field net/minecraft/server/MinecraftServer dimensionTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
-accessible field net/minecraft/server/PlayerManager field_24626 Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
+accessible field net/minecraft/server/PlayerManager registryTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
 accessible field net/minecraft/server/MinecraftServer worlds Ljava/util/Map;
 accessible field net/minecraft/util/registry/RegistryTracker$Modifiable registry Lnet/minecraft/util/registry/SimpleRegistry;
 accessible field net/minecraft/world/gen/GeneratorOptions field_24827 Lnet/minecraft/util/registry/SimpleRegistry;
+accessible field net/minecraft/util/registry/SimpleRegistry entriesById Lcom/google/common/collect/BiMap;
+accessible field net/minecraft/util/registry/SimpleRegistry entriesByKey Lcom/google/common/collect/BiMap;
+accessible field net/minecraft/util/registry/SimpleRegistry indexedEntries Lnet/minecraft/util/collection/Int2ObjectBiMap;
 accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZZZZZZILnet/minecraft/util/Identifier;F)V
 accessible class net/minecraft/server/command/TeleportCommand$LookTarget

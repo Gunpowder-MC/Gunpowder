@@ -26,9 +26,11 @@ package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
 import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.WorldSavePath
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import net.minecraft.world.border.WorldBorder
@@ -36,17 +38,51 @@ import net.minecraft.world.border.WorldBorderListener
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.UnmodifiableLevelProperties
+import org.apache.commons.io.FileUtils
+import java.io.File
 
 
 object DimensionManager {
     val server: MinecraftServer
         get() = GunpowderMod.instance.server
 
+    fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
+        return server.dimensionTracker.registry.containsId(dimensionTypeId.value)
+    }
+
     fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
+        if (hasDimensionType(dimensionTypeId)) {
+            throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
+        }
+
         server.dimensionTracker.addDimensionType(dimensionTypeId, dimensionType)
     }
 
+    fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>) {
+        if (dimensionTypeId == DimensionType.OVERWORLD_REGISTRY_KEY || dimensionTypeId == DimensionType.THE_NETHER_REGISTRY_KEY || dimensionTypeId == DimensionType.THE_END_REGISTRY_KEY) {
+            return  // don't remove default
+        }
+
+        if (!hasDimensionType(dimensionTypeId)) {
+            return
+        }
+
+        val dtype = server.dimensionTracker.registry.entriesById[dimensionTypeId.value]
+        server.dimensionTracker.registry.entriesById.remove(dimensionTypeId.value)
+        server.dimensionTracker.registry.entriesByKey.remove(dimensionTypeId)
+        val i = server.dimensionTracker.registry.indexedEntries.getId(dtype)
+        server.dimensionTracker.registry.indexedEntries.put(null, i)
+    }
+
+    fun hasWorld(worldId: RegistryKey<World>): Boolean {
+        return server.worlds.containsKey(worldId)
+    }
+
     fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld {
+        if (hasWorld(worldId)) {
+            throw IllegalArgumentException("World ${worldId.value} already registered!")
+        }
+
         val generatorOptions = server.saveProperties.generatorOptions
         val dimensionType = server.dimensionTracker.registry.get(dimensionTypeId)!!
         val serverWorldProperties = server.saveProperties.mainWorldProperties
@@ -78,9 +114,46 @@ object DimensionManager {
         server.worlds[worldId] = world
 
         for (player in server.playerManager.playerList) {
+            GunpowderMod.instance.logger.info("Marking needsSync for player $player")
             (player as SyncPlayer).setNeedsSync(true)
         }
 
         return world
+    }
+
+    fun removeWorld(worldId: RegistryKey<World>) {
+        if (worldId == World.END || worldId == World.NETHER || worldId == World.OVERWORLD) {
+            return  // Not deleting default worlds
+        }
+
+        if (!hasWorld(worldId)) {
+            return  // No such world
+        }
+
+        val world = server.worlds.remove(worldId)
+        if (world != null) {
+
+            val path = world.server.session.getWorldDirectory(world.registryKey)
+            FileUtils.deleteDirectory(path)
+
+            for (player in server.playerManager.playerList) {
+                if (player.spawnPointDimension == worldId) {
+                    player.setSpawnPoint(null, null, false, false)
+                }
+
+                GunpowderMod.instance.logger.info("Marking needsSync for player $player")
+                (player as SyncPlayer).setNeedsSync(true)
+
+                // Teleport players in the dimension to be removed
+                if (player.world == world) {
+                    TeleportRequest.builder {
+                        val sw = server.getWorlds().first { it.registryKey == player.spawnPointDimension }
+                        dimension(sw)
+                        destination(player.spawnPointPosition ?: sw.spawnPos)
+                        player(player)
+                    }.execute(0)
+                }
+            }
+        }
     }
 }

@@ -39,6 +39,7 @@ import net.minecraft.util.registry.RegistryKey
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.TemporalUnit
+import kotlin.concurrent.thread
 import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
 
 class TeleportRequest private constructor(
@@ -53,8 +54,11 @@ class TeleportRequest private constructor(
         val now = LocalDateTime.now()
         val server = player.server
 
-        Thread(Runnable {
-            Thread.sleep(Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis())
+        thread(start=true) {
+            val duration = Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis()
+            if (duration > 0) {
+                Thread.sleep(duration)
+            }
 
             // Verify they're still online
             if (server.playerManager.playerList.contains(player)) {
@@ -77,7 +81,7 @@ class TeleportRequest private constructor(
                     }
                 }
             }
-        }).start()
+        }
     }
 
     class Builder : APITeleportRequest.Builder {

@@ -93,12 +93,29 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
         registry.registerCommand {
             Command.builder(it) {
+                val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
+                val wkey = RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc"))
+
                 command("testdim") {
                     executes {
-                        println("Registering custom dim")
-                        val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
-                        DimensionManager.addDimensionType(dtype, DimensionType(OptionalLong.of(2400L), true, false, false, false, false, true, true, true, false, 256, BlockTags.INFINIBURN_OVERWORLD.id, 0.0f))
-                        DimensionManager.addWorld(RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc")), dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
+                        if (!DimensionManager.hasDimensionType(dtype)) {
+                            DimensionManager.addDimensionType(dtype, DimensionType(OptionalLong.of(2400L), true, false, false, false, false, true, true, true, false, 256, BlockTags.INFINIBURN_OVERWORLD.id, 0.0f))
+                        }
+                        if (!DimensionManager.hasWorld(wkey)) {
+                            DimensionManager.addWorld(wkey, dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
+                        }
+                        1
+                    }
+                }
+
+                command("testdim2") {
+                    executes {
+                        if (DimensionManager.hasDimensionType(dtype)) {
+                            DimensionManager.removeDimensionType(dtype)
+                        }
+                        if (DimensionManager.hasWorld(wkey)) {
+                            DimensionManager.removeWorld(wkey)
+                        }
                         1
                     }
                 }
@@ -118,23 +135,6 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             database.disconnect()
-        })
-
-        PlayerTeleportCallback.EVENT.register(PlayerTeleportCallback { player, request ->
-            if (player.world.dimensionRegistryKey.value != request.dimension) {
-                if ((player as SyncPlayer).needsSync()) {
-                    player.networkHandler.sendPacket(GameJoinS2CPacket(
-                            player.entityId, player.interactionManager.gameMode, player.interactionManager.method_30119(),
-                            BiomeAccess.hashSeed(player.serverWorld.seed), player.world.levelProperties.isHardcore, DimensionManager.server.worldRegistryKeys,
-                            DimensionManager.server.playerManager.field_24626, player.world.dimensionRegistryKey, player.world.registryKey,
-                            DimensionManager.server.playerManager.maxPlayerCount, DimensionManager.server.playerManager.viewDistance,
-                            player.world.gameRules.getBoolean(GameRules.REDUCED_DEBUG_INFO),
-                            !player.world.gameRules.getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
-                            player.world.isDebugWorld, player.serverWorld.isFlat))
-                    player.networkHandler.sendPacket(CloseScreenS2CPacket())
-                    player.setNeedsSync(false)
-                }
-            }
         })
     }
 

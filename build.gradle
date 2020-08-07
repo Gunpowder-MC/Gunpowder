@@ -40,7 +40,6 @@ allprojects { project ->
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
-
     project.setBuildDir(rootProject.getBuildDir())
 
     license {
@@ -57,16 +56,41 @@ allprojects { project ->
         modCompile.extendsFrom modShade
     }
 
+    jar {
+        enabled = false
+    }
+
+    remapJar {
+        enabled = false
+    }
+
+    shadowJar {
+        enabled = true
+        // Only shadow implementation/modImplementation
+        configurations = [project.configurations.shade]
+        classifier = "dev"
+    }
+
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from project.sourceSets.main.allSource.srcDirs
     }
 
-    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
-            archiveName = "${archivesBaseName}-${version}-maven.jar"
+            archiveName = "${project.archivesBaseName}-${project.version}.jar"
+            addNestedDependencies = true
+            remapAccessWidener = true
+        }
+    }
+
+    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+        afterEvaluate {
+            input = file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}-dev.jar")
+            archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
             addNestedDependencies = false
+            remapAccessWidener = true
         }
     }
 
@@ -135,6 +159,9 @@ allprojects { project ->
         }
     }
 
+    build.dependsOn(shadowJar, remapShadowJar, sourcesJar, remapSourcesJar)
+    publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
+
     // Fix some warnings
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -156,9 +183,6 @@ dependencies {
         transitive = false
     }
 }
-
-task licenseFormatAll
-subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 
 subprojects {
     runClient {
@@ -186,6 +210,14 @@ remapJar {
 }
 
 remapSourcesJar {
+    enabled = false
+}
+
+remapShadowJar {
+    enabled = false
+}
+
+remapMavenJar {
     enabled = false
 }
 

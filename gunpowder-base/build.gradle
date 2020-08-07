@@ -34,36 +34,10 @@ dependencies {
     include libs.playerabilitylib
 }
 
-jar {
-    enabled = false
-}
-
-remapJar {
-    enabled = false
-}
-
-shadowJar {
-    enabled = true
-    // Only shadow implementation/modImplementation
-    configurations = [project.configurations.shade]
-    classifier = "dev"
-}
-
-task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
-    afterEvaluate {
-        input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
-        archiveName = "${archivesBaseName}-${version}.jar"
-        addNestedDependencies = true
-        remapAccessWidener = true
-    }
-}
 
 minecraft {
     accessWidener = file("src/main/resources/gunpowder_base.accesswidener")
 }
-
-rootProject.build.dependsOn(shadowJar, remapShadowJar)
-rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
 
 sourceSets {
     main {
