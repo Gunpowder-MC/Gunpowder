@@ -29,10 +29,9 @@ import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
 import io.github.gunpowder.entities.GunpowderDatabase
+import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.entities.GunpowderRegistry
-import io.github.gunpowder.entities.LanguageHack
 import io.github.gunpowder.injection.AbstractModule
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.apache.logging.log4j.LogManager
 
@@ -50,10 +49,9 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     var modules: MutableList<GunpowderModule> = mutableListOf()
 
     fun initialize() {
-        FabricLoader.getInstance().allMods.filter { itt -> itt.metadata.depends.any { it.modId == "gunpowder-base" } }.forEach { LanguageHack.activate(it.metadata.name) }
-
         logger.info("Starting Gunpowder")
         registry.registerBuiltin()
+        GunpowderEvents.init()
         logger.info("Loading modules")
 
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java)
@@ -73,22 +71,8 @@ abstract class AbstractGunpowderMod : GunpowderMod {
             // Thereby accessing the gunpowder instance BEFORE the server start callbacks have been fired
             module.registerConfigs()
             module.registerCommands()
+            module.onInitialize()  // Moved this to earlier than SERVER_STARTED since loading tags may need custom data
         }
-
-        // TODO: Look into cleanup so we can turn this into internal method references
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
-            database.loadDatabase()
-
-            modules.forEach {
-                // Register non-commands
-                it.onInitialize()
-            }
-        })
-
-        ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
-            // Disable DB, unregister everything except commands
-            database.disconnect()
-        })
     }
 
     abstract fun createModule(): AbstractModule

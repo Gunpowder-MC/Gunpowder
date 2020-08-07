@@ -6,7 +6,10 @@
   "mixins": [
     "LanguageMixin_Base",
     "LivingEntityMixin_Base",
-    "ServerPlayerEntityMixin_Base"
+    "ServerPlayerEntityMixin_Base",
+    "ServerPlayerInteractionManagerMixin_Base",
+    "SignBlockEntityMixin_Base",
+    "SignBlockMixin_Base"
   ],
   "client": [
   ],

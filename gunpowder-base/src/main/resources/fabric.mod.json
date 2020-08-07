@@ -15,6 +15,9 @@
       "io.github.gunpowder.mod.client.GunpowderClientMod"
     ]
   },
+  "mixins": [
+    "mixins.base.gunpowder.json"
+  ],
   "depends": {
     "fabricloader": ">=0.8.9",
     "fabric": "*",

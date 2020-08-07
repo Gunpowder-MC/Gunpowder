@@ -24,11 +24,9 @@
 
 package io.github.gunpowder.mixin.cast;
 
-import java.util.Map;
-import java.util.regex.Pattern;
+import io.github.gunpowder.entities.builders.SignType;
 
-public interface LanguageMixinCast_Base {
-    Map<String, String> getTranslations();
-
-    Pattern getTokenPattern();
+public interface SignBlockEntityMixinCast_Base {
+    boolean isCustom();
+    SignType getSignType();
 }

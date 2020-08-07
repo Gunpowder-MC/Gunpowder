@@ -25,35 +25,61 @@
 package io.github.gunpowder.mixin.base;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonParseException;
+import io.github.gunpowder.api.GunpowderMod;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Language;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 @Mixin(Language.class)
-public class LanguageMixin_Base {
+public abstract class LanguageMixin_Base {
     @Shadow
     @Final
     private static Pattern TOKEN_PATTERN;
 
-    private static Map<String, String> translations;
+    @Redirect(method = "create", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
+    private static ImmutableMap storeTranslations(ImmutableMap.Builder builder) {
+        BiConsumer biConsumer = builder::put;
 
-    @Inject(method = "create", at = @At(value = "INVOKE_ASSIGN", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;"))
-    private static void storeTranslations(CallbackInfoReturnable<Language> cir, ImmutableMap<String, String> map) {
-        translations = map;
-    }
+        FabricLoader.getInstance().getAllMods().stream().filter(itt -> itt.getMetadata().getDepends().stream().anyMatch(it -> it.getModId().equals("gunpowder-base"))).forEach(c -> {
+            try {
+                InputStream inputStream = Language.class.getResourceAsStream("/assets/"+c.getMetadata().getId()+"/lang/en_us.json");
+                Throwable prevErr = null;
 
-    public Map<String, String> getTranslations() {
-        return translations;
-    }
+                try {
+                    Language.load(inputStream, biConsumer);
+                } catch (Throwable err) {
+                    prevErr = err;
+                    throw err;
+                } finally {
+                    if (inputStream != null) {
+                        if (prevErr != null) {
+                            try {
+                                inputStream.close();
+                            } catch (Throwable err) {
+                                prevErr.addSuppressed(err);
+                            }
+                        } else {
+                            inputStream.close();
+                        }
+                    }
 
-    public Pattern getTokenPattern() {
-        return TOKEN_PATTERN;
+                }
+            } catch (JsonParseException | IOException err) {
+                GunpowderMod.getInstance().getLogger().error("Couldn't read strings from /assets/"+c.getMetadata().getId()+"/lang/en_us.json", err);
+            }
+        });
+
+        return builder.build();
     }
 }

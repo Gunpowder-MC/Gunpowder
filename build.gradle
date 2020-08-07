@@ -40,6 +40,7 @@ allprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
+    project.group = rootProject.group
 
     setBuildDir(rootProject.getBuildDir())
 
