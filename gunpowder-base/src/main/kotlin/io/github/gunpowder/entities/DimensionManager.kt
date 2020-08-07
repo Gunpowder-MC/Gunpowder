@@ -31,16 +31,15 @@ import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.WorldSavePath
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import net.minecraft.world.border.WorldBorder
 import net.minecraft.world.border.WorldBorderListener
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.ChunkGenerator
+import net.minecraft.world.level.ServerWorldProperties
 import net.minecraft.world.level.UnmodifiableLevelProperties
 import org.apache.commons.io.FileUtils
-import java.io.File
 
 
 object DimensionManager : GunpowderDimensionManager {
@@ -79,14 +78,13 @@ object DimensionManager : GunpowderDimensionManager {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld {
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld {
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
 
         val generatorOptions = server.saveProperties.generatorOptions
         val dimensionType = server.dimensionTracker.registry.get(dimensionTypeId)!!
-        val serverWorldProperties = server.saveProperties.mainWorldProperties
 
         val overworld = server.worlds[World.OVERWORLD]!!
         val worldGenerationProgressListener = overworld.chunkManager.threadedAnvilChunkStorage.worldGenerationProgressListener
@@ -105,7 +103,7 @@ object DimensionManager : GunpowderDimensionManager {
             WorldBorder()
         }
 
-        val props = UnmodifiableLevelProperties(server.saveProperties, serverWorldProperties)
+        val props = UnmodifiableLevelProperties(server.saveProperties, properties)
         val world = ServerWorld(server, server.workerExecutor, server.session,
                                 props, worldId, dimensionTypeId, dimensionType,
                                 worldGenerationProgressListener, chunkGenerator,

@@ -29,6 +29,7 @@ import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.ChunkGenerator
+import net.minecraft.world.level.ServerWorldProperties
 
 interface GunpowderDimensionManager {
     fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean
@@ -36,6 +37,6 @@ interface GunpowderDimensionManager {
     fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>)
 
     fun hasWorld(worldId: RegistryKey<World>): Boolean
-    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld
     fun removeWorld(worldId: RegistryKey<World>)
 }
