@@ -53,6 +53,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
     @Shadow public abstract void setTextOnRow(int row, Text text);
 
+    @Shadow private PlayerEntity editor;
     boolean custom = false;
     SignType type = null;
 
@@ -92,11 +93,14 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
     @Override
     public void markDirty() {
+        if (world.isClient()) return;
+
         String header = text[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
             type = (SignType) SignType.Companion.getRegistry().get(new Identifier(header.substring(1, header.length()-1)));
-            if (type != null) {
+            if (type != null && type.getConditionEvent().invoke((SignBlockEntity)(Object) this, (ServerPlayerEntity)this.editor)) {
                 setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
+                type.getCreateEvent().invoke((SignBlockEntity)(Object) this, (ServerPlayerEntity)this.editor);
                 custom = true;
             }
         }

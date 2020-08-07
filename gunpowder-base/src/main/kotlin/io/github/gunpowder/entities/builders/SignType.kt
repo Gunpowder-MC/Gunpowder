@@ -40,7 +40,8 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
                val createEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
                val destroyEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
                val serializeEvent: (SignBlockEntity, CompoundTag) -> Unit,
-               val deserializeEvent: (SignBlockEntity, CompoundTag) -> Unit) : APISignType {
+               val deserializeEvent: (SignBlockEntity, CompoundTag) -> Unit,
+               val conditionEvent: (SignBlockEntity, ServerPlayerEntity) -> Boolean) : APISignType {
 
     companion object {
         private val key = RegistryKey.ofRegistry<APISignType>(Identifier("gunpowder:sign_type"))
@@ -50,6 +51,7 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
     class Builder : APISignType.Builder {
         var id = Identifier("unused_sign_type_too_long_for_sign")
         var clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit = { _, _ -> }
+        var requireEvent: (SignBlockEntity, ServerPlayerEntity) -> Boolean = { _, _ -> true }
         var createEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit = { _, _ -> }
         var destroyEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit = { _, _ -> }
         var serializeEvent: (SignBlockEntity, CompoundTag) -> Unit = { _, _ -> }
@@ -57,6 +59,10 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
 
         override fun name(name: Identifier) {
             id = name
+        }
+
+        override fun requires(condition: (SignBlockEntity, ServerPlayerEntity) -> Boolean) {
+            requireEvent = condition
         }
 
         override fun onClicked(callback: (SignBlockEntity, ServerPlayerEntity) -> Unit) {
@@ -80,7 +86,7 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
         }
 
         override fun build() {
-            Registry.register(registry, id, SignType(clickEvent, createEvent, destroyEvent, serializeEvent, deserializeEvent))
+            Registry.register(registry, id, SignType(clickEvent, createEvent, destroyEvent, serializeEvent, deserializeEvent, requireEvent))
         }
     }
 }

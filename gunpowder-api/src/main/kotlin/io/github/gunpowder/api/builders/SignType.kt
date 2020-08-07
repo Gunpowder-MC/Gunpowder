@@ -30,6 +30,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import java.util.function.BiConsumer
+import java.util.function.BiFunction
 import java.util.function.Consumer
 
 interface SignType {
@@ -46,6 +47,9 @@ interface SignType {
     interface Builder {
         fun name(name: String) = name(Identifier(name))
         fun name(name: Identifier)
+
+        fun requires(condition: BiFunction<SignBlockEntity, ServerPlayerEntity, Boolean>) = requires(condition::apply)
+        fun requires(condition: (SignBlockEntity, ServerPlayerEntity) -> Boolean)
 
         fun onClicked(callback: BiConsumer<SignBlockEntity, ServerPlayerEntity>) = onClicked(callback::accept)
         fun onClicked(callback: (SignBlockEntity, ServerPlayerEntity) -> Unit)
