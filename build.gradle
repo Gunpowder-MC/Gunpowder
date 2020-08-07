@@ -40,6 +40,7 @@ allprojects { project ->
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
+    project.group = rootProject.group
     project.setBuildDir(rootProject.getBuildDir())
 
     license {

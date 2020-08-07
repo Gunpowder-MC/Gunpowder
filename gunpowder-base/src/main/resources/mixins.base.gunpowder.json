@@ -6,7 +6,9 @@
   "mixins": [
     "LivingEntityMixin_Base",
     "ServerPlayerEntityMixin_Base",
-    "ServerPlayNetworkHandlerMixin_Base",
+    "ServerPlayerInteractionManagerMixin_Base",
+    "SignBlockEntityMixin_Base",
+    "SignBlockMixin_Base"
     "TeleportCommandMixin_Base"
   ],
   "client": [

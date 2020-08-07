@@ -35,7 +35,10 @@ import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.builders.*
 import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.network.MessageType
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.LiteralText
+import net.minecraft.util.Util
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -45,6 +48,7 @@ import io.github.gunpowder.api.GunpowderRegistry as APIGunpowderRegistry
 import io.github.gunpowder.api.builders.ChestGui as APIChestGui
 import io.github.gunpowder.api.builders.Command as APICommand
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
+import io.github.gunpowder.api.builders.SignType as APISignType
 import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
 import io.github.gunpowder.api.builders.Text as APIText
 
@@ -68,6 +72,7 @@ object GunpowderRegistry : APIGunpowderRegistry {
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
         builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
         builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
+        builders[APISignType.Builder::class.java] = Supplier { SignType.Builder() }
 
         registerCommand(InfoCommand::register)
     }
