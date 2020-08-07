@@ -18,7 +18,9 @@ More information will be provided soon. Contributions should follow the guidelin
 
 ## Extending
 
-If you want to use Gunpowder, add the following to your build.gradle:
+If you want to use Gunpowder, use our [template project](https://github.com/gunpowder-mc/gunpowdertemplate) or follow the steps below:
+
+Add the following to your build.gradle:
 
 ```gradle
 dependencies {
