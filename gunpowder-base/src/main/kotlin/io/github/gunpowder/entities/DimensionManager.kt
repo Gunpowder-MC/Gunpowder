@@ -27,25 +27,17 @@ package io.github.gunpowder.entities
 import com.google.common.collect.ImmutableList
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.mixin.cast.SyncPlayer
-import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.GameRules
 import net.minecraft.world.World
-import net.minecraft.world.biome.source.BiomeAccess
 import net.minecraft.world.border.WorldBorder
 import net.minecraft.world.border.WorldBorderListener
-import net.minecraft.world.dimension.DimensionOptions
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.UnmodifiableLevelProperties
-import java.util.function.Supplier
 
-/**
- * Based on MinecraftServerMixin from AE2-Fabric
- */
+
 object DimensionManager {
     val server: MinecraftServer
         get() = GunpowderMod.instance.server
@@ -57,7 +49,6 @@ object DimensionManager {
     fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld {
         val generatorOptions = server.saveProperties.generatorOptions
         val dimensionType = server.dimensionTracker.registry.get(dimensionTypeId)!!
-        val dimensionOptions = DimensionOptions(Supplier { server.dimensionTracker.registry.get(dimensionTypeId) }, chunkGenerator)
         val serverWorldProperties = server.saveProperties.mainWorldProperties
 
         val overworld = server.worlds[World.OVERWORLD]!!
@@ -85,16 +76,6 @@ object DimensionManager {
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
-        //val dimOptKey = RegistryKey.of(Registry.DIMENSION_OPTIONS, worldId.value)
-        //generatorOptions.dimensionMap.add(dimOptKey, dimensionOptions)
-
-        // From AE2:
-        // FIXME FABRIC: might not be needed anymore if dimensions will save regardless
-        //generatorOptions.dimensionMap.markLoaded(dimOptKey);
-        // Otherwise it wont be saved
-        // Ensure the save properties are saved, or the world will potentially be lost
-        // on restarta
-        //server.session.method_27426(server.dimensionTracker, server.saveProperties, server.playerManager.userData)
 
         for (player in server.playerManager.playerList) {
             (player as SyncPlayer).setNeedsSync(true)

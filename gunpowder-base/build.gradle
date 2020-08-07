@@ -34,10 +34,6 @@ dependencies {
     include libs.playerabilitylib
 }
 
-minecraft {
-    accessWidener file("src/main/resources/gunpowder_base.accesswidener")
-}
-
 jar {
     enabled = false
 }
@@ -60,6 +56,10 @@ task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadow
         addNestedDependencies = true
         remapAccessWidener = true
     }
+}
+
+minecraft {
+    accessWidener = file("src/main/resources/gunpowder_base.accesswidener")
 }
 
 rootProject.build.dependsOn(shadowJar, remapShadowJar)
