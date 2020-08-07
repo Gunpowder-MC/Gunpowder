@@ -28,6 +28,7 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
+import io.github.gunpowder.entities.DimensionManager
 import io.github.gunpowder.entities.GunpowderDatabase
 import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.entities.GunpowderRegistry
@@ -40,6 +41,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     override val logger = LogManager.getLogger(GunpowderMod::class.java)
     override val registry = GunpowderRegistry
     override val database = GunpowderDatabase
+    override val dimensionManager = DimensionManager
     val injector: Injector
 
     init {

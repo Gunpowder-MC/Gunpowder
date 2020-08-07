@@ -18,9 +18,13 @@
   "mixins": [
     "mixins.base.gunpowder.json"
   ],
+  "accessWidener": "gunpowder_base.accesswidener",
   "depends": {
     "fabricloader": ">=0.8.9",
     "fabric": "*",
     "fabric-language-kotlin": ">=1.3.50"
+  },
+  "conflicts": {
+    "gunpowder-api": "*"
   }
 }

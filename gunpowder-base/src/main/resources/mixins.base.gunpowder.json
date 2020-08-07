@@ -4,12 +4,12 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.gunpowder.mixin.plugin.BaseModulePlugin",
   "mixins": [
-    "LanguageMixin_Base",
     "LivingEntityMixin_Base",
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
     "SignBlockEntityMixin_Base",
     "SignBlockMixin_Base"
+    "TeleportCommandMixin_Base"
   ],
   "client": [
   ],

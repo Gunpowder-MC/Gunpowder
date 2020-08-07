@@ -22,26 +22,16 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api
+package io.github.nyliummc.essentials.entities.mc
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
-import org.apache.logging.log4j.Logger
+import com.mojang.serialization.Lifecycle
+import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.util.registry.SimpleRegistry
 
-interface GunpowderMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: GunpowderRegistry
-    val database: GunpowderDatabase
-    val dimensionManager: GunpowderDimensionManager
-    val logger: Logger
-
-    companion object {
-        @field:Inject
-        private var implementation: GunpowderMod? = null
-
-        @JvmStatic
-        val instance: GunpowderMod
-            get() = implementation ?: throw Exception("Gunpowder mod instance was not available yet!")
+class WrapperRegistry<T>(registryKey: RegistryKey<Registry<T>>, lifecycle: Lifecycle, val wrapped: SimpleRegistry<T>, val default: T) : SimpleRegistry<T>(registryKey, lifecycle) {
+    override fun get(id: Identifier?): T? {
+        return wrapped.get(id) ?: default
     }
 }

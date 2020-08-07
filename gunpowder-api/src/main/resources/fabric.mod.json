@@ -9,6 +9,7 @@
   "environment": "*",
   "depends": {
     "fabricloader": ">=0.8.9",
-    "fabric": "*"
+    "fabric": "*",
+    "gunpowder-core": "${version}"
   }
 }

@@ -32,7 +32,7 @@ version = project.mod_version + "+" + project.minecraft
 
 // Project config
 
-allprojects {
+allprojects { project ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
@@ -41,8 +41,7 @@ allprojects {
 
     project.version = rootProject.version
     project.group = rootProject.group
-
-    setBuildDir(rootProject.getBuildDir())
+    project.setBuildDir(rootProject.getBuildDir())
 
     license {
         header = rootProject.file('LICENSE')
@@ -58,9 +57,42 @@ allprojects {
         modCompile.extendsFrom modShade
     }
 
+    jar {
+        enabled = false
+    }
+
+    remapJar {
+        enabled = false
+    }
+
+    shadowJar {
+        enabled = true
+        // Only shadow implementation/modImplementation
+        configurations = [project.configurations.shade]
+        classifier = "dev"
+    }
+
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from project.sourceSets.main.allSource.srcDirs
+    }
+
+    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+        afterEvaluate {
+            input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
+            archiveName = "${project.archivesBaseName}-${project.version}.jar"
+            addNestedDependencies = true
+            remapAccessWidener = true
+        }
+    }
+
+    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+        afterEvaluate {
+            input = file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}-dev.jar")
+            archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
+            addNestedDependencies = false
+            remapAccessWidener = true
+        }
     }
 
     repositories {
@@ -128,6 +160,9 @@ allprojects {
         }
     }
 
+    build.dependsOn(shadowJar, remapShadowJar, sourcesJar, remapSourcesJar)
+    publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
+
     // Fix some warnings
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -149,9 +184,6 @@ dependencies {
         transitive = false
     }
 }
-
-task licenseFormatAll
-subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 
 subprojects {
     runClient {
@@ -182,6 +214,14 @@ remapSourcesJar {
     enabled = false
 }
 
+remapShadowJar {
+    enabled = false
+}
+
+remapMavenJar {
+    enabled = false
+}
+
 if (file('secrets.gradle').exists()) {
     apply from: 'secrets.gradle'
     // project.ext.apiKey = cf token
@@ -203,15 +243,10 @@ if (file('secrets.gradle').exists()) {
             publications {
                 mavenJava(MavenPublication) {
                     afterEvaluate {
-                        if (p.name.contains("-api")) {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'dev'
-                        } else {
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
-                            artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
-                        }
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
+                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
                     }
                 }
             }
