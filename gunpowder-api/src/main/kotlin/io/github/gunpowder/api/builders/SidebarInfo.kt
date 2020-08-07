@@ -26,7 +26,6 @@ package io.github.gunpowder.api.builders
 
 import io.github.gunpowder.api.GunpowderMod
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import java.util.function.Consumer

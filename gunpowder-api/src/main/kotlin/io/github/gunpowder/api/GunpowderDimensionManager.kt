@@ -24,24 +24,19 @@
 
 package io.github.gunpowder.api
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
-import org.apache.logging.log4j.Logger
+import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
+import net.minecraft.world.dimension.DimensionType
+import net.minecraft.world.gen.chunk.ChunkGenerator
+import net.minecraft.world.level.ServerWorldProperties
 
-interface GunpowderMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: GunpowderRegistry
-    val database: GunpowderDatabase
-    val dimensionManager: GunpowderDimensionManager
-    val logger: Logger
+interface GunpowderDimensionManager {
+    fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean
+    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType)
+    fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>)
 
-    companion object {
-        @field:Inject
-        private var implementation: GunpowderMod? = null
-
-        @JvmStatic
-        val instance: GunpowderMod
-            get() = implementation ?: throw Exception("Gunpowder mod instance was not available yet!")
-    }
+    fun hasWorld(worldId: RegistryKey<World>): Boolean
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld
+    fun removeWorld(worldId: RegistryKey<World>)
 }

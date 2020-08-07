@@ -22,26 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api
+package io.github.gunpowder.mixin.cast;
 
-import com.google.inject.Inject
-import net.minecraft.server.MinecraftServer
-import org.apache.logging.log4j.Logger
-
-interface GunpowderMod {
-    val server: MinecraftServer
-    val isClient: Boolean
-    val registry: GunpowderRegistry
-    val database: GunpowderDatabase
-    val dimensionManager: GunpowderDimensionManager
-    val logger: Logger
-
-    companion object {
-        @field:Inject
-        private var implementation: GunpowderMod? = null
-
-        @JvmStatic
-        val instance: GunpowderMod
-            get() = implementation ?: throw Exception("Gunpowder mod instance was not available yet!")
-    }
+public interface SyncPlayer {
+    void setNeedsSync(boolean x);
+    boolean needsSync();
 }

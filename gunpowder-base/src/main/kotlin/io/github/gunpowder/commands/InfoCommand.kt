@@ -29,10 +29,8 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.api.builders.SidebarInfo
-import io.github.gunpowder.api.builders.Text
 import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
 import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
