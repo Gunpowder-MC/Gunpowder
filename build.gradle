@@ -6,7 +6,6 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "org.jetbrains.dokka" version "1.4.0-rc"
 }
 
 apply from: "dependencies.gradle"  // libs.*
@@ -161,7 +160,7 @@ allprojects { project ->
     }
 
     build.dependsOn(shadowJar, remapShadowJar, sourcesJar, remapSourcesJar)
-    publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
+    rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
 
     // Fix some warnings
     sourceCompatibility = JavaVersion.VERSION_1_8
