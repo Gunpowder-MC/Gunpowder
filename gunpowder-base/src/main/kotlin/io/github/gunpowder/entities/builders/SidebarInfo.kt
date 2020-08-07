@@ -33,8 +33,8 @@ import net.minecraft.scoreboard.ScoreboardCriterion
 import net.minecraft.scoreboard.ScoreboardObjective
 import net.minecraft.scoreboard.ServerScoreboard
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
 import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 

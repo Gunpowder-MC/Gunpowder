@@ -28,13 +28,13 @@ import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.configs.GunpowderConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
 import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
+import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 object GunpowderDatabase : APIGunpowderDatabase {
     @Volatile private var running = true

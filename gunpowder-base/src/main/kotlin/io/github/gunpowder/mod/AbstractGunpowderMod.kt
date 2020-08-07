@@ -26,32 +26,16 @@ package io.github.gunpowder.mod
 
 import com.google.inject.Guice
 import com.google.inject.Injector
-import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.entities.DimensionManager
 import io.github.gunpowder.entities.GunpowderDatabase
 import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.entities.LanguageHack
-import io.github.gunpowder.events.PlayerTeleportCallback
 import io.github.gunpowder.injection.AbstractModule
-import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket
-import net.minecraft.tag.BlockTags
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.GameRules
-import net.minecraft.world.biome.source.BiomeAccess
-import net.minecraft.world.dimension.DimensionType
-import net.minecraft.world.gen.chunk.FlatChunkGenerator
-import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
 import org.apache.logging.log4j.LogManager
-import java.util.*
 
 abstract class AbstractGunpowderMod : GunpowderMod {
     val module = "gunpowder:modules"
