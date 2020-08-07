@@ -25,6 +25,7 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
+import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
@@ -42,15 +43,15 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 
 
-object DimensionManager {
+object DimensionManager : GunpowderDimensionManager {
     val server: MinecraftServer
         get() = GunpowderMod.instance.server
 
-    fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
+    override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
         return server.dimensionTracker.registry.containsId(dimensionTypeId.value)
     }
 
-    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
+    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
         if (hasDimensionType(dimensionTypeId)) {
             throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
         }
@@ -58,7 +59,7 @@ object DimensionManager {
         server.dimensionTracker.addDimensionType(dimensionTypeId, dimensionType)
     }
 
-    fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>) {
+    override fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>) {
         if (dimensionTypeId == DimensionType.OVERWORLD_REGISTRY_KEY || dimensionTypeId == DimensionType.THE_NETHER_REGISTRY_KEY || dimensionTypeId == DimensionType.THE_END_REGISTRY_KEY) {
             return  // don't remove default
         }
@@ -74,11 +75,11 @@ object DimensionManager {
         server.dimensionTracker.registry.indexedEntries.put(null, i)
     }
 
-    fun hasWorld(worldId: RegistryKey<World>): Boolean {
+    override fun hasWorld(worldId: RegistryKey<World>): Boolean {
         return server.worlds.containsKey(worldId)
     }
 
-    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld {
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator): ServerWorld {
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
@@ -121,7 +122,7 @@ object DimensionManager {
         return world
     }
 
-    fun removeWorld(worldId: RegistryKey<World>) {
+    override fun removeWorld(worldId: RegistryKey<World>) {
         if (worldId == World.END || worldId == World.NETHER || worldId == World.OVERWORLD) {
             return  // Not deleting default worlds
         }

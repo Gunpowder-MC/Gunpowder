@@ -26,6 +26,7 @@ package io.github.gunpowder.mod
 
 import com.google.inject.Guice
 import com.google.inject.Injector
+import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
 import io.github.gunpowder.api.builders.Command
@@ -57,6 +58,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     override val logger = LogManager.getLogger(GunpowderMod::class.java)
     override val registry = GunpowderRegistry
     override val database = GunpowderDatabase
+    override val dimensionManager = DimensionManager
     val injector: Injector
 
     init {
@@ -89,37 +91,6 @@ abstract class AbstractGunpowderMod : GunpowderMod {
             // Thereby accessing the gunpowder instance BEFORE the server start callbacks have been fired
             module.registerConfigs()
             module.registerCommands()
-        }
-
-        registry.registerCommand {
-            Command.builder(it) {
-                val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
-                val wkey = RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc"))
-
-                command("testdim") {
-                    executes {
-                        if (!DimensionManager.hasDimensionType(dtype)) {
-                            DimensionManager.addDimensionType(dtype, DimensionType(OptionalLong.of(2400L), true, false, false, false, false, true, true, true, false, 256, BlockTags.INFINIBURN_OVERWORLD.id, 0.0f))
-                        }
-                        if (!DimensionManager.hasWorld(wkey)) {
-                            DimensionManager.addWorld(wkey, dtype, FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig()))
-                        }
-                        1
-                    }
-                }
-
-                command("testdim2") {
-                    executes {
-                        if (DimensionManager.hasDimensionType(dtype)) {
-                            DimensionManager.removeDimensionType(dtype)
-                        }
-                        if (DimensionManager.hasWorld(wkey)) {
-                            DimensionManager.removeWorld(wkey)
-                        }
-                        1
-                    }
-                }
-            }
         }
 
         // TODO: Look into cleanup so we can turn this into internal method references

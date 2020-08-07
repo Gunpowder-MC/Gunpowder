@@ -33,6 +33,7 @@ interface GunpowderMod {
     val isClient: Boolean
     val registry: GunpowderRegistry
     val database: GunpowderDatabase
+    val dimensionManager: GunpowderDimensionManager
     val logger: Logger
 
     companion object {
