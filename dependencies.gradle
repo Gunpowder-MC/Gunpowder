@@ -11,7 +11,6 @@ ext {
             // Hard Dependencies
             fabric_api            : "net.fabricmc.fabric-api:fabric-api:$project.fabric_api",
             fabric_language_kotlin: "net.fabricmc:fabric-language-kotlin:$project.fabric_language_kotlin",
-            playerabilitylib      : "io.github.ladysnake:PlayerAbilityLib:$project.playerabilitylib",
 
             // Database
             exposed_core          : "org.jetbrains.exposed:exposed-core:$project.exposed_core",
