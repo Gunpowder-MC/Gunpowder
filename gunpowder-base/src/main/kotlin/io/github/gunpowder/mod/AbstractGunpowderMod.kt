@@ -89,45 +89,6 @@ abstract class AbstractGunpowderMod : GunpowderMod {
             module.registerCommands()
             module.onInitialize()  // Moved this to earlier than SERVER_STARTED since loading tags may need custom data
         }
-
-        registry.registerCommand {
-            Command.builder(it) {
-                val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
-                val wkey = RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc"))
-
-                command("testdim") {
-                    executes {
-                        if (!DimensionManager.hasDimensionType(dtype)) {
-                            DimensionManager.addDimensionType(dtype, DimensionType(
-                                    OptionalLong.of(2400L), true, false, false,
-                                    false, 1.0, false, true,
-                                    true, true, true, 256,
-                                    VoronoiBiomeAccessType.INSTANCE, BlockTags.INFINIBURN_OVERWORLD.id,
-                                    Identifier("overworld"), 0.0f))
-                        }
-                        if (!DimensionManager.hasWorld(wkey)) {
-                            DimensionManager.addWorld(
-                                    wkey, dtype,
-                                    FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig(server.registryManager.get(Registry.BIOME_KEY))),
-                                    UnmodifiableLevelProperties(server.saveProperties, server.getWorld(World.OVERWORLD)!!.levelProperties as ServerWorldProperties))
-                        }
-                        1
-                    }
-                }
-
-                command("testdim2") {
-                    executes {
-                        if (DimensionManager.hasDimensionType(dtype)) {
-                            DimensionManager.removeDimensionType(dtype)
-                        }
-                        if (DimensionManager.hasWorld(wkey)) {
-                            DimensionManager.removeWorld(wkey)
-                        }
-                        1
-                    }
-                }
-            }
-        }
     }
 
     abstract fun createModule(): AbstractModule
