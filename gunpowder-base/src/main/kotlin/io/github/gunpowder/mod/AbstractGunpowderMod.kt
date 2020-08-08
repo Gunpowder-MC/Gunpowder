@@ -28,13 +28,27 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
+import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.entities.DimensionManager
 import io.github.gunpowder.entities.GunpowderDatabase
 import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.injection.AbstractModule
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.tag.BlockTags
+import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryKey
+import net.minecraft.world.World
+import net.minecraft.world.biome.source.VoronoiBiomeAccessType
+import net.minecraft.world.dimension.DimensionType
+import net.minecraft.world.gen.chunk.FlatChunkGenerator
+import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
+import net.minecraft.world.level.LevelProperties
+import net.minecraft.world.level.ServerWorldProperties
+import net.minecraft.world.level.UnmodifiableLevelProperties
 import org.apache.logging.log4j.LogManager
+import java.util.*
 
 abstract class AbstractGunpowderMod : GunpowderMod {
     val module = "gunpowder:modules"
@@ -74,6 +88,45 @@ abstract class AbstractGunpowderMod : GunpowderMod {
             module.registerConfigs()
             module.registerCommands()
             module.onInitialize()  // Moved this to earlier than SERVER_STARTED since loading tags may need custom data
+        }
+
+        registry.registerCommand {
+            Command.builder(it) {
+                val dtype = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, Identifier("gunpowder:custom"))
+                val wkey = RegistryKey.of(Registry.DIMENSION, Identifier("gunpowder:abc"))
+
+                command("testdim") {
+                    executes {
+                        if (!DimensionManager.hasDimensionType(dtype)) {
+                            DimensionManager.addDimensionType(dtype, DimensionType(
+                                    OptionalLong.of(2400L), true, false, false,
+                                    false, 1.0, false, true,
+                                    true, true, true, 256,
+                                    VoronoiBiomeAccessType.INSTANCE, BlockTags.INFINIBURN_OVERWORLD.id,
+                                    Identifier("overworld"), 0.0f))
+                        }
+                        if (!DimensionManager.hasWorld(wkey)) {
+                            DimensionManager.addWorld(
+                                    wkey, dtype,
+                                    FlatChunkGenerator(FlatChunkGeneratorConfig.getDefaultConfig(server.registryManager.get(Registry.BIOME_KEY))),
+                                    UnmodifiableLevelProperties(server.saveProperties, server.getWorld(World.OVERWORLD)!!.levelProperties as ServerWorldProperties))
+                        }
+                        1
+                    }
+                }
+
+                command("testdim2") {
+                    executes {
+                        if (DimensionManager.hasDimensionType(dtype)) {
+                            DimensionManager.removeDimensionType(dtype)
+                        }
+                        if (DimensionManager.hasWorld(wkey)) {
+                            DimensionManager.removeWorld(wkey)
+                        }
+                        1
+                    }
+                }
+            }
         }
     }
 

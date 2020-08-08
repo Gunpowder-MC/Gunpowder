@@ -81,13 +81,13 @@ object Text : APIText {
 
         override fun onHoverText(tooltip: String) {
             text.styled {
-                it.setHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, LiteralText(tooltip)))
+                it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, LiteralText(tooltip)))
             }
         }
 
         override fun onHoverEvent(event: HoverEvent) {
             text.styled {
-                it.setHoverEvent(event)
+                it.withHoverEvent(event)
             }
         }
 

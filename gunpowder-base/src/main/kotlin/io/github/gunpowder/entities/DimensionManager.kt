@@ -25,13 +25,17 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
+import com.mojang.serialization.Lifecycle
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.registry.DynamicRegistryManager
+import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
+import net.minecraft.util.registry.SimpleRegistry
 import net.minecraft.world.World
 import net.minecraft.world.border.WorldBorder
 import net.minecraft.world.border.WorldBorderListener
@@ -45,9 +49,13 @@ import org.apache.commons.io.FileUtils
 object DimensionManager : GunpowderDimensionManager {
     val server: MinecraftServer
         get() = GunpowderMod.instance.server
+    private val dimTypeRegistry: SimpleRegistry<DimensionType>
+        get() {
+            return server.registryManager[Registry.DIMENSION_TYPE_KEY] as SimpleRegistry<DimensionType>
+        }
 
     override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
-        return server.dimensionTracker.registry.containsId(dimensionTypeId.value)
+        return dimTypeRegistry.entriesByKey.containsKey(dimensionTypeId)
     }
 
     override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
@@ -55,7 +63,7 @@ object DimensionManager : GunpowderDimensionManager {
             throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
         }
 
-        server.dimensionTracker.addDimensionType(dimensionTypeId, dimensionType)
+        Registry.register(dimTypeRegistry, dimensionTypeId.value, dimensionType)
     }
 
     override fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>) {
@@ -67,11 +75,12 @@ object DimensionManager : GunpowderDimensionManager {
             return
         }
 
-        val dtype = server.dimensionTracker.registry.entriesById[dimensionTypeId.value]
-        server.dimensionTracker.registry.entriesById.remove(dimensionTypeId.value)
-        server.dimensionTracker.registry.entriesByKey.remove(dimensionTypeId)
-        val i = server.dimensionTracker.registry.indexedEntries.getId(dtype)
-        server.dimensionTracker.registry.indexedEntries.put(null, i)
+        val dtype = dimTypeRegistry.entriesById[dimensionTypeId.value]
+        dimTypeRegistry.entriesById.remove(dimensionTypeId.value)
+        dimTypeRegistry.entriesByKey.remove(dimensionTypeId)
+        dimTypeRegistry.field_26731.remove(dtype)
+        dimTypeRegistry.field_26682.remove(dtype)
+        dimTypeRegistry.field_26683.removeInt(dtype)
     }
 
     override fun hasWorld(worldId: RegistryKey<World>): Boolean {
@@ -84,28 +93,24 @@ object DimensionManager : GunpowderDimensionManager {
         }
 
         val generatorOptions = server.saveProperties.generatorOptions
-        val dimensionType = server.dimensionTracker.registry.get(dimensionTypeId)!!
+        val dimensionType = dimTypeRegistry.get(dimensionTypeId)!!
 
         val overworld = server.worlds[World.OVERWORLD]!!
         val worldGenerationProgressListener = overworld.chunkManager.threadedAnvilChunkStorage.worldGenerationProgressListener
         val seed = generatorOptions.seed
-        val worldBorder = if (dimensionType.isShrunk) {
-            object : WorldBorder() {
-                override fun getCenterX(): Double {
-                    return super.getCenterX() / 8.0
-                }
-
-                override fun getCenterZ(): Double {
-                    return super.getCenterZ() / 8.0
-                }
+        val worldBorder = object : WorldBorder() {
+            override fun getCenterX(): Double {
+                return super.getCenterX() / dimensionType.coordinateScale
             }
-        } else {
-            WorldBorder()
+
+            override fun getCenterZ(): Double {
+                return super.getCenterZ() / dimensionType.coordinateScale
+            }
         }
 
         val props = UnmodifiableLevelProperties(server.saveProperties, properties)
         val world = ServerWorld(server, server.workerExecutor, server.session,
-                                props, worldId, dimensionTypeId, dimensionType,
+                                props, worldId, dimensionType,
                                 worldGenerationProgressListener, chunkGenerator,
                                 false, seed, ImmutableList.of(), false)
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
@@ -137,7 +142,7 @@ object DimensionManager : GunpowderDimensionManager {
 
             for (player in server.playerManager.playerList) {
                 if (player.spawnPointDimension == worldId) {
-                    player.setSpawnPoint(null, null, false, false)
+                    player.setSpawnPoint(null, null, 0.0f, false, false)
                 }
 
                 GunpowderMod.instance.logger.info("Marking needsSync for player $player")

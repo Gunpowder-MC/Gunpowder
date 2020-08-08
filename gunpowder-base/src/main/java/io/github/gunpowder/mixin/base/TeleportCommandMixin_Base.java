@@ -27,7 +27,7 @@ package io.github.gunpowder.mixin.base;
 import io.github.gunpowder.api.builders.TeleportRequest;
 import io.github.gunpowder.events.PlayerPreTeleportCallback;
 import io.github.gunpowder.events.PlayerTeleportCallback;
-import net.minecraft.command.arguments.PosArgument;
+import net.minecraft.command.argument.PosArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TeleportCommand;
@@ -76,7 +76,7 @@ public class TeleportCommandMixin_Base {
         }
     }
 
-    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/command/arguments/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at=@At("HEAD"))
+    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at=@At("HEAD"))
     private static void teleportEvent2(ServerCommandSource source, Collection<? extends Entity> targets, ServerWorld world, PosArgument location, PosArgument rotation, TeleportCommand.LookTarget facingLocation, CallbackInfoReturnable<Integer> cir) {
         try {
             for (Entity e : targets) {

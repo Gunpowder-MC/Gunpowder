@@ -7,8 +7,9 @@
     "LivingEntityMixin_Base",
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
+    "ServerPlayNetworkHandlerMixin_Base",
     "SignBlockEntityMixin_Base",
-    "SignBlockMixin_Base"
+    "SignBlockMixin_Base",
     "TeleportCommandMixin_Base"
   ],
   "client": [

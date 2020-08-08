@@ -81,8 +81,8 @@ interface TeleportRequest {
          * Dimension to teleport to (not required)
          */
         fun dimension(dimension: Identifier)
-        fun dimension(dimension: RegistryKey<DimensionType>) = dimension(dimension.value)
-        fun dimension(dimension: World) = dimension(dimension.dimensionRegistryKey)
+        fun dimension(dimension: RegistryKey<World>) = dimension(dimension.value)
+        fun dimension(dimension: World) = dimension(dimension.registryKey)
 
         /**
          * Coordinates to teleport to.

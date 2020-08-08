@@ -5,10 +5,14 @@ accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/wor
 accessible field net/minecraft/server/MinecraftServer dimensionTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
 accessible field net/minecraft/server/PlayerManager registryTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
 accessible field net/minecraft/server/MinecraftServer worlds Ljava/util/Map;
-accessible field net/minecraft/util/registry/RegistryTracker$Modifiable registry Lnet/minecraft/util/registry/SimpleRegistry;
-accessible field net/minecraft/world/gen/GeneratorOptions field_24827 Lnet/minecraft/util/registry/SimpleRegistry;
 accessible field net/minecraft/util/registry/SimpleRegistry entriesById Lcom/google/common/collect/BiMap;
 accessible field net/minecraft/util/registry/SimpleRegistry entriesByKey Lcom/google/common/collect/BiMap;
-accessible field net/minecraft/util/registry/SimpleRegistry indexedEntries Lnet/minecraft/util/collection/Int2ObjectBiMap;
-accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZZZZZZILnet/minecraft/util/Identifier;F)V
+accessible field net/minecraft/util/registry/SimpleRegistry field_26731 Ljava/util/Map;
+accessible field net/minecraft/util/registry/SimpleRegistry field_26682 Lit/unimi/dsi/fastutil/objects/ObjectList;
+accessible field net/minecraft/util/registry/SimpleRegistry field_26683 Lit/unimi/dsi/fastutil/objects/Object2IntMap;
+accessible field net/minecraft/util/registry/DynamicRegistryManager INFOS Ljava/util/Map;
+accessible field net/minecraft/server/MinecraftServer registryManager Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;
+accessible field net/minecraft/util/registry/DynamicRegistryManager$Info registry Lnet/minecraft/util/registry/RegistryKey;
+accessible field net/minecraft/util/registry/DynamicRegistryManager$Impl registries Ljava/util/Map;
+accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZDZZZZZILnet/minecraft/world/biome/source/BiomeAccessType;Lnet/minecraft/util/Identifier;Lnet/minecraft/util/Identifier;F)V
 accessible class net/minecraft/server/command/TeleportCommand$LookTarget

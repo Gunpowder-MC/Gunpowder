@@ -94,7 +94,7 @@ class TeleportRequest private constructor(
         override fun player(player: ServerPlayerEntity) {
             this.player = player
             if (dimension == null) {
-                dimension = player.world.dimensionRegistryKey.value
+                dimension = player.world.registryKey.value
             }
         }
 
