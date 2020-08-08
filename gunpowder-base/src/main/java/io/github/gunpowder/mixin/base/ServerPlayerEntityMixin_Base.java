@@ -39,16 +39,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity implements SyncPlayer {
+    private boolean sync;
+
     public ServerPlayerEntityMixin_Base(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
     }
 
-    @Inject(method="onDeath", at=@At("HEAD"))
+    @Inject(method = "onDeath", at = @At("HEAD"))
     void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
-        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object)this, source);
+        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object) this, source);
     }
-
-    private boolean sync;
 
     @Override
     public void setNeedsSync(boolean x) {

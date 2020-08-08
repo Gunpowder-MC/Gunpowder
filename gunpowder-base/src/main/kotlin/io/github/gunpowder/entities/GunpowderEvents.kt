@@ -24,17 +24,12 @@
 
 package io.github.gunpowder.entities
 
-import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.events.BlockPreBreakCallback
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
-import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.block.AbstractSignBlock
 import net.minecraft.block.entity.SignBlockEntity
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
 
 object GunpowderEvents {
     fun init() {

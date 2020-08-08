@@ -45,14 +45,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class ServerPlayNetworkHandlerMixin_Base {
-    @Shadow public abstract void sendPacket(Packet<?> packet);
+    @Shadow
+    public ServerPlayerEntity player;
 
-    @Shadow public ServerPlayerEntity player;
+    @Shadow
+    public abstract void sendPacket(Packet<?> packet);
 
     @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
     void appendPackets(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> listener, CallbackInfo ci) {
         if (packet instanceof PlayerRespawnS2CPacket) {
-            if (((SyncPlayer)player).needsSync()) {
+            if (((SyncPlayer) player).needsSync()) {
                 GunpowderMod.getInstance().getLogger().info("Player needs sync, sending packets");
                 sendPacket(new GameJoinS2CPacket(
                         player.getEntityId(), player.interactionManager.getGameMode(), player.interactionManager.method_30119(),
@@ -63,7 +65,7 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
                         !player.world.getGameRules().getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
                         player.world.isDebugWorld(), player.getServerWorld().isFlat()));
                 sendPacket(new CloseScreenS2CPacket());
-                ((SyncPlayer)player).setNeedsSync(false);
+                ((SyncPlayer) player).setNeedsSync(false);
             }
         }
     }

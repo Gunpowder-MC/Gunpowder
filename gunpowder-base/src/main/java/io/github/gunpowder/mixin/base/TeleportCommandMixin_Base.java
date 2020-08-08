@@ -43,7 +43,7 @@ import java.util.Collection;
 
 @Mixin(TeleportCommand.class)
 public class TeleportCommandMixin_Base {
-    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/entity/Entity;)I", at=@At("HEAD"))
+    @Inject(method = "execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/entity/Entity;)I", at = @At("HEAD"))
     private static void teleportEvent(ServerCommandSource source, Collection<? extends Entity> targets, Entity destination, CallbackInfoReturnable<Integer> cir) {
         try {
             for (Entity e : targets) {
@@ -76,7 +76,7 @@ public class TeleportCommandMixin_Base {
         }
     }
 
-    @Inject(method="execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at=@At("HEAD"))
+    @Inject(method = "execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/command/argument/PosArgument;Lnet/minecraft/server/command/TeleportCommand$LookTarget;)I", at = @At("HEAD"))
     private static void teleportEvent2(ServerCommandSource source, Collection<? extends Entity> targets, ServerWorld world, PosArgument location, PosArgument rotation, TeleportCommand.LookTarget facingLocation, CallbackInfoReturnable<Integer> cir) {
         try {
             for (Entity e : targets) {

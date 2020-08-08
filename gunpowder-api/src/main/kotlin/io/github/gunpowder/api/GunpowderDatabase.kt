@@ -36,5 +36,5 @@ interface GunpowderDatabase {
      * Alternative to Exposed's `transaction`, runs the transaction on a separate thread.
      */
     fun transaction(callback: Consumer<Transaction>) = transaction(callback::accept)
-    fun <T> transaction(callback: Transaction.()->T): CompletableFuture<T>
+    fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T>
 }

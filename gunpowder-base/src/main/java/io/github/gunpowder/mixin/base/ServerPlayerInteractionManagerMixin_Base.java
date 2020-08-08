@@ -38,11 +38,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin_Base {
-    @Shadow public ServerPlayerEntity player;
+    @Shadow
+    public ServerPlayerEntity player;
 
-    @Shadow public ServerWorld world;
+    @Shadow
+    public ServerWorld world;
 
-    @Inject(method = "tryBreakBlock", at=@At(value = "INVOKE", target="Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), cancellable = true)
+    @Inject(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)V"), cancellable = true)
     void breakCallback(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         ActionResult res = BlockPreBreakCallback.EVENT.invoker().trigger(player, world, pos);
         if (res == ActionResult.FAIL) {

@@ -26,5 +26,6 @@ package io.github.gunpowder.mixin.cast;
 
 public interface SyncPlayer {
     void setNeedsSync(boolean x);
+
     boolean needsSync();
 }

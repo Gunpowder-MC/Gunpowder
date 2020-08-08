@@ -37,7 +37,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
@@ -53,7 +52,7 @@ public abstract class LanguageMixin_Base {
 
         FabricLoader.getInstance().getAllMods().stream().filter(itt -> itt.getMetadata().getDepends().stream().anyMatch(it -> it.getModId().equals("gunpowder-base"))).forEach(c -> {
             try {
-                InputStream inputStream = Language.class.getResourceAsStream("/assets/"+c.getMetadata().getId()+"/lang/en_us.json");
+                InputStream inputStream = Language.class.getResourceAsStream("/assets/" + c.getMetadata().getId() + "/lang/en_us.json");
                 Throwable prevErr = null;
 
                 try {
@@ -76,7 +75,7 @@ public abstract class LanguageMixin_Base {
 
                 }
             } catch (JsonParseException | IOException err) {
-                GunpowderMod.getInstance().getLogger().error("Couldn't read strings from /assets/"+c.getMetadata().getId()+"/lang/en_us.json", err);
+                GunpowderMod.getInstance().getLogger().error("Couldn't read strings from /assets/" + c.getMetadata().getId() + "/lang/en_us.json", err);
             }
         });
 

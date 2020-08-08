@@ -53,7 +53,7 @@ interface Command {
          * The name of the command with aliases.
          * Starts a block of {@link io.github.gunpowder.gunpowder.api.builders.Command.CommandBuilder}.
          */
-        fun command(vararg names: String, builder: Consumer<CommandBuilder>) = command(*names, builder=builder::accept)
+        fun command(vararg names: String, builder: Consumer<CommandBuilder>) = command(*names, builder = builder::accept)
         fun command(vararg names: String, builder: CommandBuilder.() -> Unit)
 
         @Deprecated("Used internally, do not use.")
@@ -75,7 +75,7 @@ interface Command {
         /**
          * Literal argument.
          */
-        fun literal(vararg literals: String, builder: Consumer<ArgumentBuilder>) = literal(*literals, builder=builder::accept)
+        fun literal(vararg literals: String, builder: Consumer<ArgumentBuilder>) = literal(*literals, builder = builder::accept)
         fun literal(vararg literals: String, builder: ArgumentBuilder.() -> Unit)
 
         /**

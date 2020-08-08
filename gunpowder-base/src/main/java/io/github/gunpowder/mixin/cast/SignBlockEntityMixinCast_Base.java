@@ -28,5 +28,6 @@ import io.github.gunpowder.entities.builders.SignType;
 
 public interface SignBlockEntityMixinCast_Base {
     boolean isCustom();
+
     SignType getSignType();
 }

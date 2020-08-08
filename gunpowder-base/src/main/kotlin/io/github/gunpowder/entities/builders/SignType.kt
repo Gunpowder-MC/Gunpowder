@@ -25,8 +25,6 @@
 package io.github.gunpowder.entities.builders
 
 import com.mojang.serialization.Lifecycle
-import io.github.gunpowder.api.GunpowderMod
-import io.github.gunpowder.api.GunpowderMod.Companion.instance
 import net.minecraft.block.entity.SignBlockEntity
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.network.ServerPlayerEntity

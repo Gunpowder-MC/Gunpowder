@@ -24,7 +24,6 @@
 
 package io.github.gunpowder.mixin.base;
 
-import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
@@ -34,7 +33,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AbstractSignBlock.class)

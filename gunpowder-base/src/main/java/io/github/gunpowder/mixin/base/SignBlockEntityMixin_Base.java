@@ -24,7 +24,6 @@
 
 package io.github.gunpowder.mixin.base;
 
-import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.entities.builders.SignType;
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base;
 import net.minecraft.block.BlockState;
@@ -49,44 +48,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntityMixin_Base extends BlockEntity implements SignBlockEntityMixinCast_Base {
-    @Shadow @Final private Text[] text;
-
-    @Shadow public abstract void setTextOnRow(int row, Text text);
-
-    @Shadow private PlayerEntity editor;
     boolean custom = false;
     SignType type = null;
-
+    @Shadow
+    @Final
+    private Text[] text;
+    @Shadow
+    private PlayerEntity editor;
     public SignBlockEntityMixin_Base(BlockEntityType<?> type) {
         super(type);
     }
 
-    @Inject(method="fromTag", at=@At("HEAD"))
+    @Shadow
+    public abstract void setTextOnRow(int row, Text text);
+
+    @Inject(method = "fromTag", at = @At("HEAD"))
     public void fromTag(BlockState state, CompoundTag tag, CallbackInfo ci) {
         type = (SignType) SignType.Companion.getRegistry().get(new Identifier(tag.getString("gunpowder:customType")));
         if (type != null) {
-            type.getDeserializeEvent().invoke((SignBlockEntity)(Object) this, tag);
+            type.getDeserializeEvent().invoke((SignBlockEntity) (Object) this, tag);
             custom = true;
         }
     }
 
-    @Inject(method="toTag", at=@At("HEAD"))
+    @Inject(method = "toTag", at = @At("HEAD"))
     public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         if (type != null) {
             tag.putString("gunpowder:customType", io.github.gunpowder.entities.builders.SignType.Companion.getRegistry().getId(type).toString());
-            type.getSerializeEvent().invoke((SignBlockEntity)(Object) this, tag);
+            type.getSerializeEvent().invoke((SignBlockEntity) (Object) this, tag);
         }
     }
 
-    @Inject(method="onActivate", at=@At("HEAD"), cancellable = true)
+    @Inject(method = "onActivate", at = @At("HEAD"), cancellable = true)
     void activate(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
         if (!player.world.isClient() && custom) {
-            type.getClickEvent().invoke((SignBlockEntity)(Object) this, (ServerPlayerEntity) player);
+            type.getClickEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) player);
             cir.setReturnValue(true);
         }
     }
 
-    @Inject(method="setTextColor", at=@At("RETURN"))
+    @Inject(method = "setTextColor", at = @At("RETURN"))
     void keepHeaderColor(DyeColor value, CallbackInfoReturnable<Boolean> cir) {
         setTextOnRow(0, new LiteralText(text[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
     }
@@ -97,10 +98,10 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
         String header = text[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
-            type = (SignType) SignType.Companion.getRegistry().get(new Identifier(header.substring(1, header.length()-1)));
-            if (type != null && type.getConditionEvent().invoke((SignBlockEntity)(Object) this, (ServerPlayerEntity)this.editor)) {
+            type = (SignType) SignType.Companion.getRegistry().get(new Identifier(header.substring(1, header.length() - 1)));
+            if (type != null && type.getConditionEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor)) {
                 setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
-                type.getCreateEvent().invoke((SignBlockEntity)(Object) this, (ServerPlayerEntity)this.editor);
+                type.getCreateEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor);
                 custom = true;
             }
         }

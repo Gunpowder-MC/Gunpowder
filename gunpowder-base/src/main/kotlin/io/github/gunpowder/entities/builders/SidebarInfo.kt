@@ -42,11 +42,11 @@ import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 class SidebarInfo(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
     override fun remove() {
         val packets = mutableListOf<Packet<*>>(
-            ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove
-            ScoreboardDisplayS2CPacket(1, null),  // 1 = sidebar
-            *lines.map {
-                ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.REMOVE, objective.name, it.second.toString() + it.first, 0)
-            }.toTypedArray()
+                ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove
+                ScoreboardDisplayS2CPacket(1, null),  // 1 = sidebar
+                *lines.map {
+                    ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.REMOVE, objective.name, it.second.toString() + it.first, 0)
+                }.toTypedArray()
         )
 
         packets.forEach(player.networkHandler::sendPacket)
@@ -81,11 +81,11 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
             )
 
             val packets = mutableListOf<Packet<*>>(
-                ScoreboardObjectiveUpdateS2CPacket(objective, 0),  // mode = remove
-                ScoreboardDisplayS2CPacket(1, objective),  // 1 = sidebar
-                *lines.mapIndexed { index, pair ->
-                    ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.CHANGE, title, pair.second.toString() + pair.first, lines.size - index)
-                }.toTypedArray()
+                    ScoreboardObjectiveUpdateS2CPacket(objective, 0),  // mode = remove
+                    ScoreboardDisplayS2CPacket(1, objective),  // 1 = sidebar
+                    *lines.mapIndexed { index, pair ->
+                        ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.CHANGE, title, pair.second.toString() + pair.first, lines.size - index)
+                    }.toTypedArray()
             )
 
             packets.forEach(player.networkHandler::sendPacket)

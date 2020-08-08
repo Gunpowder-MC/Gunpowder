@@ -25,14 +25,12 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
-import com.mojang.serialization.Lifecycle
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.registry.DynamicRegistryManager
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.util.registry.SimpleRegistry
@@ -110,9 +108,9 @@ object DimensionManager : GunpowderDimensionManager {
 
         val props = UnmodifiableLevelProperties(server.saveProperties, properties)
         val world = ServerWorld(server, server.workerExecutor, server.session,
-                                props, worldId, dimensionType,
-                                worldGenerationProgressListener, chunkGenerator,
-                                false, seed, ImmutableList.of(), false)
+                props, worldId, dimensionType,
+                worldGenerationProgressListener, chunkGenerator,
+                false, seed, ImmutableList.of(), false)
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world

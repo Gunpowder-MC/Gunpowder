@@ -28,27 +28,13 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.entities.DimensionManager
 import io.github.gunpowder.entities.GunpowderDatabase
 import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.injection.AbstractModule
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.tag.BlockTags
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.World
-import net.minecraft.world.biome.source.VoronoiBiomeAccessType
-import net.minecraft.world.dimension.DimensionType
-import net.minecraft.world.gen.chunk.FlatChunkGenerator
-import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
-import net.minecraft.world.level.LevelProperties
-import net.minecraft.world.level.ServerWorldProperties
-import net.minecraft.world.level.UnmodifiableLevelProperties
 import org.apache.logging.log4j.LogManager
-import java.util.*
 
 abstract class AbstractGunpowderMod : GunpowderMod {
     val module = "gunpowder:modules"
