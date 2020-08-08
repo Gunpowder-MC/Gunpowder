@@ -1,3 +1,21 @@
+## Gunpowder 0.2.9
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+Other:
+
+- Updated to 1.16.2-rc1
+
 ## Gunpowder 0.2.8
 
 Bugs fixed:
