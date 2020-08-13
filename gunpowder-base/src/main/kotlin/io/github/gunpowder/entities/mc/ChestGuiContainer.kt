@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.entities.mc
 
+import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.entities.builders.ChestGui
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -31,6 +32,7 @@ import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket
 import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.ScreenHandlerListener
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
@@ -39,6 +41,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6) {
     private var buttons: Map<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
+    private var interval = 0
+    private var counter = 0
 
     internal fun setButtons(buttons: Map<Int, ChestGui.Builder.ChestGuiButton>) {
         this.buttons = buttons
@@ -46,6 +50,10 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, 
 
     internal fun setBackground(item: ItemStack) {
         background = item
+    }
+
+    internal fun setInterval(seconds: Int) {
+        interval = 0
     }
 
     internal fun createInventory() {
@@ -56,6 +64,24 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, 
 
     override fun canUse(player: PlayerEntity?): Boolean {
         return true
+    }
+
+    override fun addListener(listener: ScreenHandlerListener?) {
+        GunpowderEvents.guis.add(this)
+        super.addListener(listener)
+    }
+
+    override fun removeListener(listener: ScreenHandlerListener?) {
+        GunpowderEvents.guis.remove(this)
+        super.removeListener(listener)
+    }
+
+    fun update() {
+        if (interval <= 0) return
+        if (counter++ >= interval) {
+            sendContentUpdates()
+            counter = 0
+        }
     }
 
     override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {

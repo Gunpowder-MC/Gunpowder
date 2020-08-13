@@ -6,7 +6,7 @@ Bugs fixed:
 
 New Features:
 
-- None
+- ChestGUI now supports a refresh interval
 
 Improvements:
 
@@ -14,7 +14,7 @@ Improvements:
 
 Other:
 
-- Updated to 1.16.2-rc1
+- Updated to 1.16.2
 
 ## Gunpowder 0.2.8
 

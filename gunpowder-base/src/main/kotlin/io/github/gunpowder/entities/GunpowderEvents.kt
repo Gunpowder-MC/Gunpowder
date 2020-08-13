@@ -24,14 +24,19 @@
 
 package io.github.gunpowder.entities
 
+import io.github.gunpowder.entities.mc.ChestGuiContainer
 import io.github.gunpowder.events.BlockPreBreakCallback
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.block.AbstractSignBlock
 import net.minecraft.block.entity.SignBlockEntity
 import net.minecraft.util.ActionResult
 
 object GunpowderEvents {
+    private var counter = 0
+    val guis = mutableListOf<ChestGuiContainer>()
+
     fun init() {
         BlockPreBreakCallback.EVENT.register(BlockPreBreakCallback { player, world, pos ->
             val state = world.getBlockState(pos)
@@ -52,6 +57,13 @@ object GunpowderEvents {
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             GunpowderDatabase.disconnect()
+        })
+
+        ServerTickEvents.START_WORLD_TICK.register(ServerTickEvents.StartWorldTick {
+            if (counter++ == 20) {
+                counter = 0
+                guis.forEach(ChestGuiContainer::update)
+            }
         })
     }
 }

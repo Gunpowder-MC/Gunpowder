@@ -88,6 +88,11 @@ interface ChestGui {
         fun emptyIcon(icon: ItemStack)
 
         /**
+         * Time in seconds between sending contents. 0 to disable
+         */
+        fun refreshInterval(seconds: Int)
+
+        /**
          * Sets the amount of rows used in the gui. 6 by default.
          * Must be at least 1 and at most 6.
          */

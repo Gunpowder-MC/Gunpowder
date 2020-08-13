@@ -43,6 +43,7 @@ object ChestGui : APIChestGui {
         private var icon: ItemStack = ItemStack.EMPTY
         private var player: PlayerEntity? = null
         private var syncId: Int = 0
+        private var refreshInterval: Int = 0
         private var size: Int = 6
 
         override fun player(player: ServerPlayerEntity) {
@@ -66,6 +67,10 @@ object ChestGui : APIChestGui {
             this.icon = icon
         }
 
+        override fun refreshInterval(seconds: Int) {
+            this.refreshInterval = seconds
+        }
+
         override fun size(rows: Int) {
             if (rows < 1 || rows > 6) {
                 throw Exception("Invalid number of rows, must be between 1 and 6!")
@@ -86,6 +91,7 @@ object ChestGui : APIChestGui {
             return ChestGuiContainer(type!!, syncId, player!!.inventory).apply {
                 setBackground(icon)
                 setButtons(buttons)
+                setInterval(refreshInterval)
                 createInventory()
             }
         }
