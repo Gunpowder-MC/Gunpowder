@@ -10,6 +10,6 @@
   "depends": {
     "fabricloader": ">=0.8.9",
     "fabric": "*",
-    "gunpowder-core": "${version}"
+    "gunpowder-base": "${version}"
   }
 }
