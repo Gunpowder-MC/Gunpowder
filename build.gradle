@@ -179,9 +179,6 @@ dependencies {
     modRuntime(libs.modmenu) {
         transitive = false // Naughty mods who JIJ fabric api
     }
-    modRuntime(libs.playerabilitylib) {
-        transitive = false
-    }
 }
 
 subprojects {

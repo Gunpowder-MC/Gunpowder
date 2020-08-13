@@ -30,8 +30,6 @@ dependencies {
     include libs.guice
     include libs.javax_inject
     include libs.aop
-
-    include libs.playerabilitylib
 }
 
 
