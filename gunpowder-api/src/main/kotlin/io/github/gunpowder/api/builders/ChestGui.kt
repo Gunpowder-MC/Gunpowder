@@ -90,7 +90,8 @@ interface ChestGui {
         /**
          * Time in seconds between sending contents. 0 to disable
          */
-        fun refreshInterval(seconds: Int)
+        fun refreshInterval(seconds: Int, callback: Consumer<Container>) = refreshInterval(seconds, callback::accept)
+        fun refreshInterval(seconds: Int, callback: (Container) -> Unit)
 
         /**
          * Sets the amount of rows used in the gui. 6 by default.
@@ -100,5 +101,12 @@ interface ChestGui {
 
         @Deprecated("Used internally, do not use.")
         fun build(): ScreenHandler
+    }
+
+    interface Container {
+        fun clearButtons()
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: Consumer<SlotActionType>) = button(x, y, icon, clickCallback::accept)
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit)
+        fun emptyIcon(icon: ItemStack)
     }
 }

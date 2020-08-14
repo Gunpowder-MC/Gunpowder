@@ -25,6 +25,7 @@
 package io.github.gunpowder.entities.mc
 
 import io.github.gunpowder.entities.GunpowderEvents
+import io.github.gunpowder.api.builders.ChestGui as APIChestGui
 import io.github.gunpowder.entities.builders.ChestGui
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -38,13 +39,15 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 
 
-class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6) {
-    private var buttons: Map<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
+class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
+                        syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIChestGui.Container {
+    private var buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
     private var interval = 0
     private var counter = 0
+    private var callback = { c: ChestGuiContainer -> }
 
-    internal fun setButtons(buttons: Map<Int, ChestGui.Builder.ChestGuiButton>) {
+    internal fun setButtons(buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton>) {
         this.buttons = buttons
     }
 
@@ -52,8 +55,9 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, 
         background = item
     }
 
-    internal fun setInterval(seconds: Int) {
-        interval = 0
+    internal fun setInterval(seconds: Int, callback: (APIChestGui.Container) -> Unit) {
+        interval = seconds
+        this.callback = callback
     }
 
     internal fun createInventory() {
@@ -96,5 +100,25 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>, 
         sendContentUpdates()
 
         return ItemStack.EMPTY
+    }
+
+    override fun clearButtons() {
+        buttons.clear()
+    }
+
+    override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit) {
+        if (x < 0 || x > 8) {
+            throw AssertionError("X not between 0 and 8")
+        }
+
+        if (y < 0 || y > 5) {
+            throw AssertionError("Y not between 0 and 5")
+        }
+
+        buttons[x + y * 9] = ChestGui.Builder.ChestGuiButton(icon, clickCallback)
+    }
+
+    override fun emptyIcon(icon: ItemStack) {
+        setBackground(icon)
     }
 }

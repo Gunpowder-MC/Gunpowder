@@ -45,6 +45,7 @@ object ChestGui : APIChestGui {
         private var syncId: Int = 0
         private var refreshInterval: Int = 0
         private var size: Int = 6
+        private var callback = { c: APIChestGui.Container ->}
 
         override fun player(player: ServerPlayerEntity) {
             this.syncId = ContainerUtil.getSyncId(player)
@@ -67,8 +68,9 @@ object ChestGui : APIChestGui {
             this.icon = icon
         }
 
-        override fun refreshInterval(seconds: Int) {
+        override fun refreshInterval(seconds: Int, callback: (APIChestGui.Container) -> Unit) {
             this.refreshInterval = seconds
+            this.callback = callback
         }
 
         override fun size(rows: Int) {
@@ -91,7 +93,7 @@ object ChestGui : APIChestGui {
             return ChestGuiContainer(type!!, syncId, player!!.inventory).apply {
                 setBackground(icon)
                 setButtons(buttons)
-                setInterval(refreshInterval)
+                setInterval(refreshInterval, callback)
                 createInventory()
             }
         }

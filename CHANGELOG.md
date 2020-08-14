@@ -6,7 +6,7 @@ Bugs fixed:
 
 New Features:
 
-- ChestGUI now supports a refresh interval
+- ChestGUI now supports a refresh interval with callback
 
 Improvements:
 
