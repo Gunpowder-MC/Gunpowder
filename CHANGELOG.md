@@ -2,7 +2,8 @@
 
 Bugs fixed:
 
-- None
+- Database is now loaded on mod load instead of server start
+- Sign generation no longer crash the game
 
 New Features:
 

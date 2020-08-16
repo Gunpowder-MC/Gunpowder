@@ -50,10 +50,6 @@ object GunpowderEvents {
             return@BlockPreBreakCallback ActionResult.PASS
         })
 
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
-            GunpowderDatabase.loadDatabase()
-        })
-
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->
             // Disable DB, unregister everything except commands
             GunpowderDatabase.disconnect()

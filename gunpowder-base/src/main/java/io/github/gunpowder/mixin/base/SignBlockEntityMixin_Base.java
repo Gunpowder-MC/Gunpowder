@@ -94,7 +94,8 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
     @Override
     public void markDirty() {
-        if (world.isClient()) return;
+        super.markDirty();
+        if (world == null || world.isClient()) return;
 
         String header = text[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {

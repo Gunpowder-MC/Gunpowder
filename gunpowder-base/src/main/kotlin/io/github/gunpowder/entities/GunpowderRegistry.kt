@@ -93,9 +93,9 @@ object GunpowderRegistry : APIGunpowderRegistry {
         return configCache.getOrPut(clz as Class<Any>) {
             val p = configs[clz]!!
 
-            val configDir = FabricLoader.getInstance().configDirectory.canonicalPath
+            val configFile = FabricLoader.getInstance().configDir.resolve(p.first)
+            val f = configFile.toFile()
 
-            val f = File("${configDir}/${p.first}")
             if (!f.exists()) {
                 f.createNewFile()
                 if (p.second is String) {

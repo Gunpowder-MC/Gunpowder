@@ -52,7 +52,8 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
     fun initialize() {
         logger.info("Starting Gunpowder")
-        registry.registerBuiltin()
+        GunpowderRegistry.registerBuiltin()
+        GunpowderDatabase.loadDatabase()
         GunpowderEvents.init()
         logger.info("Loading modules")
 

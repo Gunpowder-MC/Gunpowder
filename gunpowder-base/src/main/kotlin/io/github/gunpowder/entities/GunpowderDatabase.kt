@@ -26,6 +26,7 @@ package io.github.gunpowder.entities
 
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.configs.GunpowderConfig
+import net.fabricmc.loader.api.FabricLoader
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -81,7 +82,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
 
         when (mode) {
             "sqlite" -> {
-                val path = GunpowderMod.instance.server.runDirectory.canonicalPath
+                val path = FabricLoader.getInstance().gameDirectory.canonicalPath
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",
