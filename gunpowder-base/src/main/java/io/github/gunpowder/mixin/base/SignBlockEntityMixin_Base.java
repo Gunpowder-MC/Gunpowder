@@ -46,6 +46,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntityMixin_Base extends BlockEntity implements SignBlockEntityMixinCast_Base {
     boolean custom = false;
@@ -99,7 +101,20 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
         String header = text[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
-            type = (SignType) SignType.Companion.getRegistry().get(new Identifier(header.substring(1, header.length() - 1)));
+            String signId = header.substring(1, header.length() - 1);
+            Identifier[] ids = (Identifier[]) SignType.Companion.getRegistry().entriesById.keySet().stream().filter((id) -> id.getPath().equals(signId)).toArray();
+            Optional<io.github.gunpowder.api.builders.SignType> typ = SignType.Companion.getRegistry().getOrEmpty(new Identifier(signId));
+
+            if (ids.length > 1 && !typ.isPresent()) {
+                // Multiple options, error
+            }
+            if (ids.length == 0 && !typ.isPresent()) {
+                // Invalid name, do nothing
+                return;
+            }
+
+            type = (SignType) typ.orElseGet(() -> SignType.Companion.getRegistry().get(ids[0]));
+
             if (type != null && type.getConditionEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor)) {
                 setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
                 type.getCreateEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor);

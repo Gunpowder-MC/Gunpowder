@@ -11,7 +11,7 @@ New Features:
 
 Improvements:
 
-- None
+- Signs now ignore namespace if only one of the value is registered
 
 Other:
 
