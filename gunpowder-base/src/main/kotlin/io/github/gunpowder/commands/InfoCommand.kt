@@ -28,14 +28,14 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.context.CommandContext
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.Command
-import io.github.gunpowder.api.builders.SidebarInfo
+import io.github.gunpowder.api.builders.ScoreboardDisplay
 import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
 object InfoCommand {
-    private val welcomeFactory = SidebarInfo.factory {
+    private val welcomeFactory = ScoreboardDisplay.factory {
         title("Gunpowder", Formatting.BOLD)
         line("Welcome to gunpowder!")
         line("")

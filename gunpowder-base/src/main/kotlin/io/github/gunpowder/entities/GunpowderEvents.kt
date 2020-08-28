@@ -24,7 +24,7 @@
 
 package io.github.gunpowder.entities
 
-import io.github.gunpowder.entities.mc.ChestGuiContainer
+import io.github.gunpowder.entities.mc.ContainerGuiScreen
 import io.github.gunpowder.events.BlockPreBreakCallback
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -35,7 +35,7 @@ import net.minecraft.util.ActionResult
 
 object GunpowderEvents {
     private var counter = 0
-    val guis = mutableListOf<ChestGuiContainer>()
+    val guis = mutableListOf<ContainerGuiScreen>()
 
     fun init() {
         BlockPreBreakCallback.EVENT.register(BlockPreBreakCallback { player, world, pos ->
@@ -58,7 +58,7 @@ object GunpowderEvents {
         ServerTickEvents.START_WORLD_TICK.register(ServerTickEvents.StartWorldTick {
             if (counter++ == 20) {
                 counter = 0
-                guis.forEach(ChestGuiContainer::update)
+                guis.forEach(ContainerGuiScreen::update)
             }
         })
     }

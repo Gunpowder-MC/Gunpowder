@@ -39,12 +39,11 @@ import net.minecraft.server.command.ServerCommandSource
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.File
 import java.util.function.Supplier
 import io.github.gunpowder.api.GunpowderRegistry as APIGunpowderRegistry
-import io.github.gunpowder.api.builders.ChestGui as APIChestGui
+import io.github.gunpowder.api.builders.ContainerGui as APIChestGui
 import io.github.gunpowder.api.builders.Command as APICommand
-import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
+import io.github.gunpowder.api.builders.ScoreboardDisplay as APISidebarInfo
 import io.github.gunpowder.api.builders.SignType as APISignType
 import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
 import io.github.gunpowder.api.builders.Text as APIText
@@ -67,8 +66,8 @@ object GunpowderRegistry : APIGunpowderRegistry {
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
-        builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
-        builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
+        builders[APIChestGui.Builder::class.java] = Supplier { ContainerGui.Builder() }
+        builders[APISidebarInfo.Builder::class.java] = Supplier { ScoreboardDisplay.Builder() }
         builders[APISignType.Builder::class.java] = Supplier { SignType.Builder() }
 
         registerCommand(InfoCommand::register)

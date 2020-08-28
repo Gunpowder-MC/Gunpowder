@@ -31,7 +31,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 import java.util.function.Consumer
 
-interface ChestGui {
+interface ContainerGui {
     companion object {
         /**
          * Creates a ChestGui

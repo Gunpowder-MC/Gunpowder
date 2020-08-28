@@ -30,14 +30,14 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import java.util.function.Consumer
 
-interface SidebarInfo {
+interface ScoreboardDisplay {
     companion object {
         /**
          * Create a sidebar factory
          */
         @JvmStatic
         fun factory(callback: Consumer<Builder>) = factory(callback::accept)
-        fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> SidebarInfo {
+        fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> ScoreboardDisplay {
             val builder = GunpowderMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
             return builder::build
@@ -63,7 +63,7 @@ interface SidebarInfo {
         fun line(text: String, color: Formatting)
 
         @Deprecated("Used internally, do not use.")
-        fun build(player: ServerPlayerEntity): SidebarInfo
+        fun build(player: ServerPlayerEntity): ScoreboardDisplay
     }
 
     fun remove()

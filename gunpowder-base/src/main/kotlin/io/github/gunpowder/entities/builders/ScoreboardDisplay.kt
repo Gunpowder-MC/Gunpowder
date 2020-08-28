@@ -36,10 +36,10 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
+import io.github.gunpowder.api.builders.ScoreboardDisplay as APISidebarInfo
 
 
-class SidebarInfo(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
+class ScoreboardDisplay(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
     override fun remove() {
         val packets = mutableListOf<Packet<*>>(
                 ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove
@@ -90,7 +90,7 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
 
             packets.forEach(player.networkHandler::sendPacket)
 
-            return SidebarInfo(objective, player, lines)
+            return ScoreboardDisplay(objective, player, lines)
         }
 
     }

@@ -25,8 +25,8 @@
 package io.github.gunpowder.entities.mc
 
 import io.github.gunpowder.entities.GunpowderEvents
-import io.github.gunpowder.api.builders.ChestGui as APIChestGui
-import io.github.gunpowder.entities.builders.ChestGui
+import io.github.gunpowder.api.builders.ContainerGui as APIChestGui
+import io.github.gunpowder.entities.builders.ContainerGui
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.SimpleInventory
@@ -39,15 +39,15 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 
 
-class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
-                        syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIChestGui.Container {
-    private var buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
+class ContainerGuiScreen(type: ScreenHandlerType<GenericContainerScreenHandler>,
+                         syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIChestGui.Container {
+    private var buttons: MutableMap<Int, ContainerGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
     private var interval = 0
     private var counter = 0
-    private var callback = { c: ChestGuiContainer -> }
+    private var callback = { _: ContainerGuiScreen -> }
 
-    internal fun setButtons(buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton>) {
+    internal fun setButtons(buttons: MutableMap<Int, ContainerGui.Builder.ChestGuiButton>) {
         this.buttons = buttons
     }
 
@@ -115,7 +115,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
             throw AssertionError("Y not between 0 and 5")
         }
 
-        buttons[x + y * 9] = ChestGui.Builder.ChestGuiButton(icon, clickCallback)
+        buttons[x + y * 9] = ContainerGui.Builder.ChestGuiButton(icon, clickCallback)
     }
 
     override fun emptyIcon(icon: ItemStack) {

@@ -25,16 +25,16 @@
 package io.github.gunpowder.entities.builders
 
 import io.github.gunpowder.api.util.ContainerUtil
-import io.github.gunpowder.entities.mc.ChestGuiContainer
+import io.github.gunpowder.entities.mc.ContainerGuiScreen
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
-import io.github.gunpowder.api.builders.ChestGui as APIChestGui
+import io.github.gunpowder.api.builders.ContainerGui as APIChestGui
 
-object ChestGui : APIChestGui {
+object ContainerGui : APIChestGui {
 
     class Builder : APIChestGui.Builder {
         internal data class ChestGuiButton(val icon: ItemStack, val callback: (SlotActionType) -> Unit)
@@ -90,7 +90,7 @@ object ChestGui : APIChestGui {
                 6 -> ScreenHandlerType.GENERIC_9X6
                 else -> null
             }
-            return ChestGuiContainer(type!!, syncId, player!!.inventory).apply {
+            return ContainerGuiScreen(type!!, syncId, player!!.inventory).apply {
                 setBackground(icon)
                 setButtons(buttons)
                 setInterval(refreshInterval, callback)
