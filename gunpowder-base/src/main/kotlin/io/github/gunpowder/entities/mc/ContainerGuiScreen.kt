@@ -25,7 +25,7 @@
 package io.github.gunpowder.entities.mc
 
 import io.github.gunpowder.entities.GunpowderEvents
-import io.github.gunpowder.api.builders.ContainerGui as APIChestGui
+import io.github.gunpowder.api.builders.ContainerGui as APIContainerGui
 import io.github.gunpowder.entities.builders.ContainerGui
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -40,14 +40,14 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 
 class ContainerGuiScreen(type: ScreenHandlerType<GenericContainerScreenHandler>,
-                         syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIChestGui.Container {
-    private var buttons: MutableMap<Int, ContainerGui.Builder.ChestGuiButton> = mutableMapOf()
+                         syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIContainerGui.Container {
+    private var buttons: MutableMap<Int, ContainerGui.Builder.ContainerGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
     private var interval = 0
     private var counter = 0
     private var callback = { _: ContainerGuiScreen -> }
 
-    internal fun setButtons(buttons: MutableMap<Int, ContainerGui.Builder.ChestGuiButton>) {
+    internal fun setButtons(buttons: MutableMap<Int, ContainerGui.Builder.ContainerGuiButton>) {
         this.buttons = buttons
     }
 
@@ -55,7 +55,7 @@ class ContainerGuiScreen(type: ScreenHandlerType<GenericContainerScreenHandler>,
         background = item
     }
 
-    internal fun setInterval(seconds: Int, callback: (APIChestGui.Container) -> Unit) {
+    internal fun setInterval(seconds: Int, callback: (APIContainerGui.Container) -> Unit) {
         interval = seconds
         this.callback = callback
     }
@@ -115,7 +115,7 @@ class ContainerGuiScreen(type: ScreenHandlerType<GenericContainerScreenHandler>,
             throw AssertionError("Y not between 0 and 5")
         }
 
-        buttons[x + y * 9] = ContainerGui.Builder.ChestGuiButton(icon, clickCallback)
+        buttons[x + y * 9] = ContainerGui.Builder.ContainerGuiButton(icon, clickCallback)
     }
 
     override fun emptyIcon(icon: ItemStack) {

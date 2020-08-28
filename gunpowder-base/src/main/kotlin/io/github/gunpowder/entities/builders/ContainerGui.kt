@@ -32,20 +32,20 @@ import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
-import io.github.gunpowder.api.builders.ContainerGui as APIChestGui
+import io.github.gunpowder.api.builders.ContainerGui as APIContainerGui
 
-object ContainerGui : APIChestGui {
+object ContainerGui : APIContainerGui {
 
-    class Builder : APIChestGui.Builder {
-        internal data class ChestGuiButton(val icon: ItemStack, val callback: (SlotActionType) -> Unit)
+    class Builder : APIContainerGui.Builder {
+        internal data class ContainerGuiButton(val icon: ItemStack, val callback: (SlotActionType) -> Unit)
 
-        private val buttons = mutableMapOf<Int, ChestGuiButton>()
+        private val buttons = mutableMapOf<Int, ContainerGuiButton>()
         private var icon: ItemStack = ItemStack.EMPTY
         private var player: PlayerEntity? = null
         private var syncId: Int = 0
         private var refreshInterval: Int = 0
         private var size: Int = 6
-        private var callback = { c: APIChestGui.Container ->}
+        private var callback = { _: APIContainerGui.Container -> }
 
         override fun player(player: ServerPlayerEntity) {
             this.syncId = ContainerUtil.getSyncId(player)
@@ -61,14 +61,14 @@ object ContainerGui : APIChestGui {
                 throw AssertionError("Y not between 0 and 5")
             }
 
-            buttons[x + y * 9] = ChestGuiButton(icon, clickCallback)
+            buttons[x + y * 9] = ContainerGuiButton(icon, clickCallback)
         }
 
         override fun emptyIcon(icon: ItemStack) {
             this.icon = icon
         }
 
-        override fun refreshInterval(seconds: Int, callback: (APIChestGui.Container) -> Unit) {
+        override fun refreshInterval(seconds: Int, callback: (APIContainerGui.Container) -> Unit) {
             this.refreshInterval = seconds
             this.callback = callback
         }
