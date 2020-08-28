@@ -34,9 +34,9 @@ import java.util.function.Consumer
 interface ContainerGui {
     companion object {
         /**
-         * Creates a ChestGui
+         * Creates a ContainerGui
          *
-         * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ChestGui.Builder}
+         * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ContainerGui.Builder}
          * @return A ScreenHandler that can be sent to the client
          */
         @JvmStatic
@@ -48,9 +48,9 @@ interface ContainerGui {
         }
 
         /**
-         * Creates a ChestGui Factory
+         * Creates a ContainerGui Factory
          *
-         * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ChestGui.Builder}
+         * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ContainerGui.Builder}
          * @return a (ServerPlayerEntity) -> ScreenHandler lambda
          */
         @JvmStatic

@@ -33,7 +33,7 @@ import java.util.function.Consumer
 interface ScoreboardDisplay {
     companion object {
         /**
-         * Create a sidebar factory
+         * Create a scoreboard display factory
          */
         @JvmStatic
         fun factory(callback: Consumer<Builder>) = factory(callback::accept)
