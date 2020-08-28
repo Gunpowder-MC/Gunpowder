@@ -38,12 +38,13 @@ data class Location(
         val rotation: Vec2f,
         val dimension: Identifier
 ) {
+    val world: ServerWorld?
+        get() = GunpowderMod.instance.server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
+
     companion object {
         @JvmStatic
         fun of(entity: Entity) = Location(entity.pos, Vec2f(entity.yaw, entity.pitch), entity.world.registryKey.value)
-    }
 
-    val world: ServerWorld?
-        get() = GunpowderMod.instance.server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
+    }
 }
 
