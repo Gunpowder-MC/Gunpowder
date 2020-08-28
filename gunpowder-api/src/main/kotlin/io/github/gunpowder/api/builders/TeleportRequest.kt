@@ -25,6 +25,7 @@
 package io.github.gunpowder.api.builders
 
 import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.api.util.Location
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
@@ -38,9 +39,7 @@ import java.util.function.Consumer
 
 interface TeleportRequest {
     val player: ServerPlayerEntity
-    val destination: Vec3d
-    val dimension: Identifier
-    val facing: Vec2f?
+    val destination: Location
     val callback: (() -> Unit)?
 
     companion object {
@@ -86,6 +85,7 @@ interface TeleportRequest {
         /**
          * Coordinates to teleport to.
          */
+        fun destination(destination: Location)
         fun destination(destination: Vec3d)
         fun destination(destination: Vec3i) {
             destination(Vec3d.of(destination))

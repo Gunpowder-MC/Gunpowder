@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.entities.builders
 
+import io.github.gunpowder.api.util.Location
 import io.github.gunpowder.events.PlayerPreTeleportCallback
 import io.github.gunpowder.events.PlayerTeleportCallback
 import net.minecraft.server.network.ServerPlayerEntity
@@ -44,9 +45,7 @@ import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
 
 class TeleportRequest private constructor(
         override val player: ServerPlayerEntity,
-        override val destination: Vec3d,
-        override val dimension: Identifier,
-        override val facing: Vec2f?,
+        override val destination: Location,
         override val callback: (() -> Unit)?
 ) : APITeleportRequest {
 
@@ -67,15 +66,15 @@ class TeleportRequest private constructor(
                     PlayerTeleportCallback.EVENT.invoker().trigger(player, this)
                     server.submit {
                         // Load chunk
-                        val chunkPos = ChunkPos(BlockPos(destination))
-                        val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
+                        val chunkPos = ChunkPos(BlockPos(destination.position))
+                        val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, destination.dimension))
 
                         // field_19347 = POST_TELEPORT
                         world!!.chunkManager.addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.entityId)
 
                         player.teleport(world,
-                                destination.x, destination.y, destination.z,
-                                facing?.x ?: player.pitch, facing?.y ?: player.yaw)
+                                destination.position.x, destination.position.y, destination.position.z,
+                                destination.rotation?.x ?: player.pitch, destination.rotation?.y ?: player.yaw)
 
                         callback?.invoke()
                     }
@@ -85,29 +84,28 @@ class TeleportRequest private constructor(
     }
 
     class Builder : APITeleportRequest.Builder {
-        private var destination: Vec3d? = null
-        private var dimension: Identifier? = null
-        private var facing: Vec2f? = null
+        private var destination: Location = Location.dummy()
         private var player: ServerPlayerEntity? = null
         private var callback: (() -> Unit)? = null
 
         override fun player(player: ServerPlayerEntity) {
             this.player = player
-            if (dimension == null) {
-                dimension = player.world.registryKey.value
-            }
         }
 
         override fun facing(facing: Vec2f) {
-            this.facing = facing
+            this.destination.rotation = facing
         }
 
         override fun dimension(dimension: Identifier) {
-            this.dimension = dimension
+            this.destination.dimension = dimension
+        }
+
+        override fun destination(destination: Location) {
+            this.destination = destination
         }
 
         override fun destination(destination: Vec3d) {
-            this.destination = destination
+            this.destination.position = destination
         }
 
         override fun onComplete(callback: () -> Unit) {
@@ -115,7 +113,7 @@ class TeleportRequest private constructor(
         }
 
         override fun build(): TeleportRequest {
-            return TeleportRequest(player!!, destination!!, dimension!!, facing, callback)
+            return TeleportRequest(player!!, destination, callback)
         }
     }
 }
