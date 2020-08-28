@@ -24,13 +24,11 @@
 
 package io.github.gunpowder.api.module.teleport.dataholders
 
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.Vec3i
+import io.github.gunpowder.api.util.Location
 import java.util.*
 
 data class StoredHome(
         val user: UUID,
         val name: String,
-        val location: Vec3i,
-        val dimension: Identifier
+        val location: Location
 )
