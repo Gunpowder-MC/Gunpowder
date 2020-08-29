@@ -27,7 +27,9 @@ package io.github.gunpowder.api.util
 import io.github.gunpowder.api.GunpowderMod
 import net.minecraft.entity.Entity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.BlockRotation
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
@@ -35,19 +37,74 @@ import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 
 data class Location(
-        var position: Vec3d,
-        var rotation: Vec2f?,
-        var dimension: Identifier
+        val position: Vec3d,
+        val rotation: Vec2f?,
+        val dimension: Identifier
 ) {
     val world: ServerWorld?
         get() = GunpowderMod.instance.server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
 
     companion object {
         @JvmStatic
-        fun of(entity: Entity) = Location(entity.pos, Vec2f(entity.yaw, entity.pitch), entity.world.registryKey.value)
+        val origin = Location(Vec3d.ZERO, Vec2f.ZERO, World.OVERWORLD.value)
 
         @JvmStatic
-        fun dummy() = Location(Vec3d.ZERO, Vec2f.ZERO, World.OVERWORLD.value)
+        fun of(entity: Entity) = Location(entity.pos, Vec2f(entity.yaw, entity.pitch), entity.world.registryKey.value)
     }
-}
 
+    fun up() = offset(Direction.UP)
+    fun up(distance: Int) = offset(distance, Direction.UP)
+
+    fun down() = offset(Direction.DOWN)
+    fun down(distance: Int) = offset(distance, Direction.DOWN)
+
+    fun north() = offset(Direction.NORTH)
+    fun north(distance: Int) = offset(distance, Direction.NORTH)
+
+    fun south() = offset(Direction.SOUTH)
+    fun south(distance: Int) = offset(distance, Direction.SOUTH)
+
+    fun west() = offset(Direction.WEST)
+    fun west(distance: Int) = offset(distance, Direction.WEST)
+
+    fun east() = offset(Direction.EAST)
+    fun east(distance: Int) = offset(distance, Direction.EAST)
+
+    fun offset(direction: Direction): Location = Location(
+            Vec3d(
+                    position.x + direction.offsetX, position.y + direction.offsetY, position.z + direction.offsetZ
+            ), rotation, dimension
+    )
+
+    fun offset(amount: Int, direction: Direction): Location = if (amount == 0) this else Location(
+            Vec3d(
+                    position.x + direction.offsetX * amount,
+                    position.y + direction.offsetY * amount,
+                    position.z + direction.offsetZ * amount
+            ), rotation, dimension
+    )
+
+    fun axisAlignedRotate(rot: BlockRotation): Location {
+        return when (rot) {
+            BlockRotation.CLOCKWISE_90 -> {
+                Location(Vec3d(-position.z, -position.y, -position.x), rotation, dimension)
+            }
+            BlockRotation.CLOCKWISE_180 -> {
+                Location(Vec3d(-position.x, -position.y, -position.z), rotation, dimension)
+            }
+            BlockRotation.COUNTERCLOCKWISE_90 -> {
+                Location(Vec3d(position.z, position.y, -position.x), rotation, dimension)
+            }
+            else -> this
+        }
+    }
+
+    fun withRotation(yaw: Float, pitch: Float) = withRotation(Vec2f(yaw, pitch))
+    fun withRotation(vector: Vec2f) = Location(position, vector, dimension)
+
+    fun withDimension(world: World) = withDimension(world.registryKey.value)
+    fun withDimension(dimension: Identifier) = Location(position, rotation, dimension)
+
+    fun withPosition(x: Double, y: Double, z: Double) = withPosition(Vec3d(x, y, z))
+    fun withPosition(position: Vec3d) = Location(position, rotation, dimension)
+}
