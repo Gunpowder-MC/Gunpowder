@@ -109,7 +109,7 @@ allprojects { project ->
 
     dependencies {
         // Kotlin Stdlib
-        implementation libs.kotlin_stdlib
+        compileOnly libs.kotlin_stdlib
 
         minecraft(libs.minecraft) {
             transitive = false
@@ -119,7 +119,7 @@ allprojects { project ->
 
         // Hard Dependencies
         modImplementation libs.fabric_api
-        modImplementation libs.fabric_language_kotlin
+        modRuntime libs.fabric_language_kotlin
 
         // Database
         implementation libs.exposed_core

@@ -35,14 +35,16 @@ import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
 object InfoCommand {
-    private val welcomeFactory = SidebarInfo.factory {
-        title("Gunpowder", Formatting.BOLD)
-        line("Welcome to gunpowder!")
-        line("")
-        line("Modules loaded:")
-        line("- base", Formatting.GREEN)
-        (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
-            line("- ${it.name}", Formatting.GREEN)
+    private val welcomeFactory by lazy {
+        SidebarInfo.factory {
+            title("Gunpowder", Formatting.BOLD)
+            line("Welcome to gunpowder!")
+            line("")
+            line("Modules loaded:")
+            line("- base", Formatting.GREEN)
+            (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
+                line("- ${it.name}", Formatting.GREEN)
+            }
         }
     }
 

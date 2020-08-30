@@ -38,6 +38,10 @@ import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 object GunpowderDatabase : APIGunpowderDatabase {
+    init {
+        println(this::class.java.classLoader)
+    }
+
     @Volatile
     private var running = true
     private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
