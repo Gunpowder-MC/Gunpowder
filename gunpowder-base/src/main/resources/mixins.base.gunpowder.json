@@ -8,6 +8,7 @@
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
     "ServerPlayNetworkHandlerMixin_Base",
+    "ServerWorldMixin_Base",
     "SignBlockEntityMixin_Base",
     "SignBlockMixin_Base",
     "TeleportCommandMixin_Base"

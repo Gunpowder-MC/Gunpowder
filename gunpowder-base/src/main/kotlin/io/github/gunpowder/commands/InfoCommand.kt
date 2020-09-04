@@ -35,8 +35,8 @@ import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
 object InfoCommand {
-    private val welcomeFactory by lazy {
-        SidebarInfo.factory {
+    private val welcomeFactory
+        get() = SidebarInfo.factory {
             title("Gunpowder", Formatting.BOLD)
             line("Welcome to gunpowder!")
             line("")
@@ -46,7 +46,6 @@ object InfoCommand {
                 line("- ${it.name}", Formatting.GREEN)
             }
         }
-    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
