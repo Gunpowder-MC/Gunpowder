@@ -84,7 +84,7 @@ class TeleportRequest private constructor(
     }
 
     class Builder : APITeleportRequest.Builder {
-        private var destination: Location = Location.origin
+        private var destination: Location = Location.ORIGIN
         private var player: ServerPlayerEntity? = null
         private var callback: (() -> Unit)? = null
 
@@ -93,11 +93,11 @@ class TeleportRequest private constructor(
         }
 
         override fun facing(facing: Vec2f) {
-            this.destination.withRotation(facing)
+            this.destination = this.destination.withRotation(facing)
         }
 
         override fun dimension(dimension: Identifier) {
-            this.destination.withDimension(dimension)
+            this.destination = this.destination.withDimension(dimension)
         }
 
         override fun destination(destination: Location) {
@@ -105,7 +105,7 @@ class TeleportRequest private constructor(
         }
 
         override fun destination(destination: Vec3d) {
-            this.destination
+            this.destination = this.destination.withPosition(destination)
         }
 
         override fun onComplete(callback: () -> Unit) {

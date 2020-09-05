@@ -32,6 +32,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
+import net.minecraft.util.math.Vec3i
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
@@ -46,7 +47,7 @@ data class Location(
 
     companion object {
         @JvmStatic
-        val origin = Location(Vec3d.ZERO, Vec2f.ZERO, World.OVERWORLD.value)
+        val ORIGIN = Location(Vec3d.ZERO, Vec2f.ZERO, World.OVERWORLD.value)
 
         @JvmStatic
         fun of(entity: Entity) = Location(entity.pos, Vec2f(entity.yaw, entity.pitch), entity.world.registryKey.value)
@@ -106,5 +107,6 @@ data class Location(
     fun withDimension(dimension: Identifier) = Location(position, rotation, dimension)
 
     fun withPosition(x: Double, y: Double, z: Double) = withPosition(Vec3d(x, y, z))
+    fun withPosition(position: Vec3i) = withPosition(Vec3d(position.x.toDouble(), position.y.toDouble(), position.z.toDouble()))
     fun withPosition(position: Vec3d) = Location(position, rotation, dimension)
 }
