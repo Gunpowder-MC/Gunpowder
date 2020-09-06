@@ -1,3 +1,11 @@
+## Gunpowder 0.2.10
+
+New Features:
+
+- WorldSleep callbacks
+
+---
+
 ## Gunpowder 0.2.9
 
 Bugs fixed:
@@ -16,6 +24,8 @@ Improvements:
 Other:
 
 - Updated to 1.16.2
+
+---
 
 ## Gunpowder 0.2.8
 

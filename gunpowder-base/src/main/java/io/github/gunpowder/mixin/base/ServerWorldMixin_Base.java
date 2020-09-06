@@ -24,39 +24,35 @@
 
 package io.github.gunpowder.mixin.base;
 
-import com.mojang.authlib.GameProfile;
-import io.github.gunpowder.events.PlayerDeathCallback;
-import io.github.gunpowder.mixin.cast.SyncPlayer;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
+import io.github.gunpowder.events.WorldPreSleepCallback;
+import io.github.gunpowder.events.WorldSleepCallback;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity implements SyncPlayer {
-    private boolean sync;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
 
-    public ServerPlayerEntityMixin_Base(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
+@Mixin(ServerWorld.class)
+public abstract class ServerWorldMixin_Base {
+    @Shadow @Final private List<ServerPlayerEntity> players;
+
+    @Inject(method="tick", at=@At(value="INVOKE", target="Lnet/minecraft/server/world/ServerWorld;setTimeOfDay(J)V"))
+    void triggerPreCallback(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+        List<ServerPlayerEntity> players = this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList());
+        WorldPreSleepCallback.EVENT.invoker().trigger((ServerWorld)(Object) this, players);
     }
 
-    @Inject(method = "onDeath", at = @At("HEAD"))
-    void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
-        PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object) this, source);
-    }
-
-    @Override
-    public void setNeedsSync(boolean x) {
-        sync = x;
-    }
-
-    @Override
-    public boolean needsSync() {
-        return sync;
+    @Inject(method="wakeSleepingPlayers", at=@At("HEAD"))
+    void triggerCallback(CallbackInfo ci) {
+        List<ServerPlayerEntity> players = this.players.stream().filter(LivingEntity::isSleeping).collect(Collectors.toList());
+        WorldSleepCallback.EVENT.invoker().trigger((ServerWorld)(Object) this, players);
     }
 }

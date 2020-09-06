@@ -35,16 +35,17 @@ import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
 object InfoCommand {
-    private val welcomeFactory = ScoreboardDisplay.factory {
-        title("Gunpowder", Formatting.BOLD)
-        line("Welcome to gunpowder!")
-        line("")
-        line("Modules loaded:")
-        line("- base", Formatting.GREEN)
-        (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
-            line("- ${it.name}", Formatting.GREEN)
+    private val welcomeFactory
+        get() = ScoreboardDisplay.factory {
+            title("Gunpowder", Formatting.BOLD)
+            line("Welcome to gunpowder!")
+            line("")
+            line("Modules loaded:")
+            line("- base", Formatting.GREEN)
+            (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
+                line("- ${it.name}", Formatting.GREEN)
+            }
         }
-    }
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {

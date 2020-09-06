@@ -22,13 +22,25 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api.module.teleport.dataholders
+package io.github.gunpowder.events;
 
-import io.github.gunpowder.api.util.Location
-import java.util.*
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 
-data class StoredHome(
-        val user: UUID,
-        val name: String,
-        val location: Location
-)
+import java.util.List;
+
+/**
+ * Called AFTER night is skipped. This does NOT guarantee all players in the current world are asleep.
+ */
+public interface WorldSleepCallback {
+    Event<WorldSleepCallback> EVENT = EventFactory.createArrayBacked(WorldSleepCallback.class, (listeners) -> (world, players) -> {
+        for (WorldSleepCallback l : listeners) {
+            l.trigger(world, players);
+        }
+    });
+
+    void trigger(ServerWorld world, List<ServerPlayerEntity> players);
+}
+

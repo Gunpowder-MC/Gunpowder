@@ -38,21 +38,29 @@ import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 object GunpowderDatabase : APIGunpowderDatabase {
+    init {
+        println(this::class.java.classLoader)
+    }
+
     @Volatile
     private var running = true
     private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
     private val databaseThread = thread(start = true, isDaemon = false, name = "Essentials Database Thread") {
         while (running) {
-            val pair = queue.poll()
-            if (pair == null) {
-                Thread.sleep(20)  // 20ms to not lag thread
-                continue
+            try {
+                val pair = queue.poll()
+                if (pair == null) {
+                    Thread.sleep(20)  // 20ms to not lag thread
+                    continue
+                }
+                val value = dbTransaction {  // Because recursion
+                    val x = pair.first.invoke(this)
+                    x
+                }
+                pair.second.complete(value)
+            } catch(e: Exception) {
+                GunpowderMod.instance.logger.error("Error on Database Thread! Please report to the mod author if this is unexpected!", e)
             }
-            val value = dbTransaction {  // Because recursion
-                val x = pair.first.invoke(this)
-                x
-            }
-            pair.second.complete(value)
         }
     }
 
