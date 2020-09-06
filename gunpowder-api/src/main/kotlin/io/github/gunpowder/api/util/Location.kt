@@ -44,7 +44,7 @@ data class Location(
 ) {
     val world: ServerWorld?
         get() = GunpowderMod.instance.server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
-
+    
     companion object {
         @JvmStatic
         val ORIGIN = Location(Vec3d.ZERO, Vec2f.ZERO, World.OVERWORLD.value)
@@ -71,13 +71,15 @@ data class Location(
     fun east() = offset(Direction.EAST)
     fun east(distance: Int) = offset(distance, Direction.EAST)
 
-    fun offset(direction: Direction): Location = Location(
+    fun offset(direction: Direction) = Location(
             Vec3d(
-                    position.x + direction.offsetX, position.y + direction.offsetY, position.z + direction.offsetZ
+                    position.x + direction.offsetX,
+                    position.y + direction.offsetY,
+                    position.z + direction.offsetZ
             ), rotation, dimension
     )
 
-    fun offset(amount: Int, direction: Direction): Location = if (amount == 0) this else Location(
+    fun offset(amount: Int, direction: Direction) = if (amount == 0) this else Location(
             Vec3d(
                     position.x + direction.offsetX * amount,
                     position.y + direction.offsetY * amount,
@@ -85,19 +87,17 @@ data class Location(
             ), rotation, dimension
     )
 
-    fun axisAlignedRotate(rot: BlockRotation): Location {
-        return when (rot) {
-            BlockRotation.CLOCKWISE_90 -> {
-                Location(Vec3d(-position.z, -position.y, -position.x), rotation, dimension)
-            }
-            BlockRotation.CLOCKWISE_180 -> {
-                Location(Vec3d(-position.x, -position.y, -position.z), rotation, dimension)
-            }
-            BlockRotation.COUNTERCLOCKWISE_90 -> {
-                Location(Vec3d(position.z, position.y, -position.x), rotation, dimension)
-            }
-            else -> this
+    fun axisAlignedRotate(rot: BlockRotation) = when (rot) {
+        BlockRotation.CLOCKWISE_90 -> {
+            Location(Vec3d(-position.z, position.y, position.x), rotation, dimension)
         }
+        BlockRotation.CLOCKWISE_180 -> {
+            Location(Vec3d(-position.x, position.y, -position.z), rotation, dimension)
+        }
+        BlockRotation.COUNTERCLOCKWISE_90 -> {
+            Location(Vec3d(position.z, position.y, -position.x), rotation, dimension)
+        }
+        else -> this
     }
 
     fun withRotation(yaw: Float, pitch: Float) = withRotation(Vec2f(yaw, pitch))
@@ -107,6 +107,9 @@ data class Location(
     fun withDimension(dimension: Identifier) = Location(position, rotation, dimension)
 
     fun withPosition(x: Double, y: Double, z: Double) = withPosition(Vec3d(x, y, z))
-    fun withPosition(position: Vec3i) = withPosition(Vec3d(position.x.toDouble(), position.y.toDouble(), position.z.toDouble()))
+    fun withPosition(position: Vec3i) = withPosition(
+            Vec3d(position.x.toDouble(), position.y.toDouble(), position.z.toDouble())
+    )
+
     fun withPosition(position: Vec3d) = Location(position, rotation, dimension)
 }

@@ -55,9 +55,7 @@ interface TeleportRequest {
     /**
      * Time (in seconds) after which to execute the teleport.
      */
-    fun execute(seconds: Long) {
-        execute(seconds, ChronoUnit.SECONDS)
-    }
+    fun execute(seconds: Long) = execute(seconds, ChronoUnit.SECONDS)
 
     /**
      * Time after which to execute the teleport.
