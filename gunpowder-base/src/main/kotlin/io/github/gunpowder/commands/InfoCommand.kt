@@ -29,12 +29,8 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.api.builders.ScoreboardDisplay
-import io.github.gunpowder.api.builders.TeleportRequest
-import io.github.gunpowder.api.util.Location
 import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.LiteralText
-import net.minecraft.util.BlockRotation
 import net.minecraft.util.Formatting
 import kotlin.concurrent.thread
 
@@ -54,34 +50,6 @@ object InfoCommand {
         Command.builder(dispatcher) {
             command("info", "gunpowder") {
                 executes(::showInfo)
-            }
-
-            command("test") {
-                literal("1") {
-                    executes {
-                        val player = it.source.player
-
-                        TeleportRequest.builder {
-                            player(player)
-                            destination(player.blockPos.up(3))
-                        }.execute(1)
-                        0
-                    }
-                }
-
-                executes {
-                    val player = it.source.player
-
-                    TeleportRequest.builder {
-                        player(player)
-                        destination(Location.of(player).up(3).axisAlignedRotate(BlockRotation.CLOCKWISE_180).west(1))
-                        onComplete {
-                            player.sendMessage(LiteralText("DONE"), false)
-                        }
-                    }.execute(1)
-
-                    1
-                }
             }
         }
     }
