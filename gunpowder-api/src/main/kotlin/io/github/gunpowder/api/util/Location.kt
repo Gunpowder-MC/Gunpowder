@@ -105,13 +105,7 @@ data class Location(
      * Offsets the position in the specified direction by one block.
      * @param direction the specified direction
      */
-    fun offset(direction: Direction) = Location(
-            Vec3d(
-                    position.x + direction.offsetX,
-                    position.y + direction.offsetY,
-                    position.z + direction.offsetZ
-            ), rotation, dimension
-    )
+    fun offset(direction: Direction) = offset(1, direction)
 
     /**
      * Offsets the position in the specified direction by the specified amount.
