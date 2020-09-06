@@ -36,10 +36,10 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import io.github.gunpowder.api.builders.ScoreboardDisplay as APISidebarInfo
+import io.github.gunpowder.api.builders.ScoreboardDisplay as APIScoreboardDisplay
 
 
-class ScoreboardDisplay(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
+class ScoreboardDisplay(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APIScoreboardDisplay {
     override fun remove() {
         val packets = mutableListOf<Packet<*>>(
                 ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove
@@ -52,7 +52,7 @@ class ScoreboardDisplay(private val objective: ScoreboardObjective, private val 
         packets.forEach(player.networkHandler::sendPacket)
     }
 
-    class Builder : APISidebarInfo.Builder {
+    class Builder : APIScoreboardDisplay.Builder {
         private var title = "Menu"
         private var titleColor = Formatting.RESET
         private var displayTitle: Text? = null
@@ -71,7 +71,7 @@ class ScoreboardDisplay(private val objective: ScoreboardObjective, private val 
             lines.add(Pair(text, color))
         }
 
-        override fun build(player: ServerPlayerEntity): APISidebarInfo {
+        override fun build(player: ServerPlayerEntity): APIScoreboardDisplay {
             val scoreboard = GunpowderMod.instance.server.scoreboard
             val objective = ScoreboardObjective(
                     scoreboard, title,
