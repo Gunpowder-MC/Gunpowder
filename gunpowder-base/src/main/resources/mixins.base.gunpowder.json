@@ -11,7 +11,8 @@
     "ServerWorldMixin_Base",
     "SignBlockEntityMixin_Base",
     "SignBlockMixin_Base",
-    "TeleportCommandMixin_Base"
+    "TeleportCommandMixin_Base",
+    "MinecraftServerMixin_Base"
   ],
   "client": [
   ],
