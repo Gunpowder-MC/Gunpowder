@@ -166,7 +166,7 @@ data class Location(
      * Returns a new Location with the dimension provided and the position and rotation of this Location.
      * @param key the registry key of the dimension
      */
-    fun withPosition(key: RegistryKey<World>) = withDimension(key.value)
+    fun withDimension(key: RegistryKey<World>) = withDimension(key.value)
 
     /**
      * Returns a new Location with the dimension provided and the position and rotation of this Location.
