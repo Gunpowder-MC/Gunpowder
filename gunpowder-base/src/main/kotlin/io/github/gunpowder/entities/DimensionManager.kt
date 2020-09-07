@@ -56,7 +56,8 @@ object DimensionManager : GunpowderDimensionManager {
         return dimTypeRegistry.entriesByKey.containsKey(dimensionTypeId)
     }
 
-    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
+    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean) {
+        // TODO: Persist
         if (hasDimensionType(dimensionTypeId)) {
             throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
         }
@@ -85,7 +86,9 @@ object DimensionManager : GunpowderDimensionManager {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld {
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, persist: Boolean): ServerWorld {
+        // TODO: Persist
+
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }

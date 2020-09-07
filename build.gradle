@@ -69,11 +69,13 @@ allprojects { project ->
         // Only shadow implementation/modImplementation
         configurations = [project.configurations.shade]
         classifier = "dev"
+        relocate "org.jetbrains.exposed", "shadow.jetbrains.exposed"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from project.sourceSets.main.allSource.srcDirs
+        // TODO: Relocate
     }
 
     task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
@@ -83,6 +85,7 @@ allprojects { project ->
             addNestedDependencies = true
             remapAccessWidener = true
         }
+        // TODO: Relocate
     }
 
     task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
@@ -92,6 +95,7 @@ allprojects { project ->
             addNestedDependencies = false
             remapAccessWidener = true
         }
+        // TODO: Relocate
     }
 
     repositories {

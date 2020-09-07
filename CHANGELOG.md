@@ -1,3 +1,23 @@
+## Gunpowder 0.3.0
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- Renamed "Essentials Database Thread" to "Gunpowder Database Thread"
+
+Other:
+
+- Made it runnable in dev by relocating Exposed (WIP)
+
+---
+
 ## Gunpowder 0.2.10
 
 New Features:

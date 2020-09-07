@@ -33,10 +33,10 @@ import net.minecraft.world.level.ServerWorldProperties
 
 interface GunpowderDimensionManager {
     fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean
-    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType)
+    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean)
     fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>)
 
     fun hasWorld(worldId: RegistryKey<World>): Boolean
-    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, persist: Boolean): ServerWorld
     fun removeWorld(worldId: RegistryKey<World>)
 }
