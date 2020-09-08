@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -52,8 +54,9 @@ allprojects { project ->
 
     configurations {
         dev
-        compile.extendsFrom shade
-        modCompile.extendsFrom modShade
+        compileOnly.extendsFrom shade
+        compileOnly.extendsFrom shadeSource
+        modCompileOnly.extendsFrom modShade
     }
 
     jar {
@@ -67,7 +70,7 @@ allprojects { project ->
     shadowJar {
         enabled = true
         // Only shadow implementation/modImplementation
-        configurations = [project.configurations.shade]
+        configurations = [project.configurations.shade, project.configurations.modShade]
         classifier = "dev"
         relocate "org.jetbrains.exposed", "shadow.jetbrains.exposed"
     }
@@ -75,27 +78,25 @@ allprojects { project ->
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from project.sourceSets.main.allSource.srcDirs
-        // TODO: Relocate
+        // TODO: Add relocated exposed maybe?
     }
 
-    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}.jar"
             addNestedDependencies = true
             remapAccessWidener = true
         }
-        // TODO: Relocate
     }
 
-    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
             addNestedDependencies = false
             remapAccessWidener = true
         }
-        // TODO: Relocate
     }
 
     repositories {
@@ -126,9 +127,15 @@ allprojects { project ->
         modRuntime libs.fabric_language_kotlin
 
         // Database
-        implementation libs.exposed_core
-        implementation libs.exposed_jdbc
-        implementation libs.exposed_java_time
+        shade(libs.exposed_core) {
+            transitive = false
+        }
+        shade(libs.exposed_jdbc) {
+            transitive = false
+        }
+        shade(libs.exposed_java_time) {
+            transitive = false
+        }
 
         // Database drivers
         implementation libs.postgresql
@@ -173,10 +180,8 @@ allprojects { project ->
 }
 
 dependencies {
-    afterEvaluate {
-        subprojects.each {
-            shade project(path: ":${it.name}", configuration: 'shadow')
-        }
+    subprojects.each {
+        shade project(path: ":${it.name}", configuration: 'shadow')
     }
 
     // Runtime Only Dependencies

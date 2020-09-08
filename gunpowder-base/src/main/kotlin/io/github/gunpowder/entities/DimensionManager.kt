@@ -53,7 +53,7 @@ object DimensionManager : GunpowderDimensionManager {
         }
 
     override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
-        return dimTypeRegistry.entriesByKey.containsKey(dimensionTypeId)
+        return dimTypeRegistry.keyToEntry.containsKey(dimensionTypeId)
     }
 
     override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean) {
@@ -74,12 +74,12 @@ object DimensionManager : GunpowderDimensionManager {
             return
         }
 
-        val dtype = dimTypeRegistry.entriesById[dimensionTypeId.value]
-        dimTypeRegistry.entriesById.remove(dimensionTypeId.value)
-        dimTypeRegistry.entriesByKey.remove(dimensionTypeId)
-        dimTypeRegistry.field_26731.remove(dtype)
-        dimTypeRegistry.field_26682.remove(dtype)
-        dimTypeRegistry.field_26683.removeInt(dtype)
+        val dtype = dimTypeRegistry.idToEntry[dimensionTypeId.value]
+        dimTypeRegistry.idToEntry.remove(dimensionTypeId.value)
+        dimTypeRegistry.keyToEntry.remove(dimensionTypeId)
+        dimTypeRegistry.entryToLifecycle.remove(dtype)
+        dimTypeRegistry.rawIdToEntry.remove(dtype)
+        dimTypeRegistry.entryToRawId.removeInt(dtype)
     }
 
     override fun hasWorld(worldId: RegistryKey<World>): Boolean {
