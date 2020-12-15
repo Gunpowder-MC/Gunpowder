@@ -6,11 +6,13 @@ Bugs fixed:
 
 New Features:
 
-- None
+- (api) Added TranslatedText
 
 Improvements:
 
+- (api) Added more documentation
 - (database) Renamed "Essentials Database Thread" to "Gunpowder Database Thread"
+- (base) Change server brand to "Fabric/Gunpowder"
 
 Other:
 
