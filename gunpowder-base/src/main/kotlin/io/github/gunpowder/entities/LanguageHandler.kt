@@ -36,50 +36,57 @@ import java.io.IOException
 
 
 object LanguageHandler : LanguageUtil {
+    // TODO: Allow mods to register custom folders
+    val modPath = mutableMapOf<String, String>()
+
     private val mapping = mutableMapOf<String, Map<String, String>>()
+
+    fun tryLoad(id: String, lang: String, consumer: (String, String) -> Unit) {
+        val path = modPath.getOrDefault(id, "/assets/$id/lang")
+
+        try {
+            val inputStream =
+                Language::class.java.getResourceAsStream(
+                    "$path/$lang.json"
+                ) ?: return
+
+            var prevErr: Throwable? = null
+
+            try {
+                Language.load(inputStream, consumer)
+            } catch (err: Throwable) {
+                prevErr = err
+                throw err
+            } finally {
+                if (prevErr != null) {
+                    try {
+                        inputStream.close()
+                    } catch (err: Throwable) {
+                        prevErr.addSuppressed(err)
+                    }
+                } else {
+                    inputStream.close()
+                }
+            }
+
+        } catch (err: JsonParseException) {
+            instance.logger.error(
+                "Couldn't read strings from /assets/$id/lang/$lang.json", err
+            )
+        } catch (err: IOException) {
+            instance.logger.error(
+                "Couldn't read strings from /assets/$id/lang/$lang.json", err
+            )
+        }
+    }
 
     fun loadLanguage(lang: String): Map<String, String> {
         val builder = ImmutableMap.builder<String, String>()
 
-        FabricLoader.getInstance().allMods.filter { itt: ModContainer ->
-            itt.metadata.depends.stream().anyMatch { it: ModDependency -> it.modId == "gunpowder-base" }
-        }.forEach { c: ModContainer ->
-            try {
-                val inputStream =
-                    Language::class.java.getResourceAsStream(
-                        "/assets/${c.metadata.id}/lang/${lang}.json"
-                    ) ?: return@forEach
+        tryLoad("minecraft", lang, builder::put)
 
-                var prevErr: Throwable? = null
-
-                try {
-                    Language.load(inputStream, builder::put)
-                } catch (err: Throwable) {
-                    prevErr = err
-                    throw err
-                } finally {
-                    if (inputStream != null) {
-                        if (prevErr != null) {
-                            try {
-                                inputStream.close()
-                            } catch (err: Throwable) {
-                                prevErr.addSuppressed(err)
-                            }
-                        } else {
-                            inputStream.close()
-                        }
-                    }
-                }
-
-            } catch (err: JsonParseException) {
-                instance.logger.error(
-                    "Couldn't read strings from /assets/${c.metadata.id}/lang/${lang}.json", err
-                )
-            } catch (err: IOException) {
-                instance.logger.error(
-                    "Couldn't read strings from /assets/${c.metadata.id}/lang/${lang}.json", err
-                )
-            }
+        FabricLoader.getInstance().allMods.forEach { c: ModContainer ->
+            tryLoad(c.metadata.id, lang, builder::put)
         }
 
         return builder.build()

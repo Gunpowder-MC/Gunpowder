@@ -75,7 +75,7 @@ class TeleportRequest private constructor(
 
                         player.teleport(world,
                                 destination.x, destination.y, destination.z,
-                                facing?.x ?: player.pitch, facing?.y ?: player.yaw)
+                                facing?.x ?: player.yaw, facing?.y ?: player.pitch)
 
                         callback?.invoke()
                     }

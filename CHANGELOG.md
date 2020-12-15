@@ -1,3 +1,23 @@
+## Gunpowder 0.3.2
+
+Bugs fixed:
+
+- (teleport) Facing now properly defaults to where a player was looking
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+Other:
+
+- None
+
+---
+
 ## Gunpowder 0.3.1
 
 Bugs fixed:
