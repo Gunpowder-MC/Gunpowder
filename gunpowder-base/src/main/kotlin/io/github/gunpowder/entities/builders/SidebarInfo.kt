@@ -36,12 +36,28 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.TemporalUnit
+import kotlin.concurrent.thread
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 
 
 class SidebarInfo(private val objective: ScoreboardObjective,
                   private val player: ServerPlayerEntity,
                   private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
+
+    override fun removeAfter(time: Long, unit: TemporalUnit) {
+        val now = LocalDateTime.now()
+        thread(start=true) {
+            val duration = Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis()
+            if (duration > 0) {
+                Thread.sleep(duration)
+            }
+            remove()
+        }
+    }
+
     override fun remove() {
         val packets = mutableListOf<Packet<*>>(
                 ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove

@@ -14,5 +14,6 @@ accessible field net/minecraft/util/registry/DynamicRegistryManager INFOS Ljava/
 accessible field net/minecraft/server/MinecraftServer registryManager Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;
 accessible field net/minecraft/util/registry/DynamicRegistryManager$Info registry Lnet/minecraft/util/registry/RegistryKey;
 accessible field net/minecraft/util/registry/DynamicRegistryManager$Impl registries Ljava/util/Map;
+accessible field net/minecraft/network/packet/c2s/play/ClientSettingsC2SPacket language Ljava/lang/String;
 accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZDZZZZZILnet/minecraft/world/biome/source/BiomeAccessType;Lnet/minecraft/util/Identifier;Lnet/minecraft/util/Identifier;F)V
 accessible class net/minecraft/server/command/TeleportCommand$LookTarget

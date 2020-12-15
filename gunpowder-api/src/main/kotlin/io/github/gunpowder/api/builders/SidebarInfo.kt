@@ -28,6 +28,8 @@ import io.github.gunpowder.api.GunpowderMod
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 import java.util.function.Consumer
 
 interface SidebarInfo {
@@ -66,5 +68,14 @@ interface SidebarInfo {
         fun build(player: ServerPlayerEntity): SidebarInfo
     }
 
+    /**
+     * Hide the sidebar
+     */
     fun remove()
+
+    /**
+     * Hide the sidebar after a specified amount of time
+     */
+    fun removeAfter(seconds: Long) = removeAfter(seconds, ChronoUnit.SECONDS)
+    fun removeAfter(time: Long, unit: TemporalUnit)
 }

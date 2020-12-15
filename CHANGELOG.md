@@ -1,3 +1,23 @@
+## Gunpowder 0.3.3
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- (language) Added methods to get the language for a user
+
+Other:
+
+- None
+
+---
+
 ## Gunpowder 0.3.2
 
 Bugs fixed:

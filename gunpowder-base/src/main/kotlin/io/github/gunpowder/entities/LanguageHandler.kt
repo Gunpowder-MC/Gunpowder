@@ -31,15 +31,19 @@ import io.github.gunpowder.api.LanguageUtil
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.ModContainer
 import net.fabricmc.loader.api.metadata.ModDependency
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Language
 import java.io.IOException
+import java.util.*
 
 
 object LanguageHandler : LanguageUtil {
+
     // TODO: Allow mods to register custom folders
     val modPath = mutableMapOf<String, String>()
 
     private val mapping = mutableMapOf<String, Map<String, String>>()
+    val languageSettings = mutableMapOf<UUID, String>()
 
     fun tryLoad(id: String, lang: String, consumer: (String, String) -> Unit) {
         val path = modPath.getOrDefault(id, "/assets/$id/lang")
@@ -88,6 +92,10 @@ object LanguageHandler : LanguageUtil {
         }
 
         return builder.build()
+    }
+
+    override fun languageForPlayer(player: ServerPlayerEntity): String {
+        return languageSettings.getOrDefault(player.uuid, "en_us")
     }
 
     override fun get(lang: String): Map<String, String> {

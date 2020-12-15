@@ -25,6 +25,7 @@
 package io.github.gunpowder.api.util
 
 import io.github.gunpowder.api.GunpowderMod
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.*
 
 class TranslatedText(val key: String, vararg val args: Any?) {
@@ -41,5 +42,19 @@ class TranslatedText(val key: String, vararg val args: Any?) {
      */
     fun translateText(languageCode: String): TranslatableText {
         return TranslatableText(translate(languageCode), args)
+    }
+
+    /**
+     * Translate for a specific player with their settings (String)
+     */
+    fun translateForPlayer(player: ServerPlayerEntity): String {
+        return translate(GunpowderMod.instance.languageEngine.languageForPlayer(player))
+    }
+
+    /**
+     * Translate for a specific player with their settings (Text)
+     */
+    fun translateTextForPlayer(player: ServerPlayerEntity): TranslatableText {
+        return translateText(GunpowderMod.instance.languageEngine.languageForPlayer(player))
     }
 }

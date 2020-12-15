@@ -24,9 +24,16 @@
 
 package io.github.gunpowder.api
 
+import net.minecraft.server.network.ServerPlayerEntity
+
 interface LanguageUtil {
     /**
      * Get a key->text mapping for a given language.
      */
     fun get(lang: String): Map<String, String>
+
+    /**
+     * Get the language the client uses
+     */
+    fun languageForPlayer(player: ServerPlayerEntity): String
 }
