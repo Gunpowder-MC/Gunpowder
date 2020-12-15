@@ -83,8 +83,6 @@ object LanguageHandler : LanguageUtil {
     fun loadLanguage(lang: String): Map<String, String> {
         val builder = ImmutableMap.builder<String, String>()
 
-        tryLoad("minecraft", lang, builder::put)
-
         FabricLoader.getInstance().allMods.forEach { c: ModContainer ->
             tryLoad(c.metadata.id, lang, builder::put)
         }

@@ -10,7 +10,7 @@ New Features:
 
 Improvements:
 
-- None
+- (language) Now loads all mods instead of just gunpowder extensions
 
 Other:
 

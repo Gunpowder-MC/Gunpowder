@@ -54,7 +54,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         GunpowderRegistry.registerBuiltin()
         GunpowderDatabase.loadDatabase()
         GunpowderEvents.init()
-        LanguageHandler.loadLanguage("en_us")
+        LanguageHandler.get("en_us")
         logger.info("Loading modules")
 
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java)
