@@ -48,7 +48,7 @@ object LanguageHandler : LanguageUtil {
                 val inputStream =
                     Language::class.java.getResourceAsStream(
                         "/assets/${c.metadata.id}/lang/${lang}.json"
-                    )
+                    ) ?: return@forEach
 
                 var prevErr: Throwable? = null
 

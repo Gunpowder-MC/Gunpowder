@@ -75,7 +75,7 @@ allprojects { project ->
         // Only shadow shade/modShade
         configurations = [project.configurations.shade, project.configurations.modShade]
         classifier = "dev"
-        relocate "org.jetbrains.exposed", "shadow.jetbrains.exposed"
+        // relocate "org.jetbrains.exposed", "shadow.jetbrains.exposed"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -128,13 +128,13 @@ allprojects { project ->
         modImplementation libs.fabric_language_kotlin
 
         // Database
-        shade(libs.exposed_core) {
+        modImplementation (libs.exposed_core) {
             transitive = false
         }
-        shade(libs.exposed_jdbc) {
+        modImplementation (libs.exposed_jdbc) {
             transitive = false
         }
-        shade(libs.exposed_java_time) {
+        modImplementation (libs.exposed_java_time) {
             transitive = false
         }
         modRuntime libs.exposed_core

@@ -10,6 +10,10 @@ dependencies {
     include libs.mysql_connector_java
     include libs.sqlite_jdbc
 
+    include libs.exposed_core
+    include libs.exposed_jdbc
+    include libs.exposed_java_time
+
     // Configs
     // Again, not shaded for compat
     include libs.jackson_core

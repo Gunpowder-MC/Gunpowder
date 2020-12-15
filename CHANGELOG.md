@@ -2,7 +2,8 @@
 
 Bugs fixed:
 
-- None
+- (database) Fixed missing libraries
+- (language) Fixed NPE
 
 New Features:
 
