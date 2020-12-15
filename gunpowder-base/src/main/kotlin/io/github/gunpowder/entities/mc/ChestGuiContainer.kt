@@ -45,7 +45,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     private var background = ItemStack.EMPTY
     private var interval = 0
     private var counter = 0
-    private var callback = { c: ChestGuiContainer -> }
+    private var callback = { _: ChestGuiContainer -> }
 
     internal fun setButtons(buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton>) {
         this.buttons = buttons

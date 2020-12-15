@@ -1,4 +1,7 @@
-import net.fabricmc.loom.task.RemapJarTask
+import net.fabricmc.loom.LoomGradleExtension
+import net.fabricmc.loom.util.RunConfig
+
+import java.util.function.Function
 
 plugins {
     id 'java'
@@ -69,7 +72,7 @@ allprojects { project ->
 
     shadowJar {
         enabled = true
-        // Only shadow implementation/modImplementation
+        // Only shadow shade/modShade
         configurations = [project.configurations.shade, project.configurations.modShade]
         classifier = "dev"
         relocate "org.jetbrains.exposed", "shadow.jetbrains.exposed"
@@ -81,7 +84,7 @@ allprojects { project ->
         // TODO: Add relocated exposed maybe?
     }
 
-    task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
+    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}.jar"
@@ -90,7 +93,7 @@ allprojects { project ->
         }
     }
 
-    task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
+    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
@@ -114,8 +117,6 @@ allprojects { project ->
 
     dependencies {
         // Kotlin Stdlib
-        compileOnly libs.kotlin_stdlib
-
         minecraft(libs.minecraft) {
             transitive = false
         }
@@ -124,7 +125,7 @@ allprojects { project ->
 
         // Hard Dependencies
         modImplementation libs.fabric_api
-        modRuntime libs.fabric_language_kotlin
+        modImplementation libs.fabric_language_kotlin
 
         // Database
         shade(libs.exposed_core) {
@@ -136,22 +137,31 @@ allprojects { project ->
         shade(libs.exposed_java_time) {
             transitive = false
         }
+        modRuntime libs.exposed_core
+        modRuntime libs.exposed_jdbc
+        modRuntime libs.exposed_java_time
 
         // Database drivers
-        implementation libs.postgresql
-        implementation libs.mysql_connector_java
-        implementation libs.sqlite_jdbc
+        modImplementation libs.postgresql
+        modImplementation libs.mysql_connector_java
+        modImplementation libs.sqlite_jdbc
 
         // Configs
-        implementation libs.jackson_core
-        implementation libs.jackson_kotlin
-        implementation libs.jackson_yaml
+        modImplementation libs.jackson_core
+        modImplementation libs.jackson_kotlin
+        modImplementation libs.jackson_yaml
+        modImplementation libs.jackson_databind
+        modImplementation libs.jackson_annotations
+        modImplementation libs.snakeyaml
+        modImplementation libs.slf4j
 
         // Dependency Injection
-        implementation libs.guice
+        modImplementation libs.guice
+        modImplementation libs.javax_inject
+        modImplementation libs.aop
 
         // We use checker for annotations
-        implementation libs.checker_qual
+        modImplementation libs.checker_qual
 
         // TODO: Permissions
     }
@@ -188,6 +198,7 @@ dependencies {
     modRuntime(libs.modmenu) {
         transitive = false // Naughty mods who JIJ fabric api
     }
+    modRuntime libs.fabric_language_kotlin
 }
 
 subprojects {
@@ -226,6 +237,7 @@ remapShadowJar {
 remapMavenJar {
     enabled = false
 }
+
 
 if (file('secrets.gradle').exists()) {
     apply from: 'secrets.gradle'

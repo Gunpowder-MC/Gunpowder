@@ -10,11 +10,12 @@ New Features:
 
 Improvements:
 
-- Renamed "Essentials Database Thread" to "Gunpowder Database Thread"
+- (database) Renamed "Essentials Database Thread" to "Gunpowder Database Thread"
 
 Other:
 
-- Made it runnable in dev by relocating Exposed (WIP)
+- (gradle) Removed maven task, replaced with runtime jar
+- (gradle) Made it runnable in dev by relocating Exposed
 
 ---
 

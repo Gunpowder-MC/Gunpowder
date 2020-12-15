@@ -27,6 +27,7 @@ package io.github.gunpowder.entities.builders
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.LiteralText
+import net.minecraft.text.TextColor
 import net.minecraft.util.Formatting
 import io.github.gunpowder.api.builders.Text as APIText
 import net.minecraft.text.MutableText as MCText
@@ -94,6 +95,12 @@ object Text : APIText {
         override fun color(color: Formatting) {
             text.styled {
                 it.withColor(color)
+            }
+        }
+
+        override fun color(color: Int) {
+            text.styled {
+                it.withColor(TextColor.fromRgb(color))
             }
         }
 

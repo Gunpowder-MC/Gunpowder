@@ -57,7 +57,7 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
             if (((SyncPlayer) player).needsSync()) {
                 GunpowderMod.getInstance().getLogger().info("Player needs sync, sending packets");
                 sendPacket(new GameJoinS2CPacket(
-                        player.getEntityId(), player.interactionManager.getGameMode(), player.interactionManager.method_30119(),
+                        player.getEntityId(), player.interactionManager.getGameMode(), player.interactionManager.getPreviousGameMode(),
                         BiomeAccess.hashSeed(player.getServerWorld().getSeed()), player.world.getLevelProperties().isHardcore(), DimensionManager.INSTANCE.getServer().getWorldRegistryKeys(),
                         DimensionManager.INSTANCE.getServer().registryManager, player.world.getDimension(), player.world.getRegistryKey(),
                         DimensionManager.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(), DimensionManager.INSTANCE.getServer().getPlayerManager().getViewDistance(),

@@ -25,6 +25,7 @@
 package io.github.gunpowder.api.builders
 
 import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.api.util.TranslatedText
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.util.Formatting
@@ -49,12 +50,16 @@ interface Text {
          */
         fun text(text: String)
         fun text(text: MCText)
+        fun translated(text: String, languageCode: String) = translated(TranslatedText(text), languageCode)
+        fun translated(text: TranslatedText, languageCode: String) = text(text.translateText(languageCode))
 
         /**
          * Add styled text.
          */
         fun text(text: String, callback: Consumer<StyleBuilder>) = text(text, callback::accept)
         fun text(text: MCText, callback: Consumer<StyleBuilder>) = text(text, callback::accept)
+        fun translated(text: String, languageCode: String, callback: Consumer<StyleBuilder>) = translated(TranslatedText(text), languageCode, callback::accept)
+        fun translated(text: TranslatedText, languageCode: String, callback: Consumer<StyleBuilder>) = text(text.translateText(languageCode), callback::accept)
         fun text(text: String, callback: StyleBuilder.() -> Unit)
         fun text(text: MCText, callback: StyleBuilder.() -> Unit)
 
@@ -78,6 +83,7 @@ interface Text {
          * TODO: RGB support since 1.16
          */
         fun color(color: Formatting)
+        fun color(color: Int)
 
 
         // Various effects

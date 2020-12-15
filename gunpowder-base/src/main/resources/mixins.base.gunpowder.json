@@ -5,6 +5,7 @@
   "plugin": "io.github.gunpowder.mixin.plugin.BaseModulePlugin",
   "mixins": [
     "LivingEntityMixin_Base",
+    "MinecraftServerMixin_Base",
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
     "ServerPlayNetworkHandlerMixin_Base",
