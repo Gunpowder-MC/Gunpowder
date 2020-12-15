@@ -85,13 +85,13 @@ object LanguageHandler : LanguageUtil {
     }
 
     fun loadLanguage(lang: String): Map<String, String> {
-        val builder = ImmutableMap.builder<String, String>()
+        val map = mutableMapOf<String, String>()
 
         FabricLoader.getInstance().allMods.forEach { c: ModContainer ->
-            tryLoad(c.metadata.id, lang, builder::put)
+            tryLoad(c.metadata.id, lang, map::put)
         }
 
-        return builder.build()
+        return Collections.unmodifiableMap(map)
     }
 
     override fun languageForPlayer(player: ServerPlayerEntity): String {
