@@ -2,7 +2,8 @@
 
 Bugs fixed:
 
-- None
+- (language) Fix incompatibility with hwyla
+- (sign) Fix bug with streams usage
 
 New Features:
 

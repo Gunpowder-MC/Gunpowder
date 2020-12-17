@@ -102,7 +102,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
         String header = text[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
             String signId = header.substring(1, header.length() - 1);
-            Identifier[] ids = (Identifier[]) SignType.Companion.getRegistry().idToEntry.keySet().stream().filter((id) -> id.getPath().equals(signId)).toArray();
+            Identifier[] ids = SignType.Companion.getRegistry().idToEntry.keySet().stream().filter((id) -> id.getPath().equals(signId)).toArray(Identifier[]::new);
             Optional<io.github.gunpowder.api.builders.SignType> typ = SignType.Companion.getRegistry().getOrEmpty(new Identifier(signId));
 
             if (ids.length > 1 && !typ.isPresent()) {
