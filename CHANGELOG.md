@@ -1,3 +1,23 @@
+## Gunpowder 0.3.4
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- None
+
+Other:
+
+- None
+
+---
+
 ## Gunpowder 0.3.3
 
 Bugs fixed:
