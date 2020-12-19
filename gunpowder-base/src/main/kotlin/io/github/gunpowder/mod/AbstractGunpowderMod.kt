@@ -49,6 +49,12 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
     var modules: MutableList<GunpowderModule> = mutableListOf()
 
+    fun reload() {
+        modules.forEach {
+            it.reload()
+        }
+    }
+
     fun initialize() {
         logger.info("Starting Gunpowder")
         GunpowderRegistry.registerBuiltin()

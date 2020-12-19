@@ -47,10 +47,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Mixin(SignBlockEntity.class)
 public abstract class SignBlockEntityMixin_Base extends BlockEntity implements SignBlockEntityMixinCast_Base {
     boolean custom = false;
+    UUID owner;
     SignType type = null;
     @Shadow
     @Final
@@ -70,6 +72,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
         if (type != null) {
             type.getDeserializeEvent().invoke((SignBlockEntity) (Object) this, tag);
             custom = true;
+            owner = tag.getUuid("gunpowder:owner");
         }
     }
 
@@ -77,6 +80,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
     public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
         if (type != null) {
             tag.putString("gunpowder:customType", io.github.gunpowder.entities.builders.SignType.Companion.getRegistry().getId(type).toString());
+            tag.putUuid("gunpowder:owner", owner);
             type.getSerializeEvent().invoke((SignBlockEntity) (Object) this, tag);
         }
     }
@@ -121,6 +125,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
                 setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
                 type.getCreateEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor);
                 custom = true;
+                owner = editor.getUuid();
             }
         }
     }
@@ -133,5 +138,10 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
     @Override
     public boolean isCustom() {
         return custom;
+    }
+
+    @Override
+    public boolean isCreator(PlayerEntity playerEntity) {
+        return playerEntity.getUuid().equals(owner);
     }
 }

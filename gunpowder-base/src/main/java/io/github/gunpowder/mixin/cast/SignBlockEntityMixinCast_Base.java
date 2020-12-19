@@ -25,9 +25,12 @@
 package io.github.gunpowder.mixin.cast;
 
 import io.github.gunpowder.entities.builders.SignType;
+import net.minecraft.entity.player.PlayerEntity;
 
 public interface SignBlockEntityMixinCast_Base {
     boolean isCustom();
+
+    boolean isCreator(PlayerEntity playerEntity);
 
     SignType getSignType();
 }

@@ -35,6 +35,13 @@ interface GunpowderModule {
     fun registerConfigs() {}
 
     /**
+     * Called on datapack reload (aka /reload)
+     *
+     * Use this to e.g. clear DB caches, update lang files, etc
+     */
+    fun reload() {}
+
+    /**
      * Register Database-related stuff here for now
      */
     fun onInitialize() {}

@@ -2,11 +2,12 @@
 
 Bugs fixed:
 
-- None
+- (sign) Owner data is retained after server reboot
+- (sign) `requires` check is now applied to destroying
 
 New Features:
 
-- None
+- (module) Added reload hook
 
 Improvements:
 
