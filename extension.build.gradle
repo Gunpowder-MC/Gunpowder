@@ -1,6 +1,6 @@
 // Variables from latest gunpowder
-String properties_text = new URL("https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/gradle.properties").getText()
-Properties props = new Properties()
+def properties_text = new URL("https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/gradle.properties").getText()
+def props = new Properties()
 props.load(new StringReader(properties_text))
 props.each { prop ->
     project.ext.set(prop.key, prop.value)
