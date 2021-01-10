@@ -25,6 +25,7 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
+import com.mojang.serialization.DynamicOps
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
@@ -51,6 +52,10 @@ object DimensionManager : GunpowderDimensionManager {
         get() {
             return server.registryManager[Registry.DIMENSION_TYPE_KEY] as SimpleRegistry<DimensionType>
         }
+
+    init {
+        // loadPersistDimensions()
+    }
 
     override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
         return dimTypeRegistry.keyToEntry.containsKey(dimensionTypeId)
@@ -117,6 +122,10 @@ object DimensionManager : GunpowderDimensionManager {
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
+
+        if (persist) {
+            // chunkGenerator.getCodec().encode(chunkGenerator, DynamicOps)
+        }
 
         for (player in server.playerManager.playerList) {
             GunpowderMod.instance.logger.info("Marking needsSync for player $player")
