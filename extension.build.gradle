@@ -1,5 +1,10 @@
 // Variables from latest gunpowder
-apply from: "https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/gradle.properties"
+properties_text = new URL("https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/gradle.properties").getText()
+props = new Properties()
+props.load(new StringReader(properties_text))
+props.each { prop ->
+    project.ext.set(prop.key, prop.value)
+}
 apply from: "https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/dependencies.gradle"
 
 // Settings
