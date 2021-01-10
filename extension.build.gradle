@@ -2,17 +2,6 @@
 apply from: "https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/gradle.properties"
 apply from: "https://raw.githubusercontent.com/Gunpowder-MC/Gunpowder/${project.gunpowder_branch}/dependencies.gradle"
 
-// Plugins
-plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'net.minecrell.licenser' version "$licenser"
-    id 'fabric-loom' version "$fabric_loom"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'org.jetbrains.kotlin.jvm' version "$kotlin"
-}
-
 // Settings
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
