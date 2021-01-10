@@ -1,6 +1,12 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 buildscript {
+    repositories {
+        maven {
+            url = "https://maven.fabricmc.net"
+        }
+    }
+
     dependencies {
         classpath "net.fabricmc:fabric-loom:$fabric_loom"
     }
