@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 // Settings
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -77,7 +79,7 @@ shadowJar {
     classifier = "dev"
 }
 
-task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
     afterEvaluate {
         input = file("${jarpath}-dev.jar")
         archiveName = "${project.name}-${project.version}.jar"
@@ -86,7 +88,7 @@ task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadow
     }
 }
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
     afterEvaluate {
         input = file("${jarpath}-dev.jar")
         archiveName = "${project.name}-${project.version}-maven.jar"
@@ -160,6 +162,13 @@ if (file('secrets.gradle').exists()) {
             addGameVersion project.minecraft
             addGameVersion "Fabric"
             addGameVersion "Java 8"
+            addGameVersion "Java 9"
+            addGameVersion "Java 10"
+//            addGameVersion "Java 11"
+//            addGameVersion "Java 12"
+//            addGameVersion "Java 13"
+//            addGameVersion "Java 14"
+//            addGameVersion "Java 15"
 
             mainArtifact file("${jarpath}.jar")
 
