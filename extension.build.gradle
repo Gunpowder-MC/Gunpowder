@@ -41,20 +41,31 @@ repositories {
 // Dependencies
 dependencies {
     // Minecraft
-    minecraft "com.mojang:minecraft:${project.minecraft}"
-    mappings "net.fabricmc:yarn:${project.minecraft}+build.${project.yarn_build}:v2"
-    modImplementation "net.fabricmc:fabric-loader:$project.fabric_loader"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$project.fabric_api"
+    minecraft(libs.minecraft) {
+        transitive = false
+    }
+    mappings libs.yarn
+    modImplementation libs.fabric_loader
 
     // Gunpowder
-    implementation "io.github.gunpowder:gunpowder-api:${project.gunpowder}+${project.minecraft}"
+    implementation "io.github.gunpowder:gunpowder-api:${project.gunpowder_version}+${project.minecraft}"
+
+    // Fabric
+    modImplementation libs.fabric_api
 
     // Database
-    implementation "org.jetbrains.exposed:exposed-core:$project.exposed"
-    implementation "org.jetbrains.exposed:exposed-java-time:$project.exposed"
+    modImplementation (libs.exposed_core) {
+        transitive = false
+    }
+    modImplementation (libs.exposed_jdbc) {
+        transitive = false
+    }
+    modImplementation (libs.exposed_java_time) {
+        transitive = false
+    }
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$project.kotlin"
+    implementation libs.kotlin_stdlib
 }
 
 
@@ -94,11 +105,11 @@ remapJar {
 
 processResources {
     inputs.property "version", project.version
-    inputs.property "gunpowder", project.gunpowder
+    inputs.property "gunpowder", project.gunpowder_version
 
     from(project.sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
-        expand "version": project.version, "gunpowder": project.gunpowder
+        expand "version": project.version, "gunpowder": project.gunpowder_version
     }
 
     from(project.sourceSets.main.resources.srcDirs) {
