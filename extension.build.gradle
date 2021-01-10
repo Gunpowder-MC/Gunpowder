@@ -2,9 +2,13 @@ import net.fabricmc.loom.task.RemapJarTask
 
 buildscript {
     repositories {
+        jcenter()
+        mavenCentral()
         maven {
-            url = "https://maven.fabricmc.net"
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
         }
+        gradlePluginPortal()
     }
 
     dependencies {
