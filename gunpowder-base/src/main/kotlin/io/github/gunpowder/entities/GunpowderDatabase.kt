@@ -41,7 +41,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
     @Volatile
     private var running = true
     private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
-    private val databaseThread = thread(start = true, name = "Gunpowder Database Thread") {
+    private val databaseThread = thread(start = true, name = "Gunpowder Database Thread", isDaemon = true) {
         while (running) {
             try {
                 val pair = queue.poll()
