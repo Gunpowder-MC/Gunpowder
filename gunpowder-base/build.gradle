@@ -4,17 +4,15 @@ dependencies {
     // Shading causes large dep issues
     compile project(":gunpowder-api")
 
-    // Database
-    // Don't shade for compat issues
-    include libs.exposed_core
-    include libs.exposed_jdbc
-    include libs.exposed_java_time
-
     // Database drivers
     // No need to have these shaded
     include libs.postgresql
     include libs.mysql_connector_java
     include libs.sqlite_jdbc
+
+    include libs.exposed_core
+    include libs.exposed_jdbc
+    include libs.exposed_java_time
 
     // Configs
     // Again, not shaded for compat
@@ -24,7 +22,7 @@ dependencies {
     include libs.jackson_databind
     include libs.jackson_annotations
     include libs.snakeyaml
-    include 'org.slf4j:slf4j-api:1.8.0-beta1'  // TODO: Move to libs I'm fucking done adding deps
+    include libs.slf4j
 
     // Dependency Injection
     include libs.guice

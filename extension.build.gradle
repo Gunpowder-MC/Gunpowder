@@ -1,0 +1,199 @@
+import net.fabricmc.loom.task.RemapJarTask
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath "net.fabricmc:fabric-loom:$fabric_loom"
+    }
+}
+
+// Settings
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+group = "io.github.gunpowder"
+version = "${project.extension_version}+gunpowder.${project.gunpowder_version}.mc.${project.minecraft}"
+String jarpath = "${project.buildDir}/libs/${project.archivesBaseName}-${project.version}"
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+// Shadow stuff
+configurations {
+    dev
+    compile.extendsFrom shade
+    modCompile.extendsFrom modShade
+}
+
+
+// Licenser
+license {
+    header = rootProject.file('LICENSE')
+    include '**/*.java'
+    include '**/*.kt'
+    style.java = 'BLOCK_COMMENT'
+    style.kt = 'BLOCK_COMMENT'
+}
+
+// Repositories
+repositories {
+    maven {
+        name = "Gunpowder"
+        url = "https://maven.martmists.com/releases"
+    }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    mavenCentral()
+}
+
+// Dependencies
+dependencies {
+    // Minecraft
+    minecraft(libs.minecraft) {
+        transitive = false
+    }
+    mappings libs.yarn
+    modImplementation libs.fabric_loader
+
+    // Gunpowder
+    implementation "io.github.gunpowder:gunpowder-api:${project.gunpowder_version}+${project.minecraft}"
+
+    // Fabric
+    modImplementation libs.fabric_api
+
+    // Database
+    modImplementation (libs.exposed_core) {
+        transitive = false
+    }
+    modImplementation (libs.exposed_jdbc) {
+        transitive = false
+    }
+    modImplementation (libs.exposed_java_time) {
+        transitive = false
+    }
+
+    // Kotlin
+    implementation libs.kotlin_stdlib
+}
+
+
+// Tasks
+shadowJar {
+    enabled = true
+    // Only shadow implementation/modImplementation
+    configurations = [project.configurations.shade]
+    classifier = "dev"
+}
+
+task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
+    afterEvaluate {
+        input = file("${jarpath}-dev.jar")
+        archiveName = "${project.name}-${project.version}.jar"
+        addNestedDependencies = true
+        remapAccessWidener = true
+    }
+}
+
+task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
+    afterEvaluate {
+        input = file("${jarpath}-dev.jar")
+        archiveName = "${project.name}-${project.version}-maven.jar"
+        addNestedDependencies = false
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from project.sourceSets.main.allSource.srcDirs
+}
+
+remapJar {
+    enabled = false
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "gunpowder", project.gunpowder_version
+
+    from(project.sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version, "gunpowder": project.gunpowder_version
+    }
+
+    from(project.sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+build.dependsOn(shadowJar, remapShadowJar)
+
+publish.dependsOn(build, shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
+
+if (file('secrets.gradle').exists()) {
+    apply from: 'secrets.gradle'
+    // project.ext.cfKey = cf token
+    // project.ext.cfID = cf id
+    // project.ext.mavenToken = maven token
+
+    publishing {
+        repositories {
+            maven {
+                url = "https://maven.martmists.com/releases"
+                credentials {
+                    username = 'admin'
+                    password = project.mavenToken
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) {
+                afterEvaluate {
+                    artifact source: file("${jarpath}-maven.jar"), classifier: ''
+                    artifact source: file("${jarpath}-dev.jar"), classifier: 'dev'
+                    artifact source: file("${jarpath}-sources.jar"), classifier: 'sources'
+                    artifact source: file("${jarpath}-sources-dev.jar"), classifier: 'sources-dev'
+                }
+            }
+        }
+    }
+
+    curseforge {
+        apiKey = project.cfKey
+        project {
+            id = "${project.cfId}"
+            releaseType = "release"
+            changelogType = "markdown"
+            changelog = file("CHANGELOG.md").readLines().join("\n").split("---")[0]
+            addGameVersion project.minecraft
+            addGameVersion "Fabric"
+            addGameVersion "Java 8"
+            addGameVersion "Java 9"
+            addGameVersion "Java 10"
+//            addGameVersion "Java 11"
+//            addGameVersion "Java 12"
+//            addGameVersion "Java 13"
+//            addGameVersion "Java 14"
+//            addGameVersion "Java 15"
+
+            mainArtifact file("${jarpath}.jar")
+
+            afterEvaluate {
+                uploadTask.dependsOn(remapShadowJar)
+            }
+        }
+        options {
+            forgeGradleIntegration = false
+        }
+    }
+}

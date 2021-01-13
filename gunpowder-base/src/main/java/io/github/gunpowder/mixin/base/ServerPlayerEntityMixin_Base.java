@@ -25,10 +25,12 @@
 package io.github.gunpowder.mixin.base;
 
 import com.mojang.authlib.GameProfile;
+import io.github.gunpowder.entities.LanguageHandler;
 import io.github.gunpowder.events.PlayerDeathCallback;
 import io.github.gunpowder.mixin.cast.SyncPlayer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -48,6 +50,11 @@ public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity implemen
     @Inject(method = "onDeath", at = @At("HEAD"))
     void triggerPlayerDeathCallback(DamageSource source, CallbackInfo ci) {
         PlayerDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) (Object) this, source);
+    }
+
+    @Inject(method="setClientSettings", at=@At("HEAD"))
+    void storeLanguage(ClientSettingsC2SPacket packet, CallbackInfo ci) {
+        LanguageHandler.INSTANCE.getLanguageSettings().put(this.uuid, packet.language);
     }
 
     @Override

@@ -36,10 +36,28 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.temporal.TemporalUnit
+import kotlin.concurrent.thread
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 
 
-class SidebarInfo(private val objective: ScoreboardObjective, private val player: ServerPlayerEntity, private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
+class SidebarInfo(private val objective: ScoreboardObjective,
+                  private val player: ServerPlayerEntity,
+                  private val lines: List<Pair<String, Formatting>>) : APISidebarInfo {
+
+    override fun removeAfter(time: Long, unit: TemporalUnit) {
+        val now = LocalDateTime.now()
+        thread(start=true) {
+            val duration = Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis()
+            if (duration > 0) {
+                Thread.sleep(duration)
+            }
+            remove()
+        }
+    }
+
     override fun remove() {
         val packets = mutableListOf<Packet<*>>(
                 ScoreboardObjectiveUpdateS2CPacket(objective, 1),  // mode = remove
@@ -72,6 +90,8 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
         }
 
         override fun build(player: ServerPlayerEntity): APISidebarInfo {
+            // TODO: Scrolling support for too large sidebars
+
             val scoreboard = GunpowderMod.instance.server.scoreboard
             val objective = ScoreboardObjective(
                     scoreboard, title,
@@ -81,7 +101,7 @@ class SidebarInfo(private val objective: ScoreboardObjective, private val player
             )
 
             val packets = mutableListOf<Packet<*>>(
-                    ScoreboardObjectiveUpdateS2CPacket(objective, 0),  // mode = remove
+                    ScoreboardObjectiveUpdateS2CPacket(objective, 0),  // mode = create
                     ScoreboardDisplayS2CPacket(1, objective),  // 1 = sidebar
                     *lines.mapIndexed { index, pair ->
                         ScoreboardPlayerUpdateS2CPacket(ServerScoreboard.UpdateMode.CHANGE, title, pair.second.toString() + pair.first, lines.size - index)

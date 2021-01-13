@@ -22,15 +22,18 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.mixin.cast;
+package io.github.gunpowder.api
 
-import io.github.gunpowder.entities.builders.SignType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity
 
-public interface SignBlockEntityMixinCast_Base {
-    boolean isCustom();
+interface LanguageUtil {
+    /**
+     * Get a key->text mapping for a given language.
+     */
+    fun get(lang: String): Map<String, String>
 
-    boolean isCreator(PlayerEntity playerEntity);
-
-    SignType getSignType();
+    /**
+     * Get the language the client uses
+     */
+    fun languageForPlayer(player: ServerPlayerEntity): String
 }

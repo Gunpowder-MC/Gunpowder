@@ -22,15 +22,18 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.mixin.cast;
+package io.github.gunpowder.mixin.base;
 
-import io.github.gunpowder.entities.builders.SignType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-public interface SignBlockEntityMixinCast_Base {
-    boolean isCustom();
-
-    boolean isCreator(PlayerEntity playerEntity);
-
-    SignType getSignType();
+@Mixin(MinecraftServer.class)
+public class MinecraftServerMixin_Base {
+    @Inject(method="getServerModName", at=@At("HEAD"), cancellable = true)
+    void setCustomName(CallbackInfoReturnable<String> cir) {
+        cir.setReturnValue("Fabric/Gunpowder");
+    }
 }

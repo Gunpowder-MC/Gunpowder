@@ -28,10 +28,8 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.gunpowder.entities.DimensionManager
-import io.github.gunpowder.entities.GunpowderDatabase
-import io.github.gunpowder.entities.GunpowderEvents
-import io.github.gunpowder.entities.GunpowderRegistry
+import io.github.gunpowder.api.LanguageUtil
+import io.github.gunpowder.entities.*
 import io.github.gunpowder.injection.AbstractModule
 import net.fabricmc.loader.api.FabricLoader
 import org.apache.logging.log4j.LogManager
@@ -42,6 +40,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     override val registry = GunpowderRegistry
     override val database = GunpowderDatabase
     override val dimensionManager = DimensionManager
+    override val languageEngine = LanguageHandler
     val injector: Injector
 
     init {
@@ -50,11 +49,18 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
     var modules: MutableList<GunpowderModule> = mutableListOf()
 
+    fun reload() {
+        modules.forEach {
+            it.reload()
+        }
+    }
+
     fun initialize() {
         logger.info("Starting Gunpowder")
         GunpowderRegistry.registerBuiltin()
         GunpowderDatabase.loadDatabase()
         GunpowderEvents.init()
+        LanguageHandler.get("en_us")
         logger.info("Loading modules")
 
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java)

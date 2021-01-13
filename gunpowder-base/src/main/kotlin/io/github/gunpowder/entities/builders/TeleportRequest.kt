@@ -71,11 +71,11 @@ class TeleportRequest private constructor(
                         val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
 
                         // field_19347 = POST_TELEPORT
-                        world!!.chunkManager.addTicket(ChunkTicketType.field_19347, chunkPos, 1, player.entityId)
+                        world!!.chunkManager.addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.entityId)
 
                         player.teleport(world,
                                 destination.x, destination.y, destination.z,
-                                facing?.x ?: player.pitch, facing?.y ?: player.yaw)
+                                facing?.x ?: player.yaw, facing?.y ?: player.pitch)
 
                         callback?.invoke()
                     }

@@ -24,9 +24,11 @@
 
 package io.github.gunpowder.entities
 
+import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.entities.mc.ChestGuiContainer
 import io.github.gunpowder.events.BlockPreBreakCallback
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
+import io.github.gunpowder.mod.AbstractGunpowderMod
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.block.AbstractSignBlock
@@ -43,11 +45,20 @@ object GunpowderEvents {
             if (state.block is AbstractSignBlock) {
                 val be = world.getBlockEntity(pos) as SignBlockEntity
                 val cast = be as SignBlockEntityMixinCast_Base
-                if (cast.isCustom && be.editor != null && be.editor.uuid != player.uuid && !player.hasPermissionLevel(4) && !player.isCreative) {
+
+                if (cast.isCustom &&
+                    !player.hasPermissionLevel(4) &&
+                    !cast.signType.conditionEvent(be, player) &&
+                    !cast.isCreator(player)) {
                     return@BlockPreBreakCallback ActionResult.FAIL;
                 }
             }
             return@BlockPreBreakCallback ActionResult.PASS
+        })
+
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(ServerLifecycleEvents.EndDataPackReload { minecraftServer, serverResourceManager, b ->
+            val gp = (GunpowderMod.instance as AbstractGunpowderMod)
+            gp.reload();
         })
 
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerLifecycleEvents.ServerStopped { server ->

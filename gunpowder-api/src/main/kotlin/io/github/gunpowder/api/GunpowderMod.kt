@@ -34,6 +34,7 @@ interface GunpowderMod {
     val registry: GunpowderRegistry
     val database: GunpowderDatabase
     val dimensionManager: GunpowderDimensionManager
+    val languageEngine: LanguageUtil
     val logger: Logger
 
     companion object {

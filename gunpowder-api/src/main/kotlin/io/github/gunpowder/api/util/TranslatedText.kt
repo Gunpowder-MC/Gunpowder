@@ -22,27 +22,39 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api
+package io.github.gunpowder.api.util
 
-/**
- * Interface a registered module should implement.
- */
-interface GunpowderModule {
-    val name: String
-    val toggleable: Boolean
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
+import io.github.gunpowder.api.GunpowderMod
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.*
+
+class TranslatedText(val key: String, vararg val args: Any?) {
+    /**
+     * Translate the TranslatedText to a string
+     */
+    fun translate(languageCode: String): String {
+        val langMap = GunpowderMod.instance.languageEngine.get(languageCode)
+        return langMap.getOrDefault(key, key).format(*args)
+    }
 
     /**
-     * Called on datapack reload (aka /reload)
-     *
-     * Use this to e.g. clear DB caches, update lang files, etc
+     * Translate the TranslatedText to a TranslatableText
      */
-    fun reload() {}
+    fun translateText(languageCode: String): TranslatableText {
+        return TranslatableText(translate(languageCode), args)
+    }
 
     /**
-     * Register Database-related stuff here for now
+     * Translate for a specific player with their settings (String)
      */
-    fun onInitialize() {}
+    fun translateForPlayer(player: ServerPlayerEntity): String {
+        return translate(GunpowderMod.instance.languageEngine.languageForPlayer(player))
+    }
+
+    /**
+     * Translate for a specific player with their settings (Text)
+     */
+    fun translateTextForPlayer(player: ServerPlayerEntity): TranslatableText {
+        return translateText(GunpowderMod.instance.languageEngine.languageForPlayer(player))
+    }
 }

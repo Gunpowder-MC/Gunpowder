@@ -25,6 +25,7 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.ImmutableList
+import com.mojang.serialization.DynamicOps
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
@@ -52,11 +53,16 @@ object DimensionManager : GunpowderDimensionManager {
             return server.registryManager[Registry.DIMENSION_TYPE_KEY] as SimpleRegistry<DimensionType>
         }
 
-    override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
-        return dimTypeRegistry.entriesByKey.containsKey(dimensionTypeId)
+    init {
+        // loadPersistDimensions()
     }
 
-    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
+    override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
+        return dimTypeRegistry.keyToEntry.containsKey(dimensionTypeId)
+    }
+
+    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean) {
+        // TODO: Persist
         if (hasDimensionType(dimensionTypeId)) {
             throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
         }
@@ -73,19 +79,21 @@ object DimensionManager : GunpowderDimensionManager {
             return
         }
 
-        val dtype = dimTypeRegistry.entriesById[dimensionTypeId.value]
-        dimTypeRegistry.entriesById.remove(dimensionTypeId.value)
-        dimTypeRegistry.entriesByKey.remove(dimensionTypeId)
-        dimTypeRegistry.field_26731.remove(dtype)
-        dimTypeRegistry.field_26682.remove(dtype)
-        dimTypeRegistry.field_26683.removeInt(dtype)
+        val dtype = dimTypeRegistry.idToEntry[dimensionTypeId.value]
+        dimTypeRegistry.idToEntry.remove(dimensionTypeId.value)
+        dimTypeRegistry.keyToEntry.remove(dimensionTypeId)
+        dimTypeRegistry.entryToLifecycle.remove(dtype)
+        dimTypeRegistry.rawIdToEntry.remove(dtype)
+        dimTypeRegistry.entryToRawId.removeInt(dtype)
     }
 
     override fun hasWorld(worldId: RegistryKey<World>): Boolean {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld {
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, persist: Boolean): ServerWorld {
+        // TODO: Persist
+
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
@@ -114,6 +122,10 @@ object DimensionManager : GunpowderDimensionManager {
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
+
+        if (persist) {
+            // chunkGenerator.getCodec().encode(chunkGenerator, DynamicOps)
+        }
 
         for (player in server.playerManager.playerList) {
             GunpowderMod.instance.logger.info("Marking needsSync for player $player")

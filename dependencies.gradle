@@ -13,9 +13,9 @@ ext {
             fabric_language_kotlin: "net.fabricmc:fabric-language-kotlin:$project.fabric_language_kotlin",
 
             // Database
-            exposed_core          : "org.jetbrains.exposed:exposed-core:$project.exposed_core",
-            exposed_jdbc          : "org.jetbrains.exposed:exposed-jdbc:$project.exposed_jdbc",
-            exposed_java_time     : "org.jetbrains.exposed:exposed-java-time:$project.exposed_java_time",
+            exposed_core          : "org.jetbrains.exposed:exposed-core:$project.exposed",
+            exposed_jdbc          : "org.jetbrains.exposed:exposed-jdbc:$project.exposed",
+            exposed_java_time     : "org.jetbrains.exposed:exposed-java-time:$project.exposed",
 
             // Database Drivers
             postgresql            : "org.postgresql:postgresql:$project.postgresql",
@@ -39,6 +39,7 @@ ext {
             checker_qual          : "org.checkerframework:checker-qual:$project.checker_qual",
 
             // Misc
-            modmenu               : "io.github.prospector:modmenu:$project.modmenu"
+            modmenu               : "io.github.prospector:modmenu:$project.modmenu",
+            slf4j                 : "org.slf4j:slf4j-api:${project.slf4j_version}"
     ]
 }
