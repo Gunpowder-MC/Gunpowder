@@ -230,7 +230,7 @@ remapShadowJar {
 }
 
 remapMavenJar {
-    enabled = false
+    enabled = true
 }
 
 
@@ -268,7 +268,7 @@ if (file('secrets.gradle').exists()) {
     // Curseforge upload
     curseforge {
 
-        apiKey = project.apiKey
+        apiKey = project.cfToken
         project {
             id = "350123"
             releaseType = "release"

@@ -57,11 +57,7 @@ object InfoCommand {
 
     private fun showInfo(commandContext: CommandContext<ServerCommandSource>): Int {
         val sidebar = welcomeFactory.invoke(commandContext.source.player)
-
-        thread(start = true) {
-            Thread.sleep(5000)
-            sidebar.remove()
-        }
+        sidebar.removeAfter(5)
 
         return 1
     }

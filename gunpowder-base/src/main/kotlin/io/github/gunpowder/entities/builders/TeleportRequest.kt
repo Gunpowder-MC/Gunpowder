@@ -54,7 +54,7 @@ class TeleportRequest private constructor(
         val now = LocalDateTime.now()
         val server = player.server
 
-        thread(start = true) {
+        thread(start = true, isDaemon = true) {
             val duration = Duration.between(LocalDateTime.now(), now.plus(time, unit)).toMillis()
             if (duration > 0) {
                 Thread.sleep(duration)

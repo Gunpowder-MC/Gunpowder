@@ -1,3 +1,24 @@
+## Gunpowder 0.3.5
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- (database) Database Thread is now a daemon thread.
+
+Other:
+
+- Updated to 1.16.5
+
+
+---
+
 ## Gunpowder 0.3.4
 
 Bugs fixed:
