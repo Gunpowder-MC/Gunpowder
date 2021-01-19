@@ -89,12 +89,12 @@ allprojects { project ->
     }
 
     task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
-        afterEvaluate {
-            input = file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}-dev.jar")
+        //afterEvaluate {
+            input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
             addNestedDependencies = false
             remapAccessWidener = true
-        }
+        //}
     }
 
     repositories {
@@ -230,7 +230,7 @@ remapShadowJar {
 }
 
 remapMavenJar {
-    enabled = true
+    enabled = false
 }
 
 
