@@ -34,7 +34,7 @@ class TranslatedText(val key: String, vararg val args: Any?) {
      */
     fun translate(languageCode: String): String {
         val langMap = GunpowderMod.instance.languageEngine.get(languageCode)
-        return langMap.getOrDefault(key, key).format(*args)
+        return langMap.getOrDefault(key, GunpowderMod.instance.languageEngine.get("en_us").getOrDefault(key, key)).format(*args)
     }
 
     /**
