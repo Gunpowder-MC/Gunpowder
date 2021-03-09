@@ -108,6 +108,10 @@ allprojects { project ->
             name = "Ladysnake Libs"
             url = "https://dl.bintray.com/ladysnake/libs"
         }
+        maven {
+            name = "HavenKing"
+            url = "https://hephaestus.dev/release"
+        }
     }
 
     dependencies {
@@ -158,6 +162,9 @@ allprojects { project ->
         // We use checker for annotations
         modImplementation libs.checker_qual
 
+        // Hermes
+        modImplementation libs.hermes
+
         // TODO: Permissions
     }
 
@@ -182,6 +189,8 @@ allprojects { project ->
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
+    compileKotlin.kotlinOptions.useIR = true
+
 }
 
 dependencies {
@@ -190,10 +199,9 @@ dependencies {
     }
 
     // Runtime Only Dependencies
-    modRuntime(libs.modmenu) {
-        transitive = false // Naughty mods who JIJ fabric api
-    }
     modRuntime libs.fabric_language_kotlin
+    modRuntime libs.fabric_api
+    modRuntime libs.hermes
 }
 
 subprojects {
@@ -277,6 +285,14 @@ if (file('secrets.gradle').exists()) {
             addGameVersion project.minecraft
             addGameVersion "Fabric"
             addGameVersion "Java 8"
+
+            relations {
+                requiredDependency("fabric-api")
+                requiredDependency("fabric-language-kotlin")
+                for (String module : project.gunpowder_modules.split(',')) {
+                    optionalDependency(module.replace(" ", ""))
+                }
+            }
 
             mainArtifact file("${project.buildDir}/libs/gunpowder-base-${project.version}.jar")
 

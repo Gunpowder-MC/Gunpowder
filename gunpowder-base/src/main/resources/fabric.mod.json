@@ -26,5 +26,8 @@
   },
   "conflicts": {
     "gunpowder-api": "*"
+  },
+  "custom": {
+    "hermes": true
   }
 }

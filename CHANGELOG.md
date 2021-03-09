@@ -1,3 +1,24 @@
+## Gunpowder 0.3.6
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- None
+
+Improvements:
+
+- TranslatedText defaults to en_us rather than the key.
+
+Other:
+
+- Gunpowder now states dependencies on CF automatically.
+- Add [Hermes](https://github.com/Haven-King/hermes) support.
+
+---
+
 ## Gunpowder 0.3.5
 
 Bugs fixed:

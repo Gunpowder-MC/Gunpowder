@@ -39,7 +39,7 @@ ext {
             checker_qual          : "org.checkerframework:checker-qual:$project.checker_qual",
 
             // Misc
-            modmenu               : "io.github.prospector:modmenu:$project.modmenu",
-            slf4j                 : "org.slf4j:slf4j-api:${project.slf4j_version}"
+            slf4j                 : "org.slf4j:slf4j-api:${project.slf4j_version}",
+            hermes                : "dev.inkwell:hermes:${project.hermes_version}"
     ]
 }
