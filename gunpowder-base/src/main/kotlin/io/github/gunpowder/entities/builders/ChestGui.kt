@@ -37,7 +37,7 @@ import io.github.gunpowder.api.builders.ChestGui as APIChestGui
 object ChestGui : APIChestGui {
 
     class Builder : APIChestGui.Builder {
-        internal data class ChestGuiButton(val icon: ItemStack, val callback: (SlotActionType) -> Unit)
+        internal data class ChestGuiButton(val icon: ItemStack, val callback: (SlotActionType, APIChestGui.Container) -> Unit)
 
         private val buttons = mutableMapOf<Int, ChestGuiButton>()
         private var icon: ItemStack = ItemStack.EMPTY
@@ -50,7 +50,7 @@ object ChestGui : APIChestGui {
             this.player = player
         }
 
-        override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit) {
+        override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, APIChestGui.Container) -> Unit) {
             if (x < 0 || x > 8) {
                 throw AssertionError("X not between 0 and 8")
             }
@@ -88,7 +88,7 @@ object ChestGui : APIChestGui {
                 6 -> ScreenHandlerType.GENERIC_9X6
                 else -> null
             }
-            return ChestGuiContainer(type!!, syncId, player!!.inventory).apply {
+            return ChestGuiContainer(type!!, syncId, player!!.inventory, size).apply {
                 setBackground(icon)
                 setButtons(buttons)
                 setInterval(refreshInterval, callback)

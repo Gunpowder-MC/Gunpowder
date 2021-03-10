@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 interface ChestGui {
@@ -65,8 +66,8 @@ interface ChestGui {
          * @param icon the ItemStack to display
          * @param clickCallback the callback to execute when clicked
          */
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: Consumer<SlotActionType>) = button(x, y, icon, clickCallback::accept)
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit)
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: BiConsumer<SlotActionType, Container>) = button(x, y, icon, clickCallback::accept)
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, Container) -> Unit)
 
         /**
          * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
@@ -91,8 +92,8 @@ interface ChestGui {
 
     interface Container {
         fun clearButtons()
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: Consumer<SlotActionType>) = button(x, y, icon, clickCallback::accept)
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit)
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: BiConsumer<SlotActionType, Container>) = button(x, y, icon, clickCallback::accept)
+        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, Container) -> Unit)
         fun emptyIcon(icon: ItemStack)
     }
 }

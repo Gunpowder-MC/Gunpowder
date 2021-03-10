@@ -40,7 +40,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 
 class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
-                        syncId: Int, playerInventory: PlayerInventory) : GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(54), 6), APIChestGui.Container {
+                        syncId: Int, playerInventory: PlayerInventory, rows: Int) :
+        GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(9 * rows), rows), APIChestGui.Container {
     private var buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
     private var interval = 0
@@ -92,7 +93,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {
         if (buttons.containsKey(slotId)) {
             val button = buttons[slotId]!!
-            button.callback.invoke(actionType)
+            button.callback.invoke(actionType, this)
         }
 
         // Avoid desyncs
@@ -107,7 +108,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
         buttons.clear()
     }
 
-    override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType) -> Unit) {
+    override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, APIChestGui.Container) -> Unit) {
         if (x < 0 || x > 8) {
             throw AssertionError("X not between 0 and 8")
         }
