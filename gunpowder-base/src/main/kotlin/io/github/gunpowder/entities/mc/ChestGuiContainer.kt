@@ -83,12 +83,14 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     fun update() {
         if (interval <= 0) return
         if (counter++ >= interval) {
+            println("Syncing from update()")
             sendContentUpdates()
             counter = 0
         }
     }
 
     override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {
+        println("Clicked slot $slotId")
         if (buttons.containsKey(slotId)) {
             val button = buttons[slotId]!!
             button.callback.invoke(actionType)

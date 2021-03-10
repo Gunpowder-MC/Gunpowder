@@ -34,33 +34,19 @@ import java.util.function.Consumer
 interface ChestGui {
     companion object {
         /**
-         * Creates a ChestGui
-         *
-         * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ChestGui.Builder}
-         * @return A ScreenHandler that can be sent to the client
-         */
-        @JvmStatic
-        fun builder(callback: Consumer<Builder>) = builder(callback::accept)
-        fun builder(callback: Builder.() -> Unit): ScreenHandler {
-            val builder = GunpowderMod.instance.registry.getBuilder(Builder::class.java)
-            callback(builder)
-            return builder.build()
-        }
-
-        /**
          * Creates a ChestGui Factory
          *
          * @param callback Block in scope of a {@link io.github.gunpowder.gunpowder.api.builders.ChestGui.Builder}
-         * @return a (ServerPlayerEntity) -> ScreenHandler lambda
+         * @return (syncId: Int, player: ServerPlayerEntity) -> ScreenHandler
          */
         @JvmStatic
         fun factory(callback: Consumer<Builder>) = factory(callback::accept)
-        fun factory(callback: Builder.() -> Unit): (ServerPlayerEntity) -> ScreenHandler {
+        fun factory(callback: Builder.() -> Unit): (Int, ServerPlayerEntity) -> ScreenHandler {
             val builder = GunpowderMod.instance.registry.getBuilder(Builder::class.java)
             callback(builder)
-            return {
+            return { i, it ->
                 builder.player(it)
-                builder.build()
+                builder.build(i)
             }
         }
     }
@@ -100,7 +86,7 @@ interface ChestGui {
         fun size(rows: Int)
 
         @Deprecated("Used internally, do not use.")
-        fun build(): ScreenHandler
+        fun build(syncId: Int): ScreenHandler
     }
 
     interface Container {

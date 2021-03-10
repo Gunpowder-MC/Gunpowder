@@ -42,13 +42,11 @@ object ChestGui : APIChestGui {
         private val buttons = mutableMapOf<Int, ChestGuiButton>()
         private var icon: ItemStack = ItemStack.EMPTY
         private var player: PlayerEntity? = null
-        private var syncId: Int = 0
         private var refreshInterval: Int = 0
         private var size: Int = 6
         private var callback = { c: APIChestGui.Container ->}
 
         override fun player(player: ServerPlayerEntity) {
-            this.syncId = ContainerUtil.getSyncId(player)
             this.player = player
         }
 
@@ -80,7 +78,7 @@ object ChestGui : APIChestGui {
             this.size = rows
         }
 
-        override fun build(): ScreenHandler {
+        override fun build(syncId: Int): ScreenHandler {
             val type = when (size) {
                 1 -> ScreenHandlerType.GENERIC_9X1
                 2 -> ScreenHandlerType.GENERIC_9X2

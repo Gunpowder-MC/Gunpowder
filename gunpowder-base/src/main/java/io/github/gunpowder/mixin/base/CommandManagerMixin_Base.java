@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-package io.github.nyliummc.essentials.entities.mc
+package io.github.gunpowder.mixin.base;
 
-import com.mojang.serialization.Lifecycle
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.util.registry.SimpleRegistry
+import net.minecraft.server.command.CommandManager;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-class WrapperRegistry<T>(registryKey: RegistryKey<Registry<T>>, lifecycle: Lifecycle, val wrapped: SimpleRegistry<T>, val default: T) : SimpleRegistry<T>(registryKey, lifecycle) {
-    override fun get(id: Identifier?): T? {
-        return wrapped.get(id) ?: default
+@Mixin(value = CommandManager.class, remap = false)
+public class CommandManagerMixin_Base {
+    @Redirect(at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z"), method = "execute")
+    private boolean isDebugEnabled(Logger logger) {
+        return true;
     }
 }
