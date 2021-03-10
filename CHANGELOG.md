@@ -1,3 +1,24 @@
+## Gunpowder 0.3.7
+
+Bugs fixed:
+
+- (ChestGUI) Fixed refreshInterval not working
+- (ChestGUI) Fixed refreshInterval being set to 21 ticks rather than 20
+
+New Features:
+
+- None
+
+Improvements:
+
+- (ChestGUI) ChestGUI button callbacks now receive the Container as argument
+
+Other:
+
+- (misc) Made errors in commands log the full error 
+
+---
+
 ## Gunpowder 0.3.6
 
 Bugs fixed:
