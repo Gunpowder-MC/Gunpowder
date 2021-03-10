@@ -70,9 +70,4 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
             }
         }
     }
-
-    @Inject(method="onClickSlot", at=@At("HEAD"))
-    void debug(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        System.out.println(packet.getSyncId());
-    }
 }

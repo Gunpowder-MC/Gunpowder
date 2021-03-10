@@ -67,7 +67,7 @@ object GunpowderEvents {
         })
 
         ServerTickEvents.START_WORLD_TICK.register(ServerTickEvents.StartWorldTick {
-            if (counter++ == 20) {
+            if (counter++ == 19) {
                 counter = 0
                 guis.forEach(ChestGuiContainer::update)
             }
