@@ -30,6 +30,7 @@ import io.github.gunpowder.mixin.cast.SyncPlayer;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
@@ -68,5 +69,10 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
                 ((SyncPlayer) player).setNeedsSync(false);
             }
         }
+    }
+
+    @Inject(method="onClickSlot", at=@At("HEAD"))
+    void debug(ClickSlotC2SPacket packet, CallbackInfo ci) {
+        System.out.println(packet.getSyncId());
     }
 }

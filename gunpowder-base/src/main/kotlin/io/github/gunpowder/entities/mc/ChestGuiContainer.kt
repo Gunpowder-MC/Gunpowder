@@ -83,14 +83,13 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     fun update() {
         if (interval <= 0) return
         if (counter++ >= interval) {
-            println("Syncing from update()")
+            callback.invoke(this)
             sendContentUpdates()
             counter = 0
         }
     }
 
     override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {
-        println("Clicked slot $slotId")
         if (buttons.containsKey(slotId)) {
             val button = buttons[slotId]!!
             button.callback.invoke(actionType)
@@ -118,6 +117,11 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
         }
 
         buttons[x + y * 9] = ChestGui.Builder.ChestGuiButton(icon, clickCallback)
+    }
+
+    override fun sendContentUpdates() {
+        this.createInventory()
+        super.sendContentUpdates()
     }
 
     override fun emptyIcon(icon: ItemStack) {
