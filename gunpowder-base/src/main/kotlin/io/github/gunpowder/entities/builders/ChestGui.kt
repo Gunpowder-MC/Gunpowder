@@ -78,6 +78,10 @@ object ChestGui : APIChestGui {
             this.size = rows
         }
 
+        override fun clearButtons() {
+            buttons.clear()
+        }
+
         override fun build(syncId: Int): ScreenHandler {
             val type = when (size) {
                 1 -> ScreenHandlerType.GENERIC_9X1
@@ -95,6 +99,5 @@ object ChestGui : APIChestGui {
                 createInventory()
             }
         }
-
     }
 }
