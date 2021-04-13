@@ -75,6 +75,9 @@ interface ChestGui {
     }
 
     interface Container {
+        /**
+         * Remove all buttons from this gui.
+         */
         fun clearButtons()
 
         /**
@@ -87,6 +90,7 @@ interface ChestGui {
          */
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: BiConsumer<SlotActionType, Container>) = button(x, y, icon, clickCallback::accept)
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, Container) -> Unit)
+
         /**
          * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
          */
