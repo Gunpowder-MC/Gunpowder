@@ -52,27 +52,11 @@ interface ChestGui {
         }
     }
 
-    interface Builder {
+    interface Builder: Container {
         /**
          * Set the player to sync the GUI with.
          */
         fun player(player: ServerPlayerEntity)
-
-        /**
-         * Add an item as button.
-         *
-         * @param x the column in the chest
-         * @param y the row in the chest
-         * @param icon the ItemStack to display
-         * @param clickCallback the callback to execute when clicked
-         */
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: BiConsumer<SlotActionType, Container>) = button(x, y, icon, clickCallback::accept)
-        fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, Container) -> Unit)
-
-        /**
-         * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
-         */
-        fun emptyIcon(icon: ItemStack)
 
         /**
          * Time in seconds between sending contents. 0 to disable
@@ -91,9 +75,25 @@ interface ChestGui {
     }
 
     interface Container {
+        /**
+         * Remove all buttons from this gui.
+         */
         fun clearButtons()
+
+        /**
+         * Add an item as button.
+         *
+         * @param x the column in the chest
+         * @param y the row in the chest
+         * @param icon the ItemStack to display
+         * @param clickCallback the callback to execute when clicked
+         */
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: BiConsumer<SlotActionType, Container>) = button(x, y, icon, clickCallback::accept)
         fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, Container) -> Unit)
+
+        /**
+         * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
+         */
         fun emptyIcon(icon: ItemStack)
     }
 }
