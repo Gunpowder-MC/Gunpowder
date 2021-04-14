@@ -61,8 +61,7 @@ object DimensionManager : GunpowderDimensionManager {
         return dimTypeRegistry.keyToEntry.containsKey(dimensionTypeId)
     }
 
-    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean) {
-        // TODO: Persist
+    override fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType) {
         if (hasDimensionType(dimensionTypeId)) {
             throw IllegalArgumentException("DimensionType ${dimensionTypeId.value} already registered!")
         }
@@ -91,9 +90,7 @@ object DimensionManager : GunpowderDimensionManager {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, persist: Boolean): ServerWorld {
-        // TODO: Persist
-
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld {
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
@@ -122,10 +119,6 @@ object DimensionManager : GunpowderDimensionManager {
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
-
-        if (persist) {
-            // chunkGenerator.getCodec().encode(chunkGenerator, DynamicOps)
-        }
 
         for (player in server.playerManager.playerList) {
             GunpowderMod.instance.logger.info("Marking needsSync for player $player")

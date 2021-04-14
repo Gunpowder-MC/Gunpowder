@@ -33,10 +33,19 @@ import net.minecraft.world.level.ServerWorldProperties
 
 interface GunpowderDimensionManager {
     fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean
-    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType, persist: Boolean)
+
+    /**
+     * Note: Dimension Types do not persist naturally. While their dimensions are saved, they must be re-created
+     *  by your mod to ensure the dimension loads correctly.
+     */
+    fun addDimensionType(dimensionTypeId: RegistryKey<DimensionType>, dimensionType: DimensionType)
     fun removeDimensionType(dimensionTypeId: RegistryKey<DimensionType>)
 
     fun hasWorld(worldId: RegistryKey<World>): Boolean
-    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, persist: Boolean): ServerWorld
+    /**
+     * Note: Worlds do not persist naturally. While their world data is saved, they must be re-created
+     *  by your mod to ensure the world loads correctly, otherwise users will be moved to the overworld on load.
+     */
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld
     fun removeWorld(worldId: RegistryKey<World>)
 }
