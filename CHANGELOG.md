@@ -1,3 +1,12 @@
+## Gunpowder 0.4.0
+
+Improvements:
+- (ChestGUI) ChestGUI is now easier to use
+- (Dimension) The `persist` option is now removed, mods should handle re-registering dimensions themselves
+
+
+---
+
 ## Gunpowder 0.3.7
 
 Bugs fixed:
