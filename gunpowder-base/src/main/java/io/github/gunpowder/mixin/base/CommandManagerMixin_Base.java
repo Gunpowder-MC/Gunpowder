@@ -32,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CommandManager.class)
 public class CommandManagerMixin_Base {
-    @Redirect(at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z"), method = "execute", remap = false)
+    @Redirect(at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;isDebugEnabled()Z", remap = false), method = "execute")
     private boolean isDebugEnabled(Logger logger) {
         return true;
     }
