@@ -1,3 +1,14 @@
+## Gunpowder 0.4.2
+
+New Features:
+- (Module) Modules can now specify a priority for loading.
+
+Other:
+- (Util) Added a mixin that prints netty disconnect stacktraces.
+
+
+---
+
 ## Gunpowder 0.4.0
 
 Improvements:

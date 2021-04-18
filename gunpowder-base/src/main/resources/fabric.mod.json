@@ -24,8 +24,9 @@
     "fabric": "*",
     "fabric-language-kotlin": ">=1.3.50"
   },
-  "conflicts": {
-    "gunpowder-api": "*"
+  "breaks": {
+    "gunpowder-api": "*",
+    "quilt_loader": "*"
   },
   "custom": {
     "hermes": true

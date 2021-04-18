@@ -22,34 +22,19 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api
+package io.github.gunpowder.mixin.base;
 
-/**
- * Interface a registered module should implement.
- */
-interface GunpowderModule {
-    val name: String
-    val toggleable: Boolean
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.network.ClientConnection;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-    /**
-     * Lower priority value means loaded earlier
-     */
-    val priority: Int
-        get() = 1000
-
-    fun registerCommands() {}
-    fun registerEvents() {}
-    fun registerConfigs() {}
-
-    /**
-     * Called on datapack reload (aka /reload)
-     *
-     * Use this to e.g. clear DB caches, update lang files, etc
-     */
-    fun reload() {}
-
-    /**
-     * Register Database-related stuff here for now
-     */
-    fun onInitialize() {}
+@Mixin(ClientConnection.class)
+public class ClientConnectionMixin_Base {
+    @Inject(method="exceptionCaught", at=@At("HEAD"))
+    void logException(ChannelHandlerContext channelHandlerContext, Throwable throwable, CallbackInfo ci) {
+        throwable.printStackTrace();
+    }
 }

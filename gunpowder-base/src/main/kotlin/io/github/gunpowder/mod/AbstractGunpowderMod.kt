@@ -63,7 +63,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         LanguageHandler.get("en_us")
         logger.info("Loading modules")
 
-        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java)
+        val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java).sortedBy { it.entrypoint.priority }
 
         // Register events before registering commands
         // in case of a RegisterCommandEvent or something
