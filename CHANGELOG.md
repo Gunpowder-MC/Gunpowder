@@ -1,4 +1,4 @@
-## Gunpowder 0.4.2
+## Gunpowder 0.4.3
 
 Bugs fixed:
 - Default implementation for priority was not working correctly
