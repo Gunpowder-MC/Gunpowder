@@ -34,6 +34,7 @@ interface GunpowderModule {
     /**
      * Lower priority value means loaded earlier
      */
+    @JvmDefault
     val priority: Int
         get() = 1000
 

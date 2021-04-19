@@ -190,6 +190,7 @@ allprojects { project ->
     targetCompatibility = JavaVersion.VERSION_1_8
     compileKotlin.kotlinOptions.jvmTarget = "1.8"
     compileKotlin.kotlinOptions.useIR = true
+    compileKotlin.kotlinOptions.freeCompilerArgs = ['-Xjvm-default=compatibility']
 
 }
 

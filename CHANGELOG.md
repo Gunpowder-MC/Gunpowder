@@ -1,5 +1,12 @@
 ## Gunpowder 0.4.2
 
+Bugs fixed:
+- Default implementation for priority was not working correctly
+
+---
+
+## Gunpowder 0.4.2
+
 New Features:
 - (Module) Modules can now specify a priority for loading.
 
