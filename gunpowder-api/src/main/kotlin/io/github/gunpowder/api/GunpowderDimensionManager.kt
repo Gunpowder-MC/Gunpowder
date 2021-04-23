@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.api
 
+import com.google.common.collect.BiMap
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
@@ -48,4 +49,11 @@ interface GunpowderDimensionManager {
      */
     fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld
     fun removeWorld(worldId: RegistryKey<World>)
+
+    /**
+     * Link two worlds by nether portal. This lasts until server shutdown.
+     * Linking the vanilla dimensions will not work, and no world can be linked twice.
+     */
+    fun linkNether(overworld: RegistryKey<World>, nether: RegistryKey<World>)
+    fun getLinkedWorlds(): BiMap<RegistryKey<World>, RegistryKey<World>>
 }

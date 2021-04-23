@@ -4,8 +4,10 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.gunpowder.mixin.plugin.BaseModulePlugin",
   "mixins": [
+    "AbstractFireBlockMixin_Base",
     "ClientConnectionMixin_Base",
     "CommandManagerMixin_Base",
+    "EntityMixin_Base",
     "LivingEntityMixin_Base",
     "MinecraftServerMixin_Base",
     "ServerPlayerEntityMixin_Base",

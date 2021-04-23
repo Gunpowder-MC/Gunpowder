@@ -24,8 +24,7 @@
 
 package io.github.gunpowder.entities
 
-import com.google.common.collect.ImmutableList
-import com.mojang.serialization.DynamicOps
+import com.google.common.collect.*
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
@@ -53,8 +52,11 @@ object DimensionManager : GunpowderDimensionManager {
             return server.registryManager[Registry.DIMENSION_TYPE_KEY] as SimpleRegistry<DimensionType>
         }
 
+    val netherMap = HashBiMap.create<RegistryKey<World>, RegistryKey<World>>()
+    private val linkedWorldSet = mutableSetOf<RegistryKey<World>>(World.OVERWORLD, World.NETHER, World.END)
+
     init {
-        // loadPersistDimensions()
+        netherMap[World.OVERWORLD] = World.NETHER
     }
 
     override fun hasDimensionType(dimensionTypeId: RegistryKey<DimensionType>): Boolean {
@@ -162,5 +164,17 @@ object DimensionManager : GunpowderDimensionManager {
                 }
             }
         }
+    }
+
+    override fun linkNether(overworld: RegistryKey<World>, nether: RegistryKey<World>) {
+        if (overworld in linkedWorldSet || nether in linkedWorldSet) {
+            throw IllegalArgumentException("World already linked!")
+        }
+        linkedWorldSet.addAll(listOf(overworld, nether))
+        netherMap[overworld] = nether
+    }
+
+    override fun getLinkedWorlds(): BiMap<RegistryKey<World>, RegistryKey<World>> {
+        return ImmutableBiMap.copyOf(netherMap)
     }
 }

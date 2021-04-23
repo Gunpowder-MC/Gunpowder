@@ -1,3 +1,24 @@
+## Gunpowder 0.4.4
+
+
+Bugs fixed:
+
+- None
+
+New Features:
+
+- Added the ability to link two dimensions through nether portals.
+
+Improvements:
+
+- No longer using the deprecated gameDirectory field.
+
+Other:
+
+- None
+
+---
+
 ## Gunpowder 0.4.3
 
 Bugs fixed:

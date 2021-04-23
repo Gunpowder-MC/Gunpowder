@@ -34,6 +34,7 @@ import java.sql.Connection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
+import kotlin.io.path.pathString
 import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
@@ -86,7 +87,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
 
         when (mode) {
             "sqlite" -> {
-                val path = FabricLoader.getInstance().gameDirectory.canonicalPath
+                val path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",
