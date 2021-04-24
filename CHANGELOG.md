@@ -1,3 +1,11 @@
+## Gunpowder 0.4.3
+
+Bugs fixed:
+- Time is no longer static in custom worlds
+- ServerWorldProperties are passed directly to the constructor of the world now
+
+---
+
 ## Gunpowder 0.4.4
 
 
