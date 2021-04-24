@@ -28,7 +28,8 @@
     "gunpowder-api": "*"
   },
   "conflicts": {
-    "carpet": "*"
+    "carpet": "*",
+    "immersive-portals": "*"
   },
   "custom": {
     "hermes": true
