@@ -64,9 +64,6 @@ object GunpowderDatabase : APIGunpowderDatabase {
     private val config by lazy { GunpowderMod.instance.registry.getConfig(GunpowderConfig::class.java) }
     override lateinit var db: Database
 
-    // Not configurable
-    private val databaseName = "gunpowder"
-
     fun disconnect() {
         running = false
         databaseThread.join()
@@ -80,6 +77,8 @@ object GunpowderDatabase : APIGunpowderDatabase {
     fun loadDatabase() {
         val dbc = config.database
         var mode = dbc.mode
+
+        val databaseName = config.database.database
 
         if (GunpowderMod.instance.isClient) {
             mode = "sqlite"
