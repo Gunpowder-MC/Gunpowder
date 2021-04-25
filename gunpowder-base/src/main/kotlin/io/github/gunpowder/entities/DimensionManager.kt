@@ -116,7 +116,8 @@ object DimensionManager : GunpowderDimensionManager {
         val world = ServerWorld(server, server.workerExecutor, server.session,
                 properties, worldId, dimensionType,
                 worldGenerationProgressListener, chunkGenerator,
-                false, seed, ImmutableList.of(), dimTypeRegistry.get(dimensionTypeId)?.hasFixedTime() ?: false)
+                false, seed, ImmutableList.of(), !dimTypeRegistry.get(dimensionTypeId)!!.hasFixedTime())
+        world.savingDisabled = false
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
