@@ -1,4 +1,16 @@
-## Gunpowder 0.4.3
+## Gunpowder 0.5.0
+
+Bugs fixed:
+- Time static boolean was inverted.
+- XP is no longer empty on dimension teleport.
+
+New Features:
+- Specify database in gunpowder.yaml
+  - THIS IS A BREAKING CHANGE! OLD CONFIGS WILL NOT LOAD!
+
+---
+
+## Gunpowder 0.4.5
 
 Bugs fixed:
 - Time is no longer static in custom worlds
