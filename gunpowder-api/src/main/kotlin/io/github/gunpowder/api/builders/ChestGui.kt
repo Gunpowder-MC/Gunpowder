@@ -70,6 +70,9 @@ interface ChestGui {
          */
         fun size(rows: Int)
 
+        @Deprecated("Not supported for builder.", ReplaceWith(""))
+        override fun close() = throw UnsupportedOperationException("Cannot close unbuilt ChestGUI")
+
         @Deprecated("Used internally, do not use.")
         fun build(syncId: Int): ScreenHandler
     }
@@ -95,5 +98,10 @@ interface ChestGui {
          * The default itemstack for unspecified buttons. ItemStack.EMPTY by default.
          */
         fun emptyIcon(icon: ItemStack)
+
+        /**
+         * Close the gui.
+         */
+        fun close()
     }
 }
