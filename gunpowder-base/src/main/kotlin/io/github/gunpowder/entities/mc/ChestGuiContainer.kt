@@ -42,7 +42,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
                         syncId: Int, playerInventory: PlayerInventory, rows: Int) :
         GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(9 * rows), rows), APIChestGui.Container {
-    private val player: PlayerEntity = playerInventory.player
+    private val player: ServerPlayerEntity = playerInventory.player as ServerPlayerEntity
 
     private var buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
@@ -133,6 +133,8 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     override fun emptyIcon(icon: ItemStack) {
         setBackground(icon)
     }
+
+    override fun getPlayer(): ServerPlayerEntity? = player
 
     override fun close() {
         syncInventory(player)

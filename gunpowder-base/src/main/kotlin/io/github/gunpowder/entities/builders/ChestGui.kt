@@ -41,7 +41,7 @@ object ChestGui : APIChestGui {
 
         private val buttons = mutableMapOf<Int, ChestGuiButton>()
         private var icon: ItemStack = ItemStack.EMPTY
-        private var player: PlayerEntity? = null
+        private var player: ServerPlayerEntity? = null
         private var refreshInterval: Int = 0
         private var size: Int = 6
         private var callback = { c: APIChestGui.Container ->}
@@ -49,6 +49,8 @@ object ChestGui : APIChestGui {
         override fun player(player: ServerPlayerEntity) {
             this.player = player
         }
+
+        override fun getPlayer(): ServerPlayerEntity? = this.player
 
         override fun button(x: Int, y: Int, icon: ItemStack, clickCallback: (SlotActionType, APIChestGui.Container) -> Unit) {
             if (x < 0 || x > 8) {

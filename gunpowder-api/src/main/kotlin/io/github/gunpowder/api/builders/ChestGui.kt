@@ -100,6 +100,11 @@ interface ChestGui {
         fun emptyIcon(icon: ItemStack)
 
         /**
+         * Get the player viewing this gui, or else null.
+         */
+        fun getPlayer(): ServerPlayerEntity?
+
+        /**
          * Close the gui.
          */
         fun close()
