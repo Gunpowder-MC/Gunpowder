@@ -42,7 +42,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
     @Volatile
     private var running = true
     private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
-    private val databaseThread = thread(start = true, name = "Gunpowder Database Thread", isDaemon = true) {
+    private val databaseThread = thread(start = false, name = "Gunpowder Database Thread", isDaemon = true) {
         while (running) {
             try {
                 val pair = queue.poll()
@@ -114,6 +114,8 @@ object GunpowderDatabase : APIGunpowderDatabase {
                 throw AssertionError("Invalid db type")
             }
         }
+
+        databaseThread.start()
     }
 
     override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {

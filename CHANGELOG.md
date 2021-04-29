@@ -1,5 +1,12 @@
 ## Gunpowder 0.5.1
 
+Changes:
+- Start processing database actions after database connection is established.
+
+---
+
+## Gunpowder 0.5.1
+
 Bugs fixed:
 
 - Runtime dimensions now use the seed from the ChunkGenerator rather than the server seed.
