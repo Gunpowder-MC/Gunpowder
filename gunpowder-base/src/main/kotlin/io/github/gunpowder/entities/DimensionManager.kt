@@ -38,6 +38,7 @@ import net.minecraft.world.World
 import net.minecraft.world.border.WorldBorder
 import net.minecraft.world.border.WorldBorderListener
 import net.minecraft.world.dimension.DimensionType
+import net.minecraft.world.gen.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.ServerWorldProperties
 import net.minecraft.world.level.UnmodifiableLevelProperties
@@ -92,17 +93,16 @@ object DimensionManager : GunpowderDimensionManager {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties): ServerWorld {
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, spawners: List<Spawner>): ServerWorld {
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
 
-        val generatorOptions = server.saveProperties.generatorOptions
         val dimensionType = dimTypeRegistry.get(dimensionTypeId)!!
 
         val overworld = server.worlds[World.OVERWORLD]!!
         val worldGenerationProgressListener = overworld.chunkManager.threadedAnvilChunkStorage.worldGenerationProgressListener
-        val seed = generatorOptions.seed
+        val seed = chunkGenerator.worldSeed
         val worldBorder = object : WorldBorder() {
             override fun getCenterX(): Double {
                 return super.getCenterX() / dimensionType.coordinateScale
@@ -116,7 +116,7 @@ object DimensionManager : GunpowderDimensionManager {
         val world = ServerWorld(server, server.workerExecutor, server.session,
                 properties, worldId, dimensionType,
                 worldGenerationProgressListener, chunkGenerator,
-                false, seed, ImmutableList.of(), !dimTypeRegistry.get(dimensionTypeId)!!.hasFixedTime())
+                false, seed, spawners, !dimTypeRegistry.get(dimensionTypeId)!!.hasFixedTime())
         world.savingDisabled = false
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 

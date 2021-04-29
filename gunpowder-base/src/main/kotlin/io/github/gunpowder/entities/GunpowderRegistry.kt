@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mojang.brigadier.CommandDispatcher
 import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.api.exposed.PlayerTable
 import io.github.gunpowder.commands.InfoCommand
 import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.builders.*
@@ -72,6 +73,8 @@ object GunpowderRegistry : APIGunpowderRegistry {
         builders[APISignType.Builder::class.java] = Supplier { SignType.Builder() }
 
         registerCommand(InfoCommand::register)
+
+        registerTable(PlayerTable)
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
@@ -84,7 +87,7 @@ object GunpowderRegistry : APIGunpowderRegistry {
     }
 
     override fun registerTable(tab: Table) {
-        transaction(GunpowderMod.instance.database.db) {
+        GunpowderMod.instance.database.transaction {
             SchemaUtils.createMissingTablesAndColumns(tab)
         }
     }

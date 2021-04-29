@@ -10,6 +10,7 @@
     "EntityMixin_Base",
     "LivingEntityMixin_Base",
     "MinecraftServerMixin_Base",
+    "PlayerManagerMixin_Base",
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
     "ServerPlayNetworkHandlerMixin_Base",

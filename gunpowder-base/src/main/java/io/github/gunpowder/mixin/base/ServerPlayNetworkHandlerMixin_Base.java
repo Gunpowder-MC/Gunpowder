@@ -26,6 +26,8 @@ package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.entities.DimensionManager;
+import io.github.gunpowder.entities.GunpowderDatabase;
+import io.github.gunpowder.entities.builtin.PlayerHandler;
 import io.github.gunpowder.mixin.cast.SyncPlayer;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -36,6 +38,7 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.biome.source.BiomeAccess;
 import org.spongepowered.asm.mixin.Mixin;
@@ -69,5 +72,10 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
                 ((SyncPlayer) player).setNeedsSync(false);
             }
         }
+    }
+
+    @Inject(method = "onDisconnected", at=@At("HEAD"))
+    void setLastSeen(Text reason, CallbackInfo ci) {
+        PlayerHandler.INSTANCE.lastSeenPlayer(player);
     }
 }

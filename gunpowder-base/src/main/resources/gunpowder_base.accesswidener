@@ -1,19 +1,20 @@
 accessWidener v1 named
-accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage worldGenerationProgressListener Lnet/minecraft/server/WorldGenerationProgressListener;
-accessible field net/minecraft/server/MinecraftServer workerExecutor Ljava/util/concurrent/Executor;
-accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/world/level/storage/LevelStorage$Session;
+accessible class net/minecraft/server/command/TeleportCommand$LookTarget
+accessible field net/minecraft/network/packet/c2s/play/ClientSettingsC2SPacket language Ljava/lang/String;
 accessible field net/minecraft/server/MinecraftServer dimensionTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
-accessible field net/minecraft/server/PlayerManager registryTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
+accessible field net/minecraft/server/MinecraftServer registryManager Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;
+accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/world/level/storage/LevelStorage$Session;
+accessible field net/minecraft/server/MinecraftServer workerExecutor Ljava/util/concurrent/Executor;
 accessible field net/minecraft/server/MinecraftServer worlds Ljava/util/Map;
+accessible field net/minecraft/server/PlayerManager registryTracker Lnet/minecraft/util/registry/RegistryTracker$Modifiable;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage worldGenerationProgressListener Lnet/minecraft/server/WorldGenerationProgressListener;
+accessible field net/minecraft/util/registry/DynamicRegistryManager INFOS Ljava/util/Map;
+accessible field net/minecraft/util/registry/DynamicRegistryManager$Impl registries Ljava/util/Map;
+accessible field net/minecraft/util/registry/DynamicRegistryManager$Info registry Lnet/minecraft/util/registry/RegistryKey;
+accessible field net/minecraft/util/registry/SimpleRegistry entryToLifecycle Ljava/util/Map;
+accessible field net/minecraft/util/registry/SimpleRegistry entryToRawId Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible field net/minecraft/util/registry/SimpleRegistry idToEntry Lcom/google/common/collect/BiMap;
 accessible field net/minecraft/util/registry/SimpleRegistry keyToEntry Lcom/google/common/collect/BiMap;
-accessible field net/minecraft/util/registry/SimpleRegistry entryToLifecycle Ljava/util/Map;
 accessible field net/minecraft/util/registry/SimpleRegistry rawIdToEntry Lit/unimi/dsi/fastutil/objects/ObjectList;
-accessible field net/minecraft/util/registry/SimpleRegistry entryToRawId Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-accessible field net/minecraft/util/registry/DynamicRegistryManager INFOS Ljava/util/Map;
-accessible field net/minecraft/server/MinecraftServer registryManager Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;
-accessible field net/minecraft/util/registry/DynamicRegistryManager$Info registry Lnet/minecraft/util/registry/RegistryKey;
-accessible field net/minecraft/util/registry/DynamicRegistryManager$Impl registries Ljava/util/Map;
-accessible field net/minecraft/network/packet/c2s/play/ClientSettingsC2SPacket language Ljava/lang/String;
+accessible field net/minecraft/world/gen/chunk/ChunkGenerator worldSeed J
 accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZDZZZZZILnet/minecraft/world/biome/source/BiomeAccessType;Lnet/minecraft/util/Identifier;Lnet/minecraft/util/Identifier;F)V
-accessible class net/minecraft/server/command/TeleportCommand$LookTarget

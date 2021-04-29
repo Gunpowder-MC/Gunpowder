@@ -30,6 +30,7 @@ import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
 import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.entities.*
+import io.github.gunpowder.entities.builtin.PlayerHandler
 import io.github.gunpowder.injection.AbstractModule
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.tag.BlockTags
@@ -70,6 +71,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         GunpowderRegistry.registerBuiltin()
         GunpowderDatabase.loadDatabase()
         GunpowderEvents.init()
+        PlayerHandler.init()
         LanguageHandler.get("en_us")
         logger.info("Loading modules")
 

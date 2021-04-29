@@ -1,3 +1,25 @@
+## Gunpowder 0.5.1
+
+Bugs fixed:
+
+- Runtime dimensions now use the seed from the ChunkGenerator rather than the server seed.
+
+New Features:
+
+- Added the ability to specify spawners for worlds.
+  - The old method is now marked as deprecated.
+
+Improvements:
+
+- Provide Exposed column types for Identifier and BlockPos.
+- Provide .center() for Vec3i and Vec3d.
+
+Other:
+
+- Added PlayerTable which can be referenced for relations.
+
+---
+
 ## Gunpowder 0.5.0
 
 Bugs fixed:
