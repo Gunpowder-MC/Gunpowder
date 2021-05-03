@@ -25,12 +25,24 @@
 package io.github.gunpowder.entities
 
 import com.google.common.collect.*
+import com.mojang.serialization.Dynamic
+import com.mojang.serialization.DynamicOps
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
 import io.github.gunpowder.mixin.cast.SyncPlayer
+import net.minecraft.SharedConstants
+import net.minecraft.datafixer.DataFixTypes
+import net.minecraft.datafixer.Schemas
+import net.minecraft.nbt.NbtIo
+import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.Tag
+import net.minecraft.resource.DataPackSettings
+import net.minecraft.resource.ResourceManager
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.dynamic.RegistryOps
+import net.minecraft.util.registry.DynamicRegistryManager
 import net.minecraft.util.registry.Registry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.util.registry.SimpleRegistry
@@ -40,9 +52,13 @@ import net.minecraft.world.border.WorldBorderListener
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
+import net.minecraft.world.level.LevelInfo
+import net.minecraft.world.level.LevelProperties
 import net.minecraft.world.level.ServerWorldProperties
-import net.minecraft.world.level.UnmodifiableLevelProperties
+import net.minecraft.world.level.storage.LevelStorage
+import net.minecraft.world.level.storage.SaveVersionInfo
 import org.apache.commons.io.FileUtils
+import java.io.File
 
 
 object DimensionManager : GunpowderDimensionManager {
@@ -55,6 +71,7 @@ object DimensionManager : GunpowderDimensionManager {
 
     val netherMap = HashBiMap.create<RegistryKey<World>, RegistryKey<World>>()
     private val linkedWorldSet = mutableSetOf<RegistryKey<World>>(World.OVERWORLD, World.NETHER, World.END)
+    private val custom = mutableSetOf<RegistryKey<World>>()
 
     init {
         netherMap[World.OVERWORLD] = World.NETHER
@@ -93,7 +110,44 @@ object DimensionManager : GunpowderDimensionManager {
         return server.worlds.containsKey(worldId)
     }
 
-    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, spawners: List<Spawner>): ServerWorld {
+    fun isCustom(world: RegistryKey<World>) : Boolean {
+        return custom.contains(world)
+    }
+
+    private fun getProps(key: RegistryKey<World>) : LevelProperties? {
+        val target = File(server.session.getWorldDirectory(key), "level.dat")
+        if (target.exists()) {
+            val tag = NbtIo.readCompressed(target)
+            val dataFixer = Schemas.getFixer()
+            val compoundTag3 = if (tag.contains("Player", 10)) tag.getCompound("Player") else null
+            tag.remove("Player")
+            val i = if (tag.contains("DataVersion", 99)) tag.getInt("DataVersion") else -1
+            val dynamicOps: DynamicOps<Tag> =
+                RegistryOps.of(NbtOps.INSTANCE, ResourceManager.Empty.INSTANCE, DynamicRegistryManager.create())
+            val dynamic = dataFixer.update(
+                DataFixTypes.LEVEL.typeReference,
+                Dynamic(dynamicOps, tag),
+                i,
+                SharedConstants.getGameVersion().worldVersion
+            )
+            val pair = LevelStorage.readGeneratorProperties(dynamic, dataFixer, i)
+            val saveVersionInfo = SaveVersionInfo.fromDynamic(dynamic)
+            val levelInfo = LevelInfo.fromDynamic(dynamic, DataPackSettings.SAFE_MODE)
+            return LevelProperties.readProperties(
+                dynamic,
+                dataFixer,
+                i,
+                compoundTag3,
+                levelInfo,
+                saveVersionInfo,
+                pair.first,
+                pair.second
+            )
+        }
+        return null
+    }
+
+    override fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: LevelProperties, spawners: List<Spawner>): ServerWorld {
         if (hasWorld(worldId)) {
             throw IllegalArgumentException("World ${worldId.value} already registered!")
         }
@@ -113,14 +167,20 @@ object DimensionManager : GunpowderDimensionManager {
             }
         }
 
+        val targetDir = server.session.getWorldDirectory(worldId)
+        targetDir.mkdirs()
+
+        val props = getProps(worldId) ?: properties
+
         val world = ServerWorld(server, server.workerExecutor, server.session,
-                properties, worldId, dimensionType,
+                props, worldId, dimensionType,
                 worldGenerationProgressListener, chunkGenerator,
                 false, seed, spawners, !dimTypeRegistry.get(dimensionTypeId)!!.hasFixedTime())
         world.savingDisabled = false
         worldBorder.addListener(WorldBorderListener.WorldBorderSyncer(world.worldBorder))
 
         server.worlds[worldId] = world
+        custom.add(worldId)
 
         for (player in server.playerManager.playerList) {
             GunpowderMod.instance.logger.info("Marking needsSync for player $player")

@@ -95,7 +95,9 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
 
     @Inject(method = "setTextColor", at = @At("RETURN"))
     void keepHeaderColor(DyeColor value, CallbackInfoReturnable<Boolean> cir) {
-        setTextOnRow(0, new LiteralText(text[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
+        if (custom) {
+            setTextOnRow(0, new LiteralText(text[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
+        }
     }
 
     @Override

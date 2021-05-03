@@ -32,6 +32,7 @@ import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
+import net.minecraft.world.level.LevelProperties
 import net.minecraft.world.level.ServerWorldProperties
 
 interface GunpowderDimensionManager {
@@ -51,11 +52,14 @@ interface GunpowderDimensionManager {
      * Worlds also do not save a custom spawn position! Keep track of this yourself though either a database, json file,
      *  or other method, and use World.setSpawn after calling addWorld.
      */
-    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, spawners: List<Spawner>): ServerWorld
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: LevelProperties, spawners: List<Spawner>): ServerWorld
 
     /**
      * For backwards compat
      */
+    @Deprecated("Provide LevelProperties instead of ServerWorldProperties")
+    fun addWorld(worldId: RegistryKey<World>, dimensionTypeId: RegistryKey<DimensionType>, chunkGenerator: ChunkGenerator, properties: ServerWorldProperties, spawners: List<Spawner>): ServerWorld =
+        addWorld(worldId, dimensionTypeId, chunkGenerator, properties as LevelProperties, spawners)
     @Deprecated("Provide new missing parameter 'spawners'",
         ReplaceWith("addWorld(worldId, dimensionTypeId, chunkGenerator, properties, ImmutableList.of())")
     )

@@ -1,4 +1,27 @@
-## Gunpowder 0.5.1
+## Gunpowder 0.5.3
+
+Bugs fixed:
+
+- (Fabric API) Resolved mixin conflict with FAPI.
+- (Sign API) Signs no longer turn the first line blue if not custom.
+
+New Features:
+
+- (Database) Added two new column types:
+  - ItemStack
+  - CompoundTag
+
+Improvements:
+
+- (Dimension) Custom Dimensions now have their own level.dat to store world properties.
+
+Other:
+
+- Updated to Gradle 7.
+
+---
+
+## Gunpowder 0.5.2
 
 Changes:
 - Start processing database actions after database connection is established.

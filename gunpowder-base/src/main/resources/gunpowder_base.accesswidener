@@ -18,3 +18,4 @@ accessible field net/minecraft/util/registry/SimpleRegistry keyToEntry Lcom/goog
 accessible field net/minecraft/util/registry/SimpleRegistry rawIdToEntry Lit/unimi/dsi/fastutil/objects/ObjectList;
 accessible field net/minecraft/world/gen/chunk/ChunkGenerator worldSeed J
 accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util/OptionalLong;ZZZZDZZZZZILnet/minecraft/world/biome/source/BiomeAccessType;Lnet/minecraft/util/Identifier;Lnet/minecraft/util/Identifier;F)V
+accessible method net/minecraft/world/level/storage/LevelStorage readGeneratorProperties (Lcom/mojang/serialization/Dynamic;Lcom/mojang/datafixers/DataFixer;I)Lcom/mojang/datafixers/util/Pair;

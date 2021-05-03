@@ -25,28 +25,65 @@
 package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.events.PlayerPreDeathCallback;
+import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import static org.checkerframework.checker.units.UnitsTools.g;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin_Base {
-    @Shadow
-    public abstract boolean isDead();
+public abstract class LivingEntityMixin_Base extends Entity {
+    public LivingEntityMixin_Base(EntityType<?> type, World world) {
+        super(type, world);
+    }
 
-    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal = 1))
-    public boolean triggerPlayerPreDeathCallback(LivingEntity livingEntity, DamageSource source, float f) {
-        if (livingEntity instanceof ServerPlayerEntity) {
-            ActionResult r = PlayerPreDeathCallback.EVENT.invoker().trigger((ServerPlayerEntity) livingEntity, source);
-            if (r == ActionResult.FAIL) {
-                return false;
+    @Shadow protected abstract void playHurtSound(DamageSource source);
+
+    @Shadow private DamageSource lastDamageSource;
+
+    @Shadow private long lastDamageTime;
+
+    @Inject(method="damage", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal=1, shift=At.Shift.BEFORE), cancellable=true, locals= LocalCapture.PRINT)
+    void beforeFAPIEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, float f, boolean bl, float g, boolean bl2, Entity entity2, double h) {
+        if (((LivingEntity)(Object)this) instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity)(Object)this;
+            ActionResult res = PlayerPreDeathCallback.EVENT.invoker().trigger(player, source);
+
+            if (res == ActionResult.FAIL) {
+                if (bl2) {
+                    this.playHurtSound(source);
+                }
+
+                boolean bl3 = !bl || amount > 0.0F;
+                if (bl3) {
+                    this.lastDamageSource = source;
+                    this.lastDamageTime = this.world.getTime();
+                }
+
+                Criteria.ENTITY_HURT_PLAYER.trigger(player, source, f, amount, bl);
+                if (g > 0.0F && g < 3.4028235E37F) {
+                    player.increaseStat(Stats.DAMAGE_BLOCKED_BY_SHIELD, Math.round(g * 10.0F));
+                }
+
+                if (entity2 instanceof ServerPlayerEntity) {
+                    Criteria.PLAYER_HURT_ENTITY.trigger((ServerPlayerEntity)entity2, player, source, f, amount, bl);
+                }
+
+                cir.setReturnValue(bl3);
             }
         }
-        return isDead();
     }
 }

@@ -22,31 +22,25 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api.exposed
+package io.github.gunpowder.api.exposed.typeimpl
 
-import io.github.gunpowder.api.exposed.typeimpl.BlockPosColumnType
-import io.github.gunpowder.api.exposed.typeimpl.CompoundTagColumnType
-import io.github.gunpowder.api.exposed.typeimpl.IdentifierColumnType
-import io.github.gunpowder.api.exposed.typeimpl.ItemStackColumnType
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
 
-fun Table.blockPos(name: String) : Column<BlockPos> {
-    return registerColumn(name, BlockPosColumnType())
-}
+class ItemStackColumnType : CompoundTagColumnType() {
+    override fun valueFromDB(value: Any): Any {
+        val nbt = super.valueFromDB(value) as CompoundTag
+        return ItemStack.fromTag(nbt)
+    }
 
-fun Table.identifier(name: String, collate: String? = null, eagerLoading: Boolean = false) : Column<Identifier> {
-    return registerColumn(name, IdentifierColumnType(collate, eagerLoading))
-}
-
-fun Table.compoundTag(name: String): Column<CompoundTag> {
-    return registerColumn(name, CompoundTagColumnType())
-}
-
-fun Table.itemStack(name: String) : Column<ItemStack> {
-    return registerColumn(name, ItemStackColumnType())
+    override fun valueToDB(value: Any?): Any? {
+        return when(value) {
+            is ItemStack -> {
+                val ct = CompoundTag()
+                value.toTag(ct)
+                return super.valueToDB(ct)
+            }
+            else -> super.valueToDB(value)
+        }
+    }
 }

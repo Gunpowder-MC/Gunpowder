@@ -33,6 +33,9 @@ import net.minecraft.util.ActionResult;
 /**
  * Called before a player dies; Allows cancelling.
  * All callbacks are always called, but cannot force execution if another returned ActionResult.FAIL.
+ *
+ * As of 0.5.3, these callbacks are not guaranteed to be called.
+ * This is because Fabric API now implements a more limited version of this event, which we need to use.
  */
 public interface PlayerPreDeathCallback {
     Event<PlayerPreDeathCallback> EVENT = EventFactory.createArrayBacked(PlayerPreDeathCallback.class, (listeners) -> (player, source) -> {

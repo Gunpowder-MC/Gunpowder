@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'net.minecrell.licenser' version "$licenser"
+    id 'org.cadixdev.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "$shadow"
@@ -35,7 +35,7 @@ allprojects { project ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'net.minecrell.licenser'
+    apply plugin: 'org.cadixdev.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
@@ -172,13 +172,8 @@ allprojects { project ->
     processResources {
         inputs.property "version", project.version
 
-        from(project.sourceSets.main.resources.srcDirs) {
-            include "fabric.mod.json"
+        filesMatching("fabric.mod.json") {
             expand "version": project.version
-        }
-
-        from(project.sourceSets.main.resources.srcDirs) {
-            exclude "fabric.mod.json"
         }
     }
 

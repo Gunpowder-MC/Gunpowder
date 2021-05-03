@@ -3,6 +3,7 @@
   "package": "io.github.gunpowder.mixin.base",
   "compatibilityLevel": "JAVA_8",
   "plugin": "io.github.gunpowder.mixin.plugin.BaseModulePlugin",
+  "mixinPriority": 9999,
   "mixins": [
     "AbstractFireBlockMixin_Base",
     "ClientConnectionMixin_Base",
