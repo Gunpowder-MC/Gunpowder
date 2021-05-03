@@ -42,6 +42,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
                         syncId: Int, playerInventory: PlayerInventory, rows: Int) :
         GenericContainerScreenHandler(type, syncId, playerInventory, SimpleInventory(9 * rows), rows), APIChestGui.Container {
+    private val player: ServerPlayerEntity = playerInventory.player as ServerPlayerEntity
+
     private var buttons: MutableMap<Int, ChestGui.Builder.ChestGuiButton> = mutableMapOf()
     private var background = ItemStack.EMPTY
     private var interval = 0
@@ -65,6 +67,12 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
         for (i in 0 until 54) {
             inventory.setStack(i, buttons[i]?.icon ?: background)
         }
+    }
+
+    private fun syncInventory(playerEntity: PlayerEntity) {
+        inventory.markDirty()
+        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, playerEntity.currentScreenHandler.stacks))
+        sendContentUpdates()
     }
 
     override fun canUse(player: PlayerEntity?): Boolean {
@@ -96,10 +104,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
             button.callback.invoke(actionType, this)
         }
 
-        // Avoid desyncs
-        inventory.markDirty()
-        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, playerEntity.currentScreenHandler.stacks))
-        sendContentUpdates()
+        syncInventory(playerEntity)
 
         return ItemStack.EMPTY
     }
@@ -127,5 +132,12 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
 
     override fun emptyIcon(icon: ItemStack) {
         setBackground(icon)
+    }
+
+    override fun getPlayer(): ServerPlayerEntity? = player
+
+    override fun close() {
+        syncInventory(player)
+        close(player)
     }
 }
