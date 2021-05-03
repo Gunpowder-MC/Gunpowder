@@ -1,3 +1,10 @@
+## Gunpowder 0.5.4
+
+Bugs fixed:
+- (Dimension) Entering End would crash the game.
+
+---
+
 ## Gunpowder 0.5.3
 
 Bugs fixed:
