@@ -49,7 +49,7 @@ public class EntityMixin_Base {
 
     @Redirect(method = "getTeleportTarget", at=@At(value="INVOKE", target="Lnet/minecraft/world/World;getRegistryKey()Lnet/minecraft/util/registry/RegistryKey;"))
     RegistryKey<World> comingFromNether(World world) {
-        if (DimensionManager.INSTANCE.getNetherMap().get(world.getRegistryKey()) == null) {
+        if (world.getRegistryKey() != World.END && DimensionManager.INSTANCE.getNetherMap().get(world.getRegistryKey()) == null) {
             // To generate a nether portal, we need to return World.NETHER
             return World.NETHER;
         }
@@ -58,7 +58,7 @@ public class EntityMixin_Base {
 
     @Redirect(method = "getTeleportTarget", at=@At(value="INVOKE", target="Lnet/minecraft/server/world/ServerWorld;getRegistryKey()Lnet/minecraft/util/registry/RegistryKey;"))
     RegistryKey<World> goingToNether(ServerWorld world) {
-        if (DimensionManager.INSTANCE.getNetherMap().get(world.getRegistryKey()) == null) {
+        if (world.getRegistryKey() != World.END && DimensionManager.INSTANCE.getNetherMap().get(world.getRegistryKey()) == null) {
             return World.NETHER;
         }
         return world.getRegistryKey();
