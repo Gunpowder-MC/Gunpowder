@@ -56,8 +56,8 @@ public abstract class LivingEntityMixin_Base extends Entity {
 
     @Shadow private long lastDamageTime;
 
-    @Inject(method="damage", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal=1, shift=At.Shift.BEFORE), cancellable=true, locals= LocalCapture.PRINT)
-    void beforeFAPIEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, float f, boolean bl, float g, boolean bl2, Entity entity2, double h) {
+    @Inject(method="damage", at=@At(value="INVOKE", target="Lnet/minecraft/entity/LivingEntity;isDead()Z", ordinal=1, shift=At.Shift.BEFORE), cancellable=true, locals= LocalCapture.CAPTURE_FAILHARD)
+    void beforeFAPIEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir, float f, boolean bl, float g, boolean bl2, Entity entity2) {
         if (((LivingEntity)(Object)this) instanceof ServerPlayerEntity) {
             ServerPlayerEntity player = (ServerPlayerEntity)(Object)this;
             ActionResult res = PlayerPreDeathCallback.EVENT.invoker().trigger(player, source);
