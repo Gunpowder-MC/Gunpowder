@@ -43,7 +43,7 @@ object LanguageHandler : LanguageUtil {
     val modPath = mutableMapOf<String, String>()
 
     private val mapping = mutableMapOf<String, Map<String, String>>()
-    val languageSettings = mutableMapOf<UUID, String>()
+    val languageSettings = WeakHashMap<UUID, String>()
 
     fun tryLoad(id: String, lang: String, consumer: (String, String) -> Unit) {
         val path = modPath.getOrDefault(id, "/assets/$id/lang")

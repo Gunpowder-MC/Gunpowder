@@ -88,6 +88,8 @@ object GunpowderDatabase : APIGunpowderDatabase {
             "sqlite" -> {
                 val path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
 
+                // TODO: Support per-world databases
+
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",
                         "org.sqlite.JDBC")
