@@ -1,3 +1,16 @@
+## Gunpowder 0.5.5
+
+New Features:
+
+- (Misc) Added utility methods for non-persistant custom properties 
+- (ChestGUI) Added utility methods for guis (credit to @williambl)
+
+Other:
+
+- Improved performance on larger servers
+
+---
+
 ## Gunpowder 0.5.4
 
 Bugs fixed:
