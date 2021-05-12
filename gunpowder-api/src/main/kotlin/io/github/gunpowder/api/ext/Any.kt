@@ -35,7 +35,7 @@ private val map = WeakHashMap<Any, MutableMap<String, Any>>()
  *  it loses the property.
  */
 operator fun <T> Any.set(name: String, value: T) {
-    map.getOrPut(this) { mutableMapOf() }[name] = value as Any
+    map.getOrPut(this) { mutableMapOf() }.put(name, value as Any)
 }
 
 operator fun <T> Any.get(name: String) : T {

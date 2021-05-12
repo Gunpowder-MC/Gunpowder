@@ -1,3 +1,10 @@
+## Gunpowder 0.5.6
+
+- (Dimension) Fixed issue with removing worlds
+- (Utils) Fixed recursion issue
+
+---
+
 ## Gunpowder 0.5.5
 
 New Features:

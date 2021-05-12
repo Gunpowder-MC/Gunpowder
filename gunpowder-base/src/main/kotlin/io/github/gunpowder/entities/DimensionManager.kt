@@ -206,7 +206,7 @@ object DimensionManager : GunpowderDimensionManager {
             FileUtils.deleteDirectory(path)
 
             for (player in server.playerManager.playerList) {
-                if (player.spawnPointDimension == worldId) {
+                if (player.spawnPointDimension.toString() == worldId.toString()) {
                     player.setSpawnPoint(null, null, 0.0f, false, false)
                 }
 
@@ -216,7 +216,9 @@ object DimensionManager : GunpowderDimensionManager {
                 // Teleport players in the dimension to be removed
                 if (player.world == world) {
                     TeleportRequest.builder {
-                        val sw = server.getWorlds().first { it.registryKey == player.spawnPointDimension }
+                        val sw = server.getWorlds().first {
+                            it.registryKey.toString() == player.spawnPointDimension.toString()
+                        }
                         dimension(sw)
                         destination(player.spawnPointPosition ?: sw.spawnPos)
                         player(player)
