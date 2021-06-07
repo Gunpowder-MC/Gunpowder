@@ -24,6 +24,8 @@
 
 package io.github.gunpowder.mixin.base;
 
+import io.github.gunpowder.api.components.ComponentsKt;
+import io.github.gunpowder.entities.builtin.SignTypeComponent;
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
@@ -43,9 +45,10 @@ public abstract class SignBlockMixin_Base extends Block implements SignBlockEnti
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        SignBlockEntityMixinCast_Base be = (SignBlockEntityMixinCast_Base) world.getBlockEntity(pos);
-        if (be.isCustom() && !world.isClient()) {
-            be.getSignType().getDestroyEvent().invoke((SignBlockEntity) be, (ServerPlayerEntity) player);
+        SignBlockEntity be = (SignBlockEntity) world.getBlockEntity(pos);
+        SignTypeComponent comp = ComponentsKt.with(be, SignTypeComponent.class);
+        if (comp.getCustom() && !world.isClient()) {
+            comp.type.getDestroyEvent().invoke(be, (ServerPlayerEntity) player);
         }
         super.onBreak(world, pos, state, player);
     }

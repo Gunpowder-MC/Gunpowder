@@ -2,11 +2,15 @@ package io.github.gunpowder.mod
 
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
+import io.github.gunpowder.api.builders.SignType
+import io.github.gunpowder.api.components.bind
+import io.github.gunpowder.api.components.with
 import io.github.gunpowder.api.exposed.PlayerTable
 import io.github.gunpowder.api.registerConfig
 import io.github.gunpowder.commands.InfoCommand
 import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.GunpowderDatabase
+import io.github.gunpowder.entities.builtin.SignTypeComponent
 import io.github.gunpowder.entities.mc.ChestGuiContainer
 import io.github.gunpowder.events.BlockPreBreakCallback
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
@@ -14,6 +18,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.block.AbstractSignBlock
 import net.minecraft.block.entity.SignBlockEntity
+import net.minecraft.text.LiteralText
 import net.minecraft.util.ActionResult
 
 object BuiltinModule : GunpowderModule {
@@ -25,6 +30,20 @@ object BuiltinModule : GunpowderModule {
 
     private var counter = 0
     val guis = mutableListOf<ChestGuiContainer>()
+
+    override fun onInitialize() {
+//        SIGN TYPE TEST
+//        SignType.builder {
+//            name("gp:hi")
+//            onClicked { signBlockEntity, serverPlayerEntity ->
+//                serverPlayerEntity.sendMessage(LiteralText("hi"), false)
+//            }
+//        }
+    }
+
+    override fun registerComponents() {
+        SignBlockEntity::class.bind<SignTypeComponent>()
+    }
 
     override fun registerConfigs() {
         gunpowder.registry.registerConfig<GunpowderConfig>("gunpowder.yaml", "gunpowder.yaml")
@@ -44,12 +63,12 @@ object BuiltinModule : GunpowderModule {
             val state = world.getBlockState(pos)
             if (state.block is AbstractSignBlock) {
                 val be = world.getBlockEntity(pos) as SignBlockEntity
-                val cast = be as SignBlockEntityMixinCast_Base
+                val comp = be.with<SignTypeComponent>()
 
-                if (cast.isCustom &&
+                if (comp.custom &&
                     !player.hasPermissionLevel(4) &&
-                    !cast.signType.conditionEvent(be, player) &&
-                    !cast.isCreator(player)) {
+                    !comp.type.conditionEvent(be, player) &&
+                    !comp.isCreator(player)) {
                     return@register ActionResult.FAIL;
                 }
             }
@@ -73,10 +92,10 @@ object BuiltinModule : GunpowderModule {
             }
         })
 
-        if (GunpowderMod.instance.isClient) {
-            ServerLifecycleEvents.SERVER_STARTED.register {
-                GunpowderDatabase.loadDatabase()
-            }
-        }
+//        if (GunpowderMod.instance.isClient) {
+//            ServerLifecycleEvents.SERVER_STARTED.register {
+//                GunpowderDatabase.loadDatabase()
+//            }
+//        }
     }
 }

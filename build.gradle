@@ -186,7 +186,7 @@ allprojects { project ->
     targetCompatibility = JavaVersion.VERSION_16
     compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_16
     compileKotlin.kotlinOptions.useIR = true
-    compileKotlin.kotlinOptions.freeCompilerArgs = ['-Xjvm-default=compatibility']
+    compileKotlin.kotlinOptions.freeCompilerArgs = ['-Xjvm-default=all-compatibility']
 
 }
 

@@ -86,9 +86,12 @@ object GunpowderDatabase : APIGunpowderDatabase {
             "sqlite" -> {
                 var path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
 
-                if (GunpowderMod.instance.isClient) {
-                    path += "/" + MinecraftClient.getInstance().server?.getSavePath(WorldSavePath.ROOT)?.fileName
-                }
+                // TODO: Per-world database stuff
+//                if (GunpowderMod.instance.isClient) {
+//                    val filename = MinecraftClient.getInstance().server?.getSavePath(WorldSavePath.ROOT)?.fileName
+//                        ?: return
+//                    path += "/$filename"
+//                }
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",
@@ -116,7 +119,6 @@ object GunpowderDatabase : APIGunpowderDatabase {
                 throw AssertionError("Invalid db type")
             }
         }
-
         databaseThread.start()
     }
 
