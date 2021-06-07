@@ -2,7 +2,7 @@ archivesBaseName = "gunpowder-base"
 
 dependencies {
     // Shading causes large dep issues
-    compile project(":gunpowder-api")
+    implementation project(":gunpowder-api")
 
     // Database drivers
     // No need to have these shaded

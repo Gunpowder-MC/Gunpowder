@@ -1,6 +1,6 @@
 package io.github.gunpowder.api.components
 
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 
 interface Component {
     /**
@@ -8,8 +8,8 @@ interface Component {
      * - Entity
      * - ServerPlayerEntity (with respawning)
      * - ItemStack
-     * Alternatively, these can be stored in a database column as CompoundTag
+     * Alternatively, these can be stored in a database column as NbtCompound
      */
-    fun toTag(tag: CompoundTag) {}
-    fun fromTag(tag: CompoundTag) {}
+    fun writeNbt(tag: NbtCompound) {}
+    fun fromNbt(tag: NbtCompound) {}
 }

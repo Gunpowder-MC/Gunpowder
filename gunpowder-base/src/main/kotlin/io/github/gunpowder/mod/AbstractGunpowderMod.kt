@@ -69,9 +69,6 @@ abstract class AbstractGunpowderMod : GunpowderMod {
     fun initialize() {
         logger.info("Starting Gunpowder")
         GunpowderRegistry.registerBuiltin()
-        GunpowderDatabase.loadDatabase()
-        GunpowderEvents.init()
-        PlayerHandler.init()
         LanguageHandler.get("en_us")
         logger.info("Loading modules")
 
@@ -80,8 +77,13 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         // Register events before registering commands
         // in case of a RegisterCommandEvent or something
         entrypoints.forEach {
-            it.entrypoint.registerEvents()
+            val module = it.entrypoint
+            module.registerConfigs()
+            module.registerEvents()
+            module.registerComponents()
         }
+
+        GunpowderDatabase.loadDatabase()
 
         entrypoints.forEach {
             val module = it.entrypoint
@@ -90,9 +92,9 @@ abstract class AbstractGunpowderMod : GunpowderMod {
             // We need to register configs as early as possible. The actual reloading of configs to handle per world settings can be done after the server has stopped for singleplayer
             // This is due to LiteralTextMixin_Chat accessing the config during a Resource reload.
             // Thereby accessing the gunpowder instance BEFORE the server start callbacks have been fired
-            module.registerConfigs()
+            module.registerTables()
             module.registerCommands()
-            module.onInitialize()  // Moved this to earlier than SERVER_STARTED since loading tags may need custom data
+            module.onInitialize()
         }
     }
 

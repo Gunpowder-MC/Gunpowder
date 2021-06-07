@@ -52,7 +52,6 @@ import io.github.gunpowder.api.builders.Text as APIText
 
 object GunpowderRegistry : APIGunpowderRegistry {
     private val builders = mutableMapOf<Class<*>, Supplier<*>>()
-    private val modelHandlers = mutableMapOf<Class<*>, Supplier<*>>()
     private val configs = mutableMapOf<Class<*>, Pair<String, *>>()
     private val configCache = mutableMapOf<Class<Any>, Any>()
 
@@ -63,18 +62,12 @@ object GunpowderRegistry : APIGunpowderRegistry {
     }
 
     fun registerBuiltin() {
-        configs[GunpowderConfig::class.java] = Pair("gunpowder.yaml", "gunpowder.yaml")
-
         builders[APICommand.Builder::class.java] = Supplier { Command.Builder() }
         builders[APITeleportRequest.Builder::class.java] = Supplier { TeleportRequest.Builder() }
         builders[APIText.Builder::class.java] = Supplier { Text.Builder() }
         builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
         builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
         builders[APISignType.Builder::class.java] = Supplier { SignType.Builder() }
-
-        registerCommand(InfoCommand::register)
-
-        registerTable(PlayerTable)
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {
@@ -117,15 +110,7 @@ object GunpowderRegistry : APIGunpowderRegistry {
         return builders[clz]!!.get() as T
     }
 
-    override fun <T> getModelHandler(clz: Class<T>): T {
-        return modelHandlers[clz]!!.get() as T
-    }
-
     override fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>) {
         builders[clz] = supplier
-    }
-
-    override fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>) {
-        modelHandlers[clz] = supplier
     }
 }

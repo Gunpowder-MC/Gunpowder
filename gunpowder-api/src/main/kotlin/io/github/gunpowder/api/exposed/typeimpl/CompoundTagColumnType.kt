@@ -36,7 +36,7 @@ import java.io.*
 import java.sql.Blob
 import java.sql.ResultSet
 
-open class CompoundTagColumnType : ColumnType() {
+open class NbtCompoundColumnType : ColumnType() {
     override fun sqlType(): String = currentDialect.dataTypeProvider.blobType()
 
     override fun valueFromDB(value: Any): Any {
@@ -54,7 +54,7 @@ open class CompoundTagColumnType : ColumnType() {
 
     override fun valueToDB(value: Any?): Any? {
         return when(value) {
-            is CompoundTag -> {
+            is NbtCompound -> {
                 val stream = ByteArrayOutputStream()
                 NbtIo.write(value, DataOutputStream(stream))
                 return ByteArrayInputStream(stream.toByteArray())

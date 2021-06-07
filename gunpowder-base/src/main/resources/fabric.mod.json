@@ -13,6 +13,12 @@
     ],
     "client": [
       "io.github.gunpowder.mod.client.GunpowderClientMod"
+    ],
+    "gunpowder:modules": [
+      {
+        "adapter": "kotlin",
+        "value": "io.github.gunpowder.mod.BuiltinModule"
+      }
     ]
   },
   "mixins": [

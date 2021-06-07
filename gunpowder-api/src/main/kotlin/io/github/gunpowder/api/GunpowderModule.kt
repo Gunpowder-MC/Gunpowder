@@ -29,6 +29,8 @@ package io.github.gunpowder.api
  */
 interface GunpowderModule {
     val name: String
+
+    @Deprecated("Unused, will be removed in later versions")
     val toggleable: Boolean
 
     /**
@@ -38,9 +40,13 @@ interface GunpowderModule {
     val priority: Int
         get() = 1000
 
-    fun registerCommands() {}
-    fun registerEvents() {}
+    // The methods below are in call order
+
     fun registerConfigs() {}
+    fun registerEvents() {}
+    fun registerComponents() {}
+    fun registerTables() {}
+    fun registerCommands() {}
 
     /**
      * Called on datapack reload (aka /reload)
@@ -50,7 +56,7 @@ interface GunpowderModule {
     fun reload() {}
 
     /**
-     * Register Database-related stuff here for now
+     * Called when initializing a module. This is called after all register methods.
      */
     fun onInitialize() {}
 }

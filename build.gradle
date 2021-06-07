@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'org.cadixdev.licenser' version "$licenser"
+//    id 'org.cadixdev.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "$shadow"
@@ -36,20 +36,20 @@ allprojects { project ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'org.cadixdev.licenser'
+//    apply plugin: 'org.cadixdev.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
     project.group = rootProject.group
     project.setBuildDir(rootProject.getBuildDir())
 
-    license {
-        header = rootProject.file('LICENSE')
-        include '**/*.java'
-        include '**/*.kt'
-        style.java = 'BLOCK_COMMENT'
-        style.kt = 'BLOCK_COMMENT'
-    }
+//    license {
+//        header = rootProject.file('LICENSE')
+//        include '**/*.java'
+//        include '**/*.kt'
+//        style.java = 'BLOCK_COMMENT'
+//        style.kt = 'BLOCK_COMMENT'
+//    }
 
     configurations {
         dev
@@ -120,7 +120,6 @@ allprojects { project ->
         minecraft(libs.minecraft) {
             transitive = false
         }
-        System.out.println(libs.yarn)
         mappings libs.yarn
         modImplementation libs.fabric_loader
 
@@ -183,9 +182,9 @@ allprojects { project ->
     rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
 
     // Fix some warnings
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    compileKotlin.kotlinOptions.jvmTarget = "1.8"
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+    compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_16
     compileKotlin.kotlinOptions.useIR = true
     compileKotlin.kotlinOptions.freeCompilerArgs = ['-Xjvm-default=compatibility']
 
@@ -280,9 +279,9 @@ if (file('secrets.gradle').exists()) {
             releaseType = "release"
             changelogType = "markdown"
             changelog = file("CHANGELOG.md").readLines().join("\n").split("---")[0]
-            addGameVersion project.minecraft
+            addGameVersion project.minecraft.split("-")[0]
             addGameVersion "Fabric"
-            addGameVersion "Java 8"
+            addGameVersion "Java 16"
 
             relations {
                 requiredDependency("fabric-api")

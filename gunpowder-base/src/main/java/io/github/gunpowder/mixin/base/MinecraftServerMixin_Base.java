@@ -32,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin_Base {
-    @Inject(method="getServerModName", at=@At("HEAD"), cancellable = true)
+    @Inject(method="getServerModName", at=@At("HEAD"), cancellable = true, remap=false)
     void setCustomName(CallbackInfoReturnable<String> cir) {
         cir.setReturnValue("Fabric/Gunpowder");
     }

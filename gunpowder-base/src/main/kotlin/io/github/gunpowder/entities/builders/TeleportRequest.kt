@@ -68,10 +68,10 @@ class TeleportRequest private constructor(
                     server.submit {
                         // Load chunk
                         val chunkPos = ChunkPos(BlockPos(destination))
-                        val world = server.getWorld(RegistryKey.of(Registry.DIMENSION, dimension))
+                        val world = server.getWorld(RegistryKey.of(Registry.WORLD_KEY, dimension))
 
                         // field_19347 = POST_TELEPORT
-                        world!!.chunkManager.addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.entityId)
+                        world!!.chunkManager.addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.id)
 
                         player.teleport(world,
                                 destination.x, destination.y, destination.z,

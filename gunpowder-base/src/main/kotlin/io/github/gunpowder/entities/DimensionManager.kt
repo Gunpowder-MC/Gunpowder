@@ -24,7 +24,9 @@
 
 package io.github.gunpowder.entities
 
-import com.google.common.collect.*
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
+import com.google.common.collect.ImmutableBiMap
 import com.mojang.serialization.Dynamic
 import com.mojang.serialization.DynamicOps
 import io.github.gunpowder.api.GunpowderDimensionManager
@@ -34,9 +36,9 @@ import io.github.gunpowder.mixin.cast.SyncPlayer
 import net.minecraft.SharedConstants
 import net.minecraft.datafixer.DataFixTypes
 import net.minecraft.datafixer.Schemas
+import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtIo
 import net.minecraft.nbt.NbtOps
-import net.minecraft.nbt.Tag
 import net.minecraft.resource.DataPackSettings
 import net.minecraft.resource.ResourceManager
 import net.minecraft.server.MinecraftServer
@@ -54,7 +56,6 @@ import net.minecraft.world.gen.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.LevelInfo
 import net.minecraft.world.level.LevelProperties
-import net.minecraft.world.level.ServerWorldProperties
 import net.minecraft.world.level.storage.LevelStorage
 import net.minecraft.world.level.storage.SaveVersionInfo
 import org.apache.commons.io.FileUtils
@@ -122,7 +123,7 @@ object DimensionManager : GunpowderDimensionManager {
             val compoundTag3 = if (tag.contains("Player", 10)) tag.getCompound("Player") else null
             tag.remove("Player")
             val i = if (tag.contains("DataVersion", 99)) tag.getInt("DataVersion") else -1
-            val dynamicOps: DynamicOps<Tag> =
+            val dynamicOps: DynamicOps<NbtElement> =
                 RegistryOps.of(NbtOps.INSTANCE, ResourceManager.Empty.INSTANCE, DynamicRegistryManager.create())
             val dynamic = dataFixer.update(
                 DataFixTypes.LEVEL.typeReference,

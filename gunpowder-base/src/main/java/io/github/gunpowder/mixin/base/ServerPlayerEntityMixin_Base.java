@@ -65,7 +65,7 @@ public abstract class ServerPlayerEntityMixin_Base extends PlayerEntity implemen
         LanguageHandler.INSTANCE.getLanguageSettings().put(this.uuid, packet.language);
     }
 
-    @Inject(method="teleport", at=@At(value="INVOKE", target="Lnet/minecraft/server/network/ServerPlayerInteractionManager;setWorld(Lnet/minecraft/server/world/ServerWorld;)V"))
+    @Inject(method="teleport", at=@At(value="INVOKE", target="Lnet/minecraft/server/network/ServerPlayerEntity;setWorld(Lnet/minecraft/server/world/ServerWorld;)V"))
     void syncXP(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
         networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(
                 experienceProgress,

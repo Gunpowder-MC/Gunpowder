@@ -1,6 +1,7 @@
 package io.github.gunpowder.api.components
 
 import java.util.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 
 val map = WeakHashMap<Any, HashMap<Class<out Component>, out Component>>()
@@ -8,6 +9,11 @@ val injected = HashMap<Class<*>, MutableList<Class<out Component>>>()
 
 inline fun <reified A : Component> Class<*>.bind() {
     val list = injected[this] ?: mutableListOf<Class<out Component>>().also { injected[this] = it }
+    list.add(A::class.java)
+}
+
+inline fun <reified A : Component> KClass<*>.bind() {
+    val list = injected[this.java] ?: mutableListOf<Class<out Component>>().also { injected[this.java] = it }
     list.add(A::class.java)
 }
 

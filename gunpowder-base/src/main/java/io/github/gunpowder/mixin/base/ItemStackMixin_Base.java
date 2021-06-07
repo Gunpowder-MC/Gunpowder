@@ -4,7 +4,7 @@ import io.github.gunpowder.entities.ComponentHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,23 +16,23 @@ import java.util.Optional;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin_Base {
-    @Inject(method="<init>(Lnet/minecraft/nbt/CompoundTag;)V", at=@At("RETURN"))
-    void initComponents(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method="<init>(Lnet/minecraft/nbt/NbtCompound;)V", at=@At("RETURN"))
+    void initComponents(NbtCompound tag, CallbackInfo ci) {
         ComponentHandler.INSTANCE.initComponents(this);
     }
 
     @Inject(method="<init>(Lnet/minecraft/item/ItemConvertible;ILjava/util/Optional;)V", at=@At("RETURN"))
-    void initComponents(ItemConvertible itemConvertible, int count, Optional<CompoundTag> optional, CallbackInfo ci) {
+    void initComponents(ItemConvertible itemConvertible, int count, Optional<NbtCompound> optional, CallbackInfo ci) {
         ComponentHandler.INSTANCE.initComponents(this);
     }
 
-    @Inject(method="toTag", at=@At("HEAD"))
-    void saveComponents(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+    @Inject(method="writeNbt", at=@At("HEAD"))
+    void saveComponents(NbtCompound tag, CallbackInfoReturnable<NbtCompound> cir) {
         ComponentHandler.INSTANCE.saveComponents(tag, this);
     }
 
-    @Inject(method="fromTag", at=@At("RETURN"))
-    static void loadComponents(CompoundTag tag, CallbackInfoReturnable<ItemStack> cir) {
+    @Inject(method="fromNbt", at=@At("RETURN"))
+    private static void loadComponents(NbtCompound tag, CallbackInfoReturnable<ItemStack> cir) {
         ComponentHandler.INSTANCE.loadComponents(tag, cir.getReturnValue());
     }
 }

@@ -26,7 +26,7 @@ package io.github.gunpowder.api.builders
 
 import io.github.gunpowder.api.GunpowderMod
 import net.minecraft.block.entity.SignBlockEntity
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import java.util.function.BiConsumer
@@ -60,11 +60,11 @@ interface SignType {
         fun onDestroyed(callback: BiConsumer<SignBlockEntity, ServerPlayerEntity>) = onDestroyed(callback::accept)
         fun onDestroyed(callback: (SignBlockEntity, ServerPlayerEntity) -> Unit)
 
-        fun serialize(callback: BiConsumer<SignBlockEntity, CompoundTag>) = serialize(callback::accept)
-        fun serialize(callback: (SignBlockEntity, CompoundTag) -> Unit)
+        fun serialize(callback: BiConsumer<SignBlockEntity, NbtCompound>) = serialize(callback::accept)
+        fun serialize(callback: (SignBlockEntity, NbtCompound) -> Unit)
 
-        fun deserialize(callback: BiConsumer<SignBlockEntity, CompoundTag>) = deserialize(callback::accept)
-        fun deserialize(callback: (SignBlockEntity, CompoundTag) -> Unit)
+        fun deserialize(callback: BiConsumer<SignBlockEntity, NbtCompound>) = deserialize(callback::accept)
+        fun deserialize(callback: (SignBlockEntity, NbtCompound) -> Unit)
 
         @Deprecated("Used internally, do not use.")
         fun build()

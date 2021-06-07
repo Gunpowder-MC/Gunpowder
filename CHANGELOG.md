@@ -1,3 +1,26 @@
+## Gunpowder 1.0.0
+
+New Features:
+
+- Added component system
+- Added module for tables and components 
+
+Improvements:
+
+- Provide Exposed column types for Identifier and BlockPos.
+- Provide .center() for Vec3i and Vec3d.
+
+Other:
+
+- Added PlayerTable which can be referenced for relations.
+
+
+- (Misc) Update to 1.17! :tada:
+- (Component) Added component system
+- (Internal) Moved all internal registration to a module.
+
+---
+
 ## Gunpowder 0.5.6
 
 - (Dimension) Fixed issue with removing worlds

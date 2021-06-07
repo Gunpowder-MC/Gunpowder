@@ -25,19 +25,19 @@
 package io.github.gunpowder.api.exposed.typeimpl
 
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 
-class ItemStackColumnType : CompoundTagColumnType() {
+class ItemStackColumnType : NbtCompoundColumnType() {
     override fun valueFromDB(value: Any): Any {
-        val nbt = super.valueFromDB(value) as CompoundTag
-        return ItemStack.fromTag(nbt)
+        val nbt = super.valueFromDB(value) as NbtCompound
+        return ItemStack.fromNbt(nbt)
     }
 
     override fun valueToDB(value: Any?): Any? {
         return when(value) {
             is ItemStack -> {
-                val ct = CompoundTag()
-                value.toTag(ct)
+                val ct = NbtCompound()
+                value.writeNbt(ct)
                 return super.valueToDB(ct)
             }
             else -> super.valueToDB(value)

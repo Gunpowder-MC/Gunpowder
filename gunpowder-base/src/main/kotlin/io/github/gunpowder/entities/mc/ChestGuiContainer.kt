@@ -24,9 +24,9 @@
 
 package io.github.gunpowder.entities.mc
 
-import io.github.gunpowder.entities.GunpowderEvents
 import io.github.gunpowder.api.builders.ChestGui as APIChestGui
 import io.github.gunpowder.entities.builders.ChestGui
+import io.github.gunpowder.mod.BuiltinModule
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.SimpleInventory
@@ -80,12 +80,12 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
     }
 
     override fun addListener(listener: ScreenHandlerListener?) {
-        GunpowderEvents.guis.add(this)
+        BuiltinModule.guis.add(this)
         super.addListener(listener)
     }
 
     override fun removeListener(listener: ScreenHandlerListener?) {
-        GunpowderEvents.guis.remove(this)
+        BuiltinModule.guis.remove(this)
         super.removeListener(listener)
     }
 
@@ -98,15 +98,13 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
         }
     }
 
-    override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {
+    override fun onSlotClick(slotId: Int, clickData: Int, actionType: SlotActionType, playerEntity: PlayerEntity) {
         if (buttons.containsKey(slotId)) {
             val button = buttons[slotId]!!
             button.callback.invoke(actionType, this)
         }
 
         syncInventory(playerEntity)
-
-        return ItemStack.EMPTY
     }
 
     override fun clearButtons() {

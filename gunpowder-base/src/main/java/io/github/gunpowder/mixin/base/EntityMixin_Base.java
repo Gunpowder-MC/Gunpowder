@@ -30,7 +30,7 @@ import io.github.gunpowder.entities.ComponentHandler;
 import io.github.gunpowder.entities.DimensionManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
@@ -49,13 +49,13 @@ public class EntityMixin_Base {
         ComponentHandler.INSTANCE.initComponents(this);
     }
 
-    @Inject(method="toTag", at=@At("HEAD"))
-    void saveComponents(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+    @Inject(method="writeNbt", at=@At("HEAD"))
+    void saveComponents(NbtCompound tag, CallbackInfoReturnable<NbtCompound> cir) {
         ComponentHandler.INSTANCE.saveComponents(tag, this);
     }
 
-    @Inject(method="fromTag", at=@At("HEAD"))
-    void loadComponents(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method="readNbt", at=@At("HEAD"))
+    void loadComponents(NbtCompound tag, CallbackInfo ci) {
         ComponentHandler.INSTANCE.loadComponents(tag, this);
     }
 

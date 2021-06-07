@@ -27,36 +27,36 @@ package io.github.gunpowder.entities
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.configs.GunpowderConfig
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
+import net.minecraft.util.WorldSavePath
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 import kotlin.io.path.pathString
 import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 object GunpowderDatabase : APIGunpowderDatabase {
-    @Volatile
-    private var running = true
-    private val queue = ConcurrentLinkedQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
+    private val queue = LinkedBlockingQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
     private val databaseThread = thread(start = false, name = "Gunpowder Database Thread", isDaemon = true) {
-        while (running) {
+        while (true) {
+            val pair = queue.take()
+
             try {
-                val pair = queue.poll()
-                if (pair == null) {
-                    Thread.sleep(20)  // 20ms to not lag thread
-                    continue
-                }
                 val value = dbTransaction {  // Because recursion
                     val x = pair.first.invoke(this)
                     x
                 }
+
                 pair.second.complete(value)
             } catch(e: Exception) {
                 GunpowderMod.instance.logger.error("Error on Database Thread! Please report to the mod author if this is unexpected!", e)
+                pair.second.completeExceptionally(e)
             }
         }
     }
@@ -65,8 +65,6 @@ object GunpowderDatabase : APIGunpowderDatabase {
     override lateinit var db: Database
 
     fun disconnect() {
-        running = false
-        databaseThread.join()
         try {
             TransactionManager.closeAndUnregister(db)
         } catch (e: UninitializedPropertyAccessException) {
@@ -86,9 +84,11 @@ object GunpowderDatabase : APIGunpowderDatabase {
 
         when (mode) {
             "sqlite" -> {
-                val path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
+                var path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
 
-                // TODO: Support per-world databases
+                if (GunpowderMod.instance.isClient) {
+                    path += "/" + MinecraftClient.getInstance().server?.getSavePath(WorldSavePath.ROOT)?.fileName
+                }
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",

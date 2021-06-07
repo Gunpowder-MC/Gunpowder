@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.mixin.base;
 
+import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.entities.builders.SignType;
 import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base;
 import net.minecraft.block.BlockState;
@@ -31,13 +32,15 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,20 +57,20 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
     boolean custom = false;
     UUID owner;
     SignType type = null;
-    @Shadow
-    @Final
-    private Text[] text;
-    @Shadow
-    private PlayerEntity editor;
-    public SignBlockEntityMixin_Base(BlockEntityType<?> type) {
-        super(type);
+
+    public SignBlockEntityMixin_Base(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Shadow
     public abstract void setTextOnRow(int row, Text text);
 
-    @Inject(method = "fromTag", at = @At("HEAD"))
-    public void fromTag(BlockState state, CompoundTag tag, CallbackInfo ci) {
+    @Shadow @Final private Text[] texts;
+
+    @Shadow @Nullable private UUID editor;
+
+    @Inject(method = "readNbt", at = @At("HEAD"))
+    public void fromTag(NbtCompound tag, CallbackInfo ci) {
         type = (SignType) SignType.Companion.getRegistry().get(new Identifier(tag.getString("gunpowder:customType")));
         if (type != null) {
             type.getDeserializeEvent().invoke((SignBlockEntity) (Object) this, tag);
@@ -76,8 +79,8 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
         }
     }
 
-    @Inject(method = "toTag", at = @At("HEAD"))
-    public void toTag(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+    @Inject(method = "writeNbt", at = @At("HEAD"))
+    public void toTag(NbtCompound tag, CallbackInfoReturnable<NbtCompound> cir) {
         if (type != null) {
             tag.putString("gunpowder:customType", io.github.gunpowder.entities.builders.SignType.Companion.getRegistry().getId(type).toString());
             tag.putUuid("gunpowder:owner", owner);
@@ -86,9 +89,9 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
     }
 
     @Inject(method = "onActivate", at = @At("HEAD"), cancellable = true)
-    void activate(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+    void activate(ServerPlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
         if (!player.world.isClient() && custom) {
-            type.getClickEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) player);
+            type.getClickEvent().invoke((SignBlockEntity) (Object) this, player);
             cir.setReturnValue(true);
         }
     }
@@ -96,7 +99,7 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
     @Inject(method = "setTextColor", at = @At("RETURN"))
     void keepHeaderColor(DyeColor value, CallbackInfoReturnable<Boolean> cir) {
         if (custom) {
-            setTextOnRow(0, new LiteralText(text[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
+            setTextOnRow(0, new LiteralText(texts[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
         }
     }
 
@@ -105,29 +108,30 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity implements S
         super.markDirty();
         if (world == null || world.isClient()) return;
 
-        String header = text[0].asString();
+        String header = texts[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
             String signId = header.substring(1, header.length() - 1);
             Identifier[] ids = SignType.Companion.getRegistry().idToEntry.keySet().stream().filter((id) -> id.getPath().equals(signId)).toArray(Identifier[]::new);
             Optional<io.github.gunpowder.api.builders.SignType> typ = SignType.Companion.getRegistry().getOrEmpty(new Identifier(signId));
+            ServerPlayerEntity player = GunpowderMod.getInstance().getServer().getPlayerManager().getPlayer(editor);
 
-            if (ids.length > 1 && !typ.isPresent()) {
+            if (ids.length > 1 && typ.isEmpty()) {
                 // Multiple options, error
-                editor.sendMessage(new LiteralText("Multiple signs with this ID, please be more specific."), false);
+                player.sendMessage(new LiteralText("Multiple signs with this ID, please be more specific."), false);
                 return;
             }
-            if (ids.length == 0 && !typ.isPresent()) {
+            if (ids.length == 0 && typ.isEmpty()) {
                 // Invalid name, do nothing
                 return;
             }
 
             type = (SignType) typ.orElseGet(() -> SignType.Companion.getRegistry().get(ids[0]));
 
-            if (type != null && type.getConditionEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor)) {
+            if (type != null && type.getConditionEvent().invoke((SignBlockEntity) (Object) this, player)) {
                 setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
-                type.getCreateEvent().invoke((SignBlockEntity) (Object) this, (ServerPlayerEntity) this.editor);
+                type.getCreateEvent().invoke((SignBlockEntity) (Object) this, player);
                 custom = true;
-                owner = editor.getUuid();
+                owner = editor;
             }
         }
     }

@@ -37,10 +37,6 @@ object PlayerHandler {
         GunpowderDatabase
     }
 
-    fun init() {
-
-    }
-
     fun registerPlayer(player: ServerPlayerEntity) {
         db.transaction {
             val row = PlayerTable.select { PlayerTable.id.eq(player.uuid) }.firstOrNull()

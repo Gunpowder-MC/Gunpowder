@@ -26,11 +26,11 @@ package io.github.gunpowder.api.exposed
 
 import io.github.gunpowder.api.components.Component
 import io.github.gunpowder.api.exposed.typeimpl.BlockPosColumnType
-import io.github.gunpowder.api.exposed.typeimpl.CompoundTagColumnType
+import io.github.gunpowder.api.exposed.typeimpl.NbtCompoundColumnType
 import io.github.gunpowder.api.exposed.typeimpl.IdentifierColumnType
 import io.github.gunpowder.api.exposed.typeimpl.ItemStackColumnType
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import org.jetbrains.exposed.sql.Column
@@ -44,8 +44,8 @@ fun Table.identifier(name: String, collate: String? = null, eagerLoading: Boolea
     return registerColumn(name, IdentifierColumnType(collate, eagerLoading))
 }
 
-fun Table.compoundTag(name: String): Column<CompoundTag> {
-    return registerColumn(name, CompoundTagColumnType())
+fun Table.nbtCompound(name: String): Column<NbtCompound> {
+    return registerColumn(name, NbtCompoundColumnType())
 }
 
 fun Table.itemStack(name: String) : Column<ItemStack> {

@@ -53,22 +53,17 @@ interface GunpowderRegistry {
     fun <T> getBuilder(clz: Class<T>): T
 
     /**
-     * Get the ModelHandler implementation for an API modelhandler.
-     */
-    fun <T> getModelHandler(clz: Class<T>): T
-
-    /**
      * Register a Builder to provide an API builder.
      */
     fun <O : T, T> registerBuilder(clz: Class<T>, supplier: Supplier<O>)
-
-    /**
-     * Register a model handler to provide an API model handler.
-     */
-    fun <O : T, T> registerModelHandler(clz: Class<T>, supplier: Supplier<O>)
 
     /**
      * Register a config with a default, being either the path of a resource or a config object.
      */
     fun registerConfig(filename: String, cfg: Class<*>, default: Any)
 }
+
+/**
+ * Utility func for Kotlin
+ */
+inline fun <reified C> GunpowderRegistry.registerConfig(filename: String, default: Any) = registerConfig(filename, C::class.java, default)

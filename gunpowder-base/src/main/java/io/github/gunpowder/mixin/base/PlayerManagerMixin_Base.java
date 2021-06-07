@@ -26,7 +26,7 @@ package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.entities.ComponentHandler;
 import io.github.gunpowder.entities.builtin.PlayerHandler;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -45,7 +45,7 @@ public class PlayerManagerMixin_Base {
 
     @Inject(method="respawnPlayer", at=@At("RETURN"))
     void movePlayerProps(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir) {
-        CompoundTag props = new CompoundTag();
+        NbtCompound props = new NbtCompound();
         ComponentHandler.INSTANCE.saveComponents(props, player);
         ComponentHandler.INSTANCE.loadComponents(props, cir.getReturnValue());
     }

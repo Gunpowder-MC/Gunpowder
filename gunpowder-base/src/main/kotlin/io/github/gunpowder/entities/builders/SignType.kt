@@ -26,7 +26,7 @@ package io.github.gunpowder.entities.builders
 
 import com.mojang.serialization.Lifecycle
 import net.minecraft.block.entity.SignBlockEntity
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -37,8 +37,8 @@ import io.github.gunpowder.api.builders.SignType as APISignType
 class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
                val createEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
                val destroyEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
-               val serializeEvent: (SignBlockEntity, CompoundTag) -> Unit,
-               val deserializeEvent: (SignBlockEntity, CompoundTag) -> Unit,
+               val serializeEvent: (SignBlockEntity, NbtCompound) -> Unit,
+               val deserializeEvent: (SignBlockEntity, NbtCompound) -> Unit,
                val conditionEvent: (SignBlockEntity, ServerPlayerEntity) -> Boolean) : APISignType {
 
     companion object {
@@ -52,8 +52,8 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
         var requireEvent: (SignBlockEntity, ServerPlayerEntity) -> Boolean = { _, _ -> true }
         var createEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit = { _, _ -> }
         var destroyEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit = { _, _ -> }
-        var serializeEvent: (SignBlockEntity, CompoundTag) -> Unit = { _, _ -> }
-        var deserializeEvent: (SignBlockEntity, CompoundTag) -> Unit = { _, _ -> }
+        var serializeEvent: (SignBlockEntity, NbtCompound) -> Unit = { _, _ -> }
+        var deserializeEvent: (SignBlockEntity, NbtCompound) -> Unit = { _, _ -> }
 
         override fun name(name: Identifier) {
             id = name
@@ -75,11 +75,11 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
             destroyEvent = callback
         }
 
-        override fun serialize(callback: (SignBlockEntity, CompoundTag) -> Unit) {
+        override fun serialize(callback: (SignBlockEntity, NbtCompound) -> Unit) {
             serializeEvent = callback
         }
 
-        override fun deserialize(callback: (SignBlockEntity, CompoundTag) -> Unit) {
+        override fun deserialize(callback: (SignBlockEntity, NbtCompound) -> Unit) {
             deserializeEvent = callback
         }
 

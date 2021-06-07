@@ -30,7 +30,7 @@ import io.github.gunpowder.events.WorldPreSleepCallback;
 import io.github.gunpowder.events.WorldSleepCallback;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -96,7 +96,7 @@ public abstract class ServerWorldMixin_Base extends World {
     void saveProperties(ProgressListener progressListener, boolean flush, boolean bl, CallbackInfo ci) throws IOException {
         if (DimensionManager.INSTANCE.isCustom(getRegistryKey())) {
             LevelProperties props = ((LevelProperties)getLevelProperties());
-            CompoundTag tag = props.cloneWorldTag(getRegistryManager(), new CompoundTag());
+            NbtCompound tag = props.cloneWorldNbt(getRegistryManager(), new NbtCompound());
             NbtIo.writeCompressed(tag, new File(server.session.getWorldDirectory(getRegistryKey()), "level.dat"));
         }
     }
@@ -104,10 +104,7 @@ public abstract class ServerWorldMixin_Base extends World {
     @Inject(method="<init>", at=@At("RETURN"))
     void initComponents(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session, ServerWorldProperties properties, RegistryKey<World> registryKey, DimensionType dimensionType, WorldGenerationProgressListener worldGenerationProgressListener, ChunkGenerator chunkGenerator, boolean debugWorld, long l, List<Spawner> list, boolean bl, CallbackInfo ci) {
         ComponentHandler.INSTANCE.initComponents(this);
-    }
 
-    @Inject(method="fromTag", at=@At("HEAD"))
-    void loadComponents(CompoundTag tag, CallbackInfo ci) {
-        ComponentHandler.INSTANCE.loadComponents(tag, this);
+        // TODO: Persist
     }
 }

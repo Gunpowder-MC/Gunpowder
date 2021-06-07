@@ -25,16 +25,23 @@
 package io.github.gunpowder.mixin.base;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.TimeoutException;
 import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
+
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin_Base {
     @Inject(method="exceptionCaught", at=@At("HEAD"))
     void logException(ChannelHandlerContext channelHandlerContext, Throwable throwable, CallbackInfo ci) {
+        if (throwable instanceof TimeoutException || throwable instanceof IOException) {
+            return;
+        }
         throwable.printStackTrace();
     }
 }
