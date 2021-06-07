@@ -24,7 +24,9 @@
 
 package io.github.gunpowder.mixin.base;
 
+import io.github.gunpowder.entities.ComponentHandler;
 import io.github.gunpowder.entities.builtin.PlayerHandler;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,11 +34,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin_Base {
     @Inject(method="onPlayerConnect", at=@At("HEAD"))
     void registerPlayer(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         PlayerHandler.INSTANCE.registerPlayer(player);
+    }
+
+    @Inject(method="respawnPlayer", at=@At("RETURN"))
+    void movePlayerProps(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        CompoundTag props = new CompoundTag();
+        ComponentHandler.INSTANCE.saveComponents(props, player);
+        ComponentHandler.INSTANCE.loadComponents(props, cir.getReturnValue());
     }
 }

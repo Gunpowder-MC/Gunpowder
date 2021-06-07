@@ -34,14 +34,18 @@ private val map = WeakHashMap<Any, MutableMap<String, Any>>()
  * This means that adding to e.g. a UUID, the UUID leaves memory, and another same UUID is created,
  *  it loses the property.
  */
+
+@Deprecated("Use Components instead")
 operator fun <T> Any.set(name: String, value: T) {
     map.getOrPut(this) { mutableMapOf() }.put(name, value as Any)
 }
 
+@Deprecated("Use Components instead")
 operator fun <T> Any.get(name: String) : T {
     return getOrNull<T>(name) ?: error("Property $name was null!")
 }
 
+@Deprecated("Use Components instead")
 fun <T> Any.getOrNull(name: String) : T? {
     return map[this]?.get(name) as T?
 }

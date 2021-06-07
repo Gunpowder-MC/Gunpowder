@@ -25,18 +25,40 @@
 package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.api.GunpowderMod;
+import io.github.gunpowder.api.components.ComponentsKt;
+import io.github.gunpowder.entities.ComponentHandler;
 import io.github.gunpowder.entities.DimensionManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public class EntityMixin_Base {
+    @Inject(method="<init>", at=@At("RETURN"))
+    void initComponents(EntityType<?> type, World world, CallbackInfo ci) {
+        ComponentHandler.INSTANCE.initComponents(this);
+    }
+
+    @Inject(method="toTag", at=@At("HEAD"))
+    void saveComponents(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+        ComponentHandler.INSTANCE.saveComponents(tag, this);
+    }
+
+    @Inject(method="fromTag", at=@At("HEAD"))
+    void loadComponents(CompoundTag tag, CallbackInfo ci) {
+        ComponentHandler.INSTANCE.loadComponents(tag, this);
+    }
+
     @Redirect(method="tickNetherPortal", at=@At(value="INVOKE", target="Lnet/minecraft/server/MinecraftServer;getWorld(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/server/world/ServerWorld;"))
     ServerWorld lookupMap(MinecraftServer minecraftServer, RegistryKey<World> key) {
         RegistryKey<World> realKey = ((Entity)(Object)this).world.getRegistryKey();

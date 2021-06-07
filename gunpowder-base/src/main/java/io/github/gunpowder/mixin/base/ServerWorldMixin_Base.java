@@ -24,13 +24,16 @@
 
 package io.github.gunpowder.mixin.base;
 
+import io.github.gunpowder.entities.ComponentHandler;
 import io.github.gunpowder.entities.DimensionManager;
 import io.github.gunpowder.events.WorldPreSleepCallback;
 import io.github.gunpowder.events.WorldSleepCallback;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ProgressListener;
@@ -40,8 +43,11 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.Spawner;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -49,10 +55,12 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -91,5 +99,15 @@ public abstract class ServerWorldMixin_Base extends World {
             CompoundTag tag = props.cloneWorldTag(getRegistryManager(), new CompoundTag());
             NbtIo.writeCompressed(tag, new File(server.session.getWorldDirectory(getRegistryKey()), "level.dat"));
         }
+    }
+
+    @Inject(method="<init>", at=@At("RETURN"))
+    void initComponents(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session, ServerWorldProperties properties, RegistryKey<World> registryKey, DimensionType dimensionType, WorldGenerationProgressListener worldGenerationProgressListener, ChunkGenerator chunkGenerator, boolean debugWorld, long l, List<Spawner> list, boolean bl, CallbackInfo ci) {
+        ComponentHandler.INSTANCE.initComponents(this);
+    }
+
+    @Inject(method="fromTag", at=@At("HEAD"))
+    void loadComponents(CompoundTag tag, CallbackInfo ci) {
+        ComponentHandler.INSTANCE.loadComponents(tag, this);
     }
 }

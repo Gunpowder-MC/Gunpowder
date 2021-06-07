@@ -6,6 +6,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "$shadow"
     id 'com.matthewprenger.cursegradle' version "$cursegradle"
+    id "com.github.ben-manes.versions" version "$updater"
 }
 
 apply from: "dependencies.gradle"  // libs.*
@@ -119,6 +120,7 @@ allprojects { project ->
         minecraft(libs.minecraft) {
             transitive = false
         }
+        System.out.println(libs.yarn)
         mappings libs.yarn
         modImplementation libs.fabric_loader
 

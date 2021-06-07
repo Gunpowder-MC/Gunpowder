@@ -6,9 +6,11 @@
   "mixinPriority": 9999,
   "mixins": [
     "AbstractFireBlockMixin_Base",
+    "BlockEntityMixin_Base",
     "ClientConnectionMixin_Base",
     "CommandManagerMixin_Base",
     "EntityMixin_Base",
+    "ItemStackMixin_Base",
     "LivingEntityMixin_Base",
     "MinecraftServerMixin_Base",
     "PlayerManagerMixin_Base",

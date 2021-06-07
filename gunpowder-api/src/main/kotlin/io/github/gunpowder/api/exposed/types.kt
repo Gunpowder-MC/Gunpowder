@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.api.exposed
 
+import io.github.gunpowder.api.components.Component
 import io.github.gunpowder.api.exposed.typeimpl.BlockPosColumnType
 import io.github.gunpowder.api.exposed.typeimpl.CompoundTagColumnType
 import io.github.gunpowder.api.exposed.typeimpl.IdentifierColumnType
