@@ -1,3 +1,9 @@
+## Gunpowder 0.5.7
+
+- (Debug) Added a check to stop logging unnecessary "errors"
+
+---
+
 ## Gunpowder 0.5.6
 
 - (Dimension) Fixed issue with removing worlds
