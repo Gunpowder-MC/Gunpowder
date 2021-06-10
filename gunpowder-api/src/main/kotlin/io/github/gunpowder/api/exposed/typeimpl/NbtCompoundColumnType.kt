@@ -24,16 +24,12 @@
 
 package io.github.gunpowder.api.exposed.typeimpl
 
-import com.google.common.io.ByteStreams
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.*
-import net.minecraft.util.Identifier
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtIo
 import org.jetbrains.exposed.sql.ColumnType
-import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.statements.api.PreparedStatementApi
 import org.jetbrains.exposed.sql.vendors.currentDialect
 import java.io.*
-import java.sql.Blob
 import java.sql.ResultSet
 
 open class NbtCompoundColumnType : ColumnType() {

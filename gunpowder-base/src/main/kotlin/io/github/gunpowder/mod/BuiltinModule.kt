@@ -45,10 +45,6 @@ object BuiltinModule : GunpowderModule {
         SignBlockEntity::class.bind<SignTypeComponent>()
     }
 
-    override fun registerConfigs() {
-        gunpowder.registry.registerConfig<GunpowderConfig>("gunpowder.yaml", "gunpowder.yaml")
-    }
-
     override fun registerCommands() {
         gunpowder.registry.registerCommand(InfoCommand::register)
 

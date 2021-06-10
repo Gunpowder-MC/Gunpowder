@@ -1,39 +1,40 @@
 package io.github.gunpowder.api.components
 
+import org.jetbrains.annotations.ApiStatus
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.internal.impl.resolve.calls.inference.CapturedType
 
-val map = WeakHashMap<Any, HashMap<Class<out Component<*>>, Component<*>>>()
-val injected = HashMap<Class<*>, MutableList<Class<out Component<*>>>>()
-
-inline fun <reified A : Component<*>> Class<*>.bind() {
-    val list = injected[this] ?: mutableListOf<Class<out Component<*>>>().also { injected[this] = it }
-    list.add(A::class.java)
+inline fun <reified C : Component<*>> Class<*>.bind() {
+    val list = injected.getOrPut(this) { mutableListOf() }
+    list.add(C::class.java)
 }
 
-inline fun <reified A : Component<*>> KClass<*>.bind() {
-    val list = injected[this.java] ?: mutableListOf<Class<out Component<*>>>().also { injected[this.java] = it }
-    list.add(A::class.java)
+inline fun <reified C : Component<*>> KClass<*>.bind() = this.java.bind<C>()
+
+inline fun <reified C : Component<*>> Any.with(): C {
+    return with(C::class.java)
 }
 
-inline fun <reified A : Component<*>> Any.with(): A {
-    return with(A::class.java)
-}
+// ---- Internals below ----
 
-@Deprecated("Used internally")
+val map = WeakHashMap<Any, MutableMap<Class<out Component<*>>, Component<*>>>()
+val injected = mutableMapOf<Class<*>, MutableList<Class<out Component<*>>>>()
+
+//@ApiStatus.Internal
 fun Class<*>.getComponents(): List<Class<out Component<*>>> {
     // Applies bound parameters to instance
     val list = mutableListOf<Class<out Component<*>>>()
-    injected.filter { this.kotlin.isSubclassOf(it.key.kotlin) }.forEach {
+    injected.filter { it.key.isAssignableFrom(this) }.forEach {
         list.addAll(it.value)
     }
     return list
 }
 
-@Deprecated("Used internally")
+//@ApiStatus.Internal
 fun Any.withAll(): List<Component<*>> {
     // Get all attached components
 
@@ -41,14 +42,17 @@ fun Any.withAll(): List<Component<*>> {
     return components.values.toList()
 }
 
-@Deprecated("Used internally")
+//@ApiStatus.Internal
 fun <A : Component<*>> Any.with(component: Class<A>) : A {
-    val components = map[this] ?: HashMap<Class<out Component<*>>, Component<*>>().also { map[this] = it };
-    val instance = components[component] ?: let {
-        val constructor = component.kotlin.constructors.firstOrNull { it.parameters.isEmpty() && it.visibility === KVisibility.PUBLIC } ?: error("No public no-args constructor on class $component!")
+    if (!this::class.java.getComponents().contains(component)) {
+        throw IllegalArgumentException("Component ${component.name} not bound to class ${this::class.java.name}")
+    }
+
+    val components = map.getOrPut(this) { mutableMapOf() }
+    val instance = components.getOrPut(component) {
+        val constructor = component.kotlin.constructors.firstOrNull { it.parameters.isEmpty() && it.visibility === KVisibility.PUBLIC } ?: error("No public no-args constructor on component ${component.name}!")
         val obj = constructor.call()
         obj.setBound(this)
-        components[component] = obj
         obj
     }
     return instance as A

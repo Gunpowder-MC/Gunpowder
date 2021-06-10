@@ -29,6 +29,8 @@ import com.google.inject.Injector
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
 import io.github.gunpowder.api.builders.Command
+import io.github.gunpowder.api.registerConfig
+import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.*
 import io.github.gunpowder.entities.builtin.PlayerHandler
 import io.github.gunpowder.injection.AbstractModule
@@ -58,7 +60,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         injector = Guice.createInjector(this.createModule())
     }
 
-    var modules: MutableList<GunpowderModule> = mutableListOf()
+    val modules = mutableListOf<GunpowderModule>()
 
     fun reload() {
         modules.forEach {
@@ -74,27 +76,19 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java).sortedBy { it.entrypoint.priority }
 
-        // Register events before registering commands
-        // in case of a RegisterCommandEvent or something
-        entrypoints.forEach {
-            val module = it.entrypoint
-            module.registerConfigs()
-            module.registerEvents()
-            module.registerComponents()
-        }
-
+        registry.registerConfig<GunpowderConfig>("gunpowder.yaml", "gunpowder.yaml")
         GunpowderDatabase.loadDatabase()
 
         entrypoints.forEach {
             val module = it.entrypoint
-            modules.add(module)
-            logger.info("Loaded module ${module.name}, provided by ${it.provider.metadata.id}")
-            // We need to register configs as early as possible. The actual reloading of configs to handle per world settings can be done after the server has stopped for singleplayer
-            // This is due to LiteralTextMixin_Chat accessing the config during a Resource reload.
-            // Thereby accessing the gunpowder instance BEFORE the server start callbacks have been fired
+            logger.info("Loading module ${module.name}, provided by ${it.provider.metadata.id}")
+            module.registerConfigs()
+            module.registerEvents()
+            module.registerComponents()
             module.registerTables()
             module.registerCommands()
             module.onInitialize()
+            modules.add(module)
         }
     }
 

@@ -41,7 +41,6 @@ object InfoCommand {
             line("Welcome to gunpowder!")
             line("")
             line("Modules loaded:")
-            line("- base", Formatting.GREEN)
             (GunpowderMod.instance as AbstractGunpowderMod).modules.forEach {
                 line("- ${it.name}", Formatting.GREEN)
             }

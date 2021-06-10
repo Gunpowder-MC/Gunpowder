@@ -48,7 +48,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
             val pair = queue.take()
 
             try {
-                val value = dbTransaction {  // Because recursion
+                val value = dbTransaction(db) {  // Because recursion
                     val x = pair.first.invoke(this)
                     x
                 }
