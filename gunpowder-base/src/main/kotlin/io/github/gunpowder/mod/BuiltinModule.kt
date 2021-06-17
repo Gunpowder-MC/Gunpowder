@@ -7,6 +7,7 @@ import io.github.gunpowder.api.components.bind
 import io.github.gunpowder.api.components.with
 import io.github.gunpowder.api.exposed.PlayerTable
 import io.github.gunpowder.api.registerConfig
+import io.github.gunpowder.commands.HelpCommand
 import io.github.gunpowder.commands.InfoCommand
 import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.GunpowderDatabase
@@ -46,6 +47,7 @@ object BuiltinModule : GunpowderModule {
     }
 
     override fun registerCommands() {
+        gunpowder.registry.registerCommand(HelpCommand::register)
         gunpowder.registry.registerCommand(InfoCommand::register)
 
     }
