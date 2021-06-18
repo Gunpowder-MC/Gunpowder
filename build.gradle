@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-//    id 'org.cadixdev.licenser' version "$licenser"
+    id 'org.cadixdev.licenser' version "$licenser"
     id 'fabric-loom' version "$fabric_loom" apply false
     id 'org.jetbrains.kotlin.jvm' version "$kotlin"
     id "com.github.johnrengelman.shadow" version "$shadow"
@@ -36,20 +36,20 @@ allprojects { project ->
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jetbrains.kotlin.jvm'
-//    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'org.cadixdev.licenser'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     project.version = rootProject.version
     project.group = rootProject.group
     project.setBuildDir(rootProject.getBuildDir())
 
-//    license {
-//        header = rootProject.file('LICENSE')
-//        include '**/*.java'
-//        include '**/*.kt'
-//        style.java = 'BLOCK_COMMENT'
-//        style.kt = 'BLOCK_COMMENT'
-//    }
+    license {
+        header = rootProject.file('LICENSE')
+        include '**/*.java'
+        include '**/*.kt'
+        style.java = 'BLOCK_COMMENT'
+        style.kt = 'BLOCK_COMMENT'
+    }
 
     configurations {
         dev

@@ -1,3 +1,18 @@
+## Gunpowder 1.0.2
+
+New features:
+
+- (Help) Reworked /help to add pagination
+- (Component) Added ticking components
+- (Component) Added support for serialization in more places
+  
+Improvements:
+
+- (Gradle) Re-enable licenser
+- (Component) Reworked internals 
+
+---
+
 ## Gunpowder 1.0.0
 
 New Features:
