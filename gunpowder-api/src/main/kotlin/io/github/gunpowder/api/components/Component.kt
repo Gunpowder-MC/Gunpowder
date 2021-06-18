@@ -9,12 +9,24 @@ abstract class Component<T : Any> {
     }
 
     /**
+     * Ticking supported by:
+     * - Entity
+     * - Chunk
+     * - ServerWorld
+     * - BlockEntity
+     */
+    open fun tick() {}
+
+    /**
      * Serialization as supported by:
      * - Entity
      * - ServerPlayerEntity (with respawning)
      * - ItemStack
+     * - ServerWorld (experimental)
+     * - BlockEntity
      * Alternatively, these can be stored in a database column as NbtCompound
      */
     open fun writeNbt(tag: NbtCompound) {}
+
     open fun fromNbt(tag: NbtCompound) {}
 }

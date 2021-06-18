@@ -65,28 +65,25 @@ object HelpCommand {
                     color(Formatting.GREEN)
                 }
             }
-            text("") {
-                color(Formatting.YELLOW)
-                text("========== ")
-                text("Previous") {
-                    if (page == 1) {
-                        color(Formatting.GRAY)
-                    } else {
-                        color(Formatting.BLUE)
-                        onClickCommand("/help ${page - 1}")
-                    }
+            text("========== ") { color(Formatting.YELLOW) }
+            text("Previous") {
+                if (page == 1) {
+                    color(Formatting.GRAY)
+                } else {
+                    color(Formatting.BLUE)
+                    onClickCommand("/help ${page - 1}")
                 }
-                text(" / ")
-                text("Next") {
-                    if (page == maxPage+1) {
-                        color(Formatting.GRAY)
-                    } else {
-                        color(Formatting.BLUE)
-                        onClickCommand("/help ${page + 1}")
-                    }
-                }
-                text(" ==========")
             }
+            text(" / ") { color(Formatting.YELLOW) }
+            text("Next") {
+                if (page == maxPage+1) {
+                    color(Formatting.GRAY)
+                } else {
+                    color(Formatting.BLUE)
+                    onClickCommand("/help ${page + 1}")
+                }
+            }
+            text(" ==========") { color(Formatting.YELLOW) }
         }, false)
         return entries.size
     }

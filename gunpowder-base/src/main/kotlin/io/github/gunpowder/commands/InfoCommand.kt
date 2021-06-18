@@ -48,7 +48,7 @@ object InfoCommand {
 
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
-            command("info", "gunpowder", "/help") {
+            command("info", "gunpowder") {
                 executes(::showInfo)
             }
         }

@@ -59,6 +59,11 @@ public class EntityMixin_Base {
         ComponentHandler.INSTANCE.loadComponents(tag, this);
     }
 
+    @Inject(method="tick", at=@At("HEAD"))
+    void tickComponents(CallbackInfo ci) {
+        ComponentHandler.INSTANCE.tickComponents(this);
+    }
+
     @Redirect(method="tickNetherPortal", at=@At(value="INVOKE", target="Lnet/minecraft/server/MinecraftServer;getWorld(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/server/world/ServerWorld;"))
     ServerWorld lookupMap(MinecraftServer minecraftServer, RegistryKey<World> key) {
         RegistryKey<World> realKey = ((Entity)(Object)this).world.getRegistryKey();

@@ -26,4 +26,10 @@ object ComponentHandler {
             component.fromNbt(ourTag)
         }
     }
+
+    fun tickComponents(it: Any) {
+        for (component in it.withAll()) {
+            component.tick()
+        }
+    }
 }
