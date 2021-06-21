@@ -24,13 +24,9 @@
 
 package io.github.gunpowder.api.components
 
-import org.jetbrains.annotations.ApiStatus
-import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.internal.impl.resolve.calls.inference.CapturedType
 
 inline fun <reified C : Component<*>> Class<*>.bind() {
     val list = injected.getOrPut(this) { mutableListOf() }
@@ -41,6 +37,10 @@ inline fun <reified C : Component<*>> KClass<*>.bind() = this.java.bind<C>()
 
 inline fun <reified C : Component<*>> Any.with(): C {
     return with(C::class.java)
+}
+
+inline fun <reified C: Component<*>> Any.with(block: C.() -> Unit) {
+    block(with())
 }
 
 // ---- Internals below ----
