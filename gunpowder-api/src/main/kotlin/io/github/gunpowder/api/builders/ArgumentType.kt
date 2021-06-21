@@ -38,7 +38,7 @@ import kotlin.reflect.KClass
 interface ArgumentType {
     companion object{
         fun builder(block: Consumer<Builder>) = builder(block::accept)
-        fun builder(block: (Builder) -> Unit) {
+        fun builder(block: Builder.() -> Unit) {
             val builder = GunpowderMod.instance.registry.getBuilder(Builder::class.java)
             block(builder)
             builder.register()
