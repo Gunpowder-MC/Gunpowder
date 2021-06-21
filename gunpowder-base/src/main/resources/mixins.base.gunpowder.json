@@ -15,7 +15,7 @@
     "LivingEntityMixin_Base",
     "MinecraftServerMixin_Base",
     "PlayerManagerMixin_Base",
-    "RequiredArgumentBuilderAccessor_Base",
+    "RequiredArgumentBuilderMixin_Base",
     "ServerPlayerEntityMixin_Base",
     "ServerPlayerInteractionManagerMixin_Base",
     "ServerPlayNetworkHandlerMixin_Base",

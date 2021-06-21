@@ -22,18 +22,10 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.mixin.base;
+package io.github.gunpowder.cast
 
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import com.mojang.brigadier.arguments.ArgumentType
 
-/*
- * Source: https://gitlab.com/stellardrift/colonel/-/blob/dev/src/accessor/java/ca/stellardrift/colonel/mixin/AccessorRequiredArgumentBuilder.java
- */
-@Mixin(value = RequiredArgumentBuilder.class, remap = false)
-public interface RequiredArgumentBuilderAccessor_Base {
-    @Accessor("type")
-    void accessor$type(final ArgumentType<?> type);
+interface TypeSetter {
+    fun setType(type: ArgumentType<*>)
 }

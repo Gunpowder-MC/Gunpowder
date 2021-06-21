@@ -29,6 +29,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
+import io.github.gunpowder.cast.TypeSetter;
 import io.github.gunpowder.entities.arguments.ServerArgumentTypes;
 import io.github.gunpowder.entities.builders.ArgumentType;
 import net.minecraft.command.CommandSource;
@@ -63,7 +64,7 @@ public class CommandManagerMixin_Base {
         final Set<Identifier> knownExtraCommands = ServerArgumentTypes.getKnownArgumentTypes(source.getPlayer());
 
         while (type != null && !knownExtraCommands.contains(type.getId())) {
-            ((RequiredArgumentBuilderAccessor_Base)requiredArgumentBuilder).accessor$type(type.getFallback().invoke(requiredArgumentBuilder.getType()));
+            ((TypeSetter)requiredArgumentBuilder).setType(type.getFallback().invoke(requiredArgumentBuilder.getType()));
             if (type.getSuggestions() != null) {
                 requiredArgumentBuilder.suggests((SuggestionProvider) type.getSuggestions());
             }
