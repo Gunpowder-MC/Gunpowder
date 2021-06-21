@@ -14,6 +14,9 @@
     "client": [
       "io.github.gunpowder.mod.client.GunpowderClientMod"
     ],
+    "preLaunch": [
+      "io.github.gunpowder.mod.GunpowderPrelaunchHook"
+    ],
     "gunpowder:modules": [
       {
         "adapter": "kotlin",
