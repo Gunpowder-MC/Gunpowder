@@ -26,25 +26,33 @@ package io.github.gunpowder.mod
 
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.gunpowder.api.builders.SignType
 import io.github.gunpowder.api.components.bind
 import io.github.gunpowder.api.components.with
 import io.github.gunpowder.api.exposed.PlayerTable
-import io.github.gunpowder.api.registerConfig
 import io.github.gunpowder.commands.HelpCommand
 import io.github.gunpowder.commands.InfoCommand
-import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.GunpowderDatabase
+import io.github.gunpowder.entities.arguments.ServerArgumentTypes
+import io.github.gunpowder.entities.builtin.PlayerArgumentComponent
 import io.github.gunpowder.entities.builtin.SignTypeComponent
 import io.github.gunpowder.entities.mc.ChestGuiContainer
+import io.github.gunpowder.entities.mc.RegisteredArgumentTypesC2SPacket
 import io.github.gunpowder.events.BlockPreBreakCallback
-import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base
+import net.fabricmc.api.EnvType
+import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.block.AbstractSignBlock
 import net.minecraft.block.entity.SignBlockEntity
-import net.minecraft.text.LiteralText
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.network.ClientPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Identifier
+
 
 object BuiltinModule : GunpowderModule {
     override val name = "base"
@@ -64,9 +72,24 @@ object BuiltinModule : GunpowderModule {
 //                serverPlayerEntity.sendMessage(LiteralText("hi"), false)
 //            }
 //        }
+
+        if (FabricLoader.getInstance().isModLoaded("fabric-networking-v0")) {
+            RegisteredArgumentTypesC2SPacket.register()
+            if (FabricLoader.getInstance().environmentType === EnvType.CLIENT) { // we need to send the packet
+                C2SPlayChannelEvents.REGISTER.register(C2SPlayChannelEvents.Register { handler: ClientPlayNetworkHandler?, sender: PacketSender, client: MinecraftClient, channels: List<Identifier?> ->
+                    if (channels.contains(RegisteredArgumentTypesC2SPacket.ID)) {
+                        client.execute {
+                            RegisteredArgumentTypesC2SPacket(ServerArgumentTypes.ids).sendTo(sender)
+                        }
+                    }
+                })
+            }
+        }
+
     }
 
     override fun registerComponents() {
+        ServerPlayerEntity::class.bind<PlayerArgumentComponent>()
         SignBlockEntity::class.bind<SignTypeComponent>()
     }
 
@@ -113,6 +136,13 @@ object BuiltinModule : GunpowderModule {
                 guis.forEach(ChestGuiContainer::update)
             }
         })
+
+        ServerPlayerEvents.COPY_FROM.register { old, new, alive ->
+            val oldArgs = old.with<PlayerArgumentComponent>()
+            val newArgs = new.with<PlayerArgumentComponent>()
+            newArgs.known.clear()
+            newArgs.known.addAll(oldArgs.known)
+        }
 
 //        if (GunpowderMod.instance.isClient) {
 //            ServerLifecycleEvents.SERVER_STARTED.register {

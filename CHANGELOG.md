@@ -1,3 +1,17 @@
+## Gunpowder 1.0.3
+
+New features:
+
+- (Arguments) Server-side argument types
+  - This is mostly code from Colonel updated and reworked
+    and will serve as placeholder until updated.
+
+Misc:
+
+- Updated dependencies
+
+---
+
 ## Gunpowder 1.0.2
 
 New features:

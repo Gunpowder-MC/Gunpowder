@@ -4,6 +4,9 @@ dependencies {
     // Shading causes large dep issues
     implementation project(":gunpowder-api")
 
+    // Utils
+//    include libs.colonel
+
     // Database drivers
     // No need to have these shaded
     include libs.postgresql

@@ -30,17 +30,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mojang.brigadier.CommandDispatcher
 import io.github.gunpowder.api.GunpowderMod
-import io.github.gunpowder.api.exposed.PlayerTable
-import io.github.gunpowder.commands.InfoCommand
-import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.builders.*
 import net.fabricmc.fabric.api.registry.CommandRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.server.command.ServerCommandSource
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.File
 import java.util.function.Supplier
 import io.github.gunpowder.api.GunpowderRegistry as APIGunpowderRegistry
 import io.github.gunpowder.api.builders.ChestGui as APIChestGui
@@ -48,6 +43,7 @@ import io.github.gunpowder.api.builders.Command as APICommand
 import io.github.gunpowder.api.builders.SidebarInfo as APISidebarInfo
 import io.github.gunpowder.api.builders.SignType as APISignType
 import io.github.gunpowder.api.builders.TeleportRequest as APITeleportRequest
+import io.github.gunpowder.api.builders.ArgumentType as APIArgumentType
 import io.github.gunpowder.api.builders.Text as APIText
 
 object GunpowderRegistry : APIGunpowderRegistry {
@@ -68,6 +64,7 @@ object GunpowderRegistry : APIGunpowderRegistry {
         builders[APIChestGui.Builder::class.java] = Supplier { ChestGui.Builder() }
         builders[APISidebarInfo.Builder::class.java] = Supplier { SidebarInfo.Builder() }
         builders[APISignType.Builder::class.java] = Supplier { SignType.Builder() }
+        builders[APIArgumentType.Builder::class.java] = Supplier { ArgumentType.Builder() }
     }
 
     override fun registerCommand(callback: (CommandDispatcher<ServerCommandSource>) -> Unit) {

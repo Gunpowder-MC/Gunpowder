@@ -106,8 +106,12 @@ allprojects { project ->
             url = "https://jitpack.io"
         }
         maven {
-            name = "Ladysnake Libs"
-            url = "https://dl.bintray.com/ladysnake/libs"
+            name = 'Ladysnake Mods'
+            url = 'https://ladysnake.jfrog.io/artifactory/mods'
+            content {
+                includeGroup 'io.github.ladysnake'
+                includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+            }
         }
         maven {
             name = "HavenKing"
@@ -140,6 +144,10 @@ allprojects { project ->
         modRuntime libs.exposed_core
         modRuntime libs.exposed_jdbc
         modRuntime libs.exposed_java_time
+
+        // Utils
+        modImplementation libs.pal
+//        modImplementation libs.colonel
 
         // Database drivers
         modImplementation libs.postgresql
