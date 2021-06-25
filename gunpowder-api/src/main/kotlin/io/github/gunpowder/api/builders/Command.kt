@@ -32,7 +32,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import io.github.gunpowder.api.GunpowderMod
 import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
+import java.util.function.BiFunction
 import java.util.function.Consumer
+import java.util.function.Function
 
 interface Command {
     companion object {
@@ -62,8 +64,22 @@ interface Command {
 
     interface CommandBuilder {
         /**
+         * Set the required permission. Not compatible with `requires`.
+         * opLevel is the fallback if no permission implementation is provided.
+         */
+        fun permission(permissionNode: String) = permission(permissionNode, 4)
+        fun permission(permissionNode: String, opLevel: Int) = permission(permissionNode, opLevel) { true }
+
+        fun permission(permissionNode: String, additionalCheck: Function<ServerCommandSource, Boolean>) = permission(permissionNode, additionalCheck::apply)
+        fun permission(permissionNode: String, additionalCheck: (ServerCommandSource) -> Boolean) = permission(permissionNode, 4, additionalCheck)
+
+        fun permission(permissionNode: String, opLevel: Int, additionalCheck: Function<ServerCommandSource, Boolean>) = permission(permissionNode, opLevel, additionalCheck::apply)
+        fun permission(permissionNode: String, opLevel: Int, additionalCheck: (ServerCommandSource) -> Boolean)
+
+        /**
          * Set requirements for running this function.
          */
+        fun requires(checkFunction: Function<ServerCommandSource, Boolean>) = requires(checkFunction::apply)
         fun requires(checkFunction: (ServerCommandSource) -> Boolean)
 
         /**
@@ -81,6 +97,7 @@ interface Command {
         /**
          * Code or function to execute on this command.
          */
+        fun executes(callback: Function<CommandContext<ServerCommandSource>, Int>) = executes(callback::apply)
         fun executes(callback: (CommandContext<ServerCommandSource>) -> Int)
     }
 
@@ -88,6 +105,7 @@ interface Command {
         /**
          * Suggestion provider for this callback.
          */
+        fun suggests(callback: BiFunction<CommandContext<ServerCommandSource>, SuggestionsBuilder, CompletableFuture<Suggestions>>) = suggests(callback::apply)
         fun suggests(callback: (CommandContext<ServerCommandSource>, SuggestionsBuilder) -> CompletableFuture<Suggestions>)
     }
 }

@@ -21,41 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package io.github.gunpowder.api.ext
 
-package io.github.gunpowder.api
+import net.minecraft.server.network.ServerPlayerEntity
 
 /**
- * Interface a registered module should implement.
+ * Get a property.
+ * For `node.[int]` this will be an Int
+ * for `node.[double]` this will be a Double
+ * for regular permission nodes this will be a Boolean
  */
-interface GunpowderModule {
-    val name: String
-
-    @Deprecated("Unused, will be removed in later versions")
-    val toggleable: Boolean
-
-    /**
-     * Lower priority value means loaded earlier
-     */
-    val priority: Int
-        get() = 1000
-
-    // The methods below are in call order
-
-    fun registerConfigs() {}
-    fun registerEvents() {}
-    fun registerComponents() {}
-    fun registerTables() {}
-    fun registerCommands() {}
-
-    /**
-     * Called on datapack reload (aka /reload)
-     *
-     * Use this to e.g. clear DB caches, update lang files, etc
-     */
-    fun reload() {}
-
-    /**
-     * Called when initializing a module. This is called after all register methods.
-     */
-    fun onInitialize() {}
+fun ServerPlayerEntity.getPermission(node: String, default: Boolean) = getPermission<Boolean>(node, default)
+fun <T> ServerPlayerEntity.getPermission(node: String, default: T) : T {
+    when (default) {
+        is Int -> ValueAdapter.INTEGER
+        is Double -> ValueAdapter.DOUBLE
+        is Boolean -> {
+            return Permissions.get().check(UserContext.of(this), node) == PermissionValue.TRUE
+        }
+        else -> error("Unknown permission value type")
+    }
+    return PermissionProvider.getValueFrom(listOf(node), default, )
 }

@@ -68,6 +68,16 @@ object Command : APICommand {
     }
 
     open class CommandBuilder(internal val command: BrigadierArgumentBuilder<ServerCommandSource, *>) : APICommand.CommandBuilder {
+        override fun permission(
+            permissionNode: String,
+            opLevel: Int,
+            additionalCheck: (ServerCommandSource) -> Boolean
+        ) {
+            this.command.requires {
+                Permission.requires(permissionNode, opLevel).test(it) && additionalCheck(it)
+            }
+        }
+
         override fun requires(checkFunction: (ServerCommandSource) -> Boolean) {
             this.command.requires(checkFunction)
         }
