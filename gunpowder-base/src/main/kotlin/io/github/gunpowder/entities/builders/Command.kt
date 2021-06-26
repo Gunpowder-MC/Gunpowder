@@ -32,6 +32,7 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import eu.pb4.permissions.api.v0.Permissions
 import io.github.gunpowder.api.GunpowderMod
+import io.github.gunpowder.api.ext.getPresentPermission
 import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.events.PermissionRegisterCallback
 import net.minecraft.server.command.CommandManager
@@ -76,7 +77,7 @@ object Command : APICommand {
             PermissionRegisterCallback.EVENT.invoker().trigger(permissionNode)
 
             this.command.requires {
-                Permissions.require(permissionNode, opLevel).test(it) && additionalCheck(it)
+                it.player.getPresentPermission(permissionNode, opLevel) && additionalCheck(it)
             }
         }
 
