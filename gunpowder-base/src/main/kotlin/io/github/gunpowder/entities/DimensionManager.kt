@@ -32,7 +32,7 @@ import com.mojang.serialization.DynamicOps
 import io.github.gunpowder.api.GunpowderDimensionManager
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.builders.TeleportRequest
-import io.github.gunpowder.mixin.cast.SyncPlayer
+import io.github.gunpowder.cast.SyncPlayer
 import net.minecraft.SharedConstants
 import net.minecraft.datafixer.DataFixTypes
 import net.minecraft.datafixer.Schemas

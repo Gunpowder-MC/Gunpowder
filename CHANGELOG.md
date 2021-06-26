@@ -1,3 +1,16 @@
+## Gunpowder 1.0.4
+
+New features:
+
+- (Permissions) Add permissions support
+- (Permissions) Add utility methods for values and checks in commands
+
+Misc:
+
+- Updated dependencies
+
+---
+
 ## Gunpowder 1.0.3
 
 New features:

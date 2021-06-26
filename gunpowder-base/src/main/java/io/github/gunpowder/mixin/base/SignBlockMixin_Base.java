@@ -26,7 +26,7 @@ package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.api.components.ComponentsKt;
 import io.github.gunpowder.entities.builtin.SignTypeComponent;
-import io.github.gunpowder.mixin.cast.SignBlockEntityMixinCast_Base;
+import io.github.gunpowder.cast.SignBlockEntityMixinCast_Base;
 import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

@@ -22,10 +22,21 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.mixin.cast;
+package io.github.gunpowder.events;
 
-public interface SyncPlayer {
-    void setNeedsSync(boolean x);
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 
-    boolean needsSync();
+/**
+ * Event for when `permission` is used in the command builder.
+ * This can be used by permission providers to get all known permission nodes.
+ */
+public interface PermissionRegisterCallback {
+    Event<PermissionRegisterCallback> EVENT = EventFactory.createArrayBacked(PermissionRegisterCallback.class, (listeners) -> (node) -> {
+        for (PermissionRegisterCallback l : listeners) {
+            l.trigger(node);
+        }
+    });
+
+    void trigger(String node);
 }
