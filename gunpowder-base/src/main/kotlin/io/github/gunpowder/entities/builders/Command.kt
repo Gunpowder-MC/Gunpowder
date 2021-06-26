@@ -33,6 +33,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import eu.pb4.permissions.api.v0.Permissions
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.entities.GunpowderRegistry
+import io.github.gunpowder.events.PermissionRegisterCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import java.util.concurrent.CompletableFuture
@@ -72,6 +73,8 @@ object Command : APICommand {
 
     open class CommandBuilder(internal val command: BrigadierArgumentBuilder<ServerCommandSource, *>) : APICommand.CommandBuilder {
         override fun permission(permissionNode: String, opLevel: Int, additionalCheck: (ServerCommandSource) -> Boolean) {
+            PermissionRegisterCallback.EVENT.invoker().trigger(permissionNode)
+
             this.command.requires {
                 Permissions.require(permissionNode, opLevel).test(it) && additionalCheck(it)
             }
