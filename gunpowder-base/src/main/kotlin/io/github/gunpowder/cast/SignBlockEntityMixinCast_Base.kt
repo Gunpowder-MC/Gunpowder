@@ -22,15 +22,13 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.mixin.cast;
+package io.github.gunpowder.cast
 
-import io.github.gunpowder.entities.builders.SignType;
-import net.minecraft.entity.player.PlayerEntity;
+import io.github.gunpowder.entities.builders.SignType
+import net.minecraft.entity.player.PlayerEntity
 
-public interface SignBlockEntityMixinCast_Base {
-    boolean isCustom();
-
-    boolean isCreator(PlayerEntity playerEntity);
-
-    SignType getSignType();
+interface SignBlockEntityMixinCast_Base {
+    val isCustom: Boolean
+    fun isCreator(playerEntity: PlayerEntity?): Boolean
+    val signType: SignType?
 }

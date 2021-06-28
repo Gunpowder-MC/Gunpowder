@@ -21,8 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package io.github.gunpowder.api.ext
 
+import eu.pb4.permissions.api.v0.*
+import eu.pb4.permissions.impl.VanillaPermissionProvider
 import net.minecraft.server.network.ServerPlayerEntity
 
 /**
@@ -31,15 +34,26 @@ import net.minecraft.server.network.ServerPlayerEntity
  * for `node.[double]` this will be a Double
  * for regular permission nodes this will be a Boolean
  */
-fun ServerPlayerEntity.getPermission(node: String, default: Boolean) = getPermission<Boolean>(node, default)
 fun <T> ServerPlayerEntity.getPermission(node: String, default: T) : T {
-    when (default) {
+    val adapter = when (default) {
         is Int -> ValueAdapter.INTEGER
         is Double -> ValueAdapter.DOUBLE
         is Boolean -> {
-            return Permissions.get().check(UserContext.of(this), node) == PermissionValue.TRUE
+            return (Permissions.get().check(UserContext.of(this), node).toBoolean(default)) as T
         }
         else -> error("Unknown permission value type")
     }
-    return PermissionProvider.getValueFrom(listOf(node), default, )
+    return PermissionProvider.getValueFrom(listOf(node), default, adapter as ValueAdapter<T>)
 }
+
+/**
+ * Same as above, but uses `fallback` if the provider is the builtin provider (aka not present)
+ */
+fun <T> ServerPlayerEntity.getPresentPermission(node: String, default: T, fallback: T) : T {
+    if (Permissions.get() is VanillaPermissionProvider) {
+        return fallback
+    }
+    return getPermission(node, default)
+}
+
+fun ServerPlayerEntity.getPresentPermission(node: String, opLevel: Int) = getPresentPermission(node, false, this.hasPermissionLevel(opLevel))

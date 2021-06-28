@@ -49,6 +49,7 @@ object InfoCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         Command.builder(dispatcher) {
             command("info", "gunpowder") {
+                permission("gunpowder.info", 0)
                 executes(::showInfo)
             }
         }

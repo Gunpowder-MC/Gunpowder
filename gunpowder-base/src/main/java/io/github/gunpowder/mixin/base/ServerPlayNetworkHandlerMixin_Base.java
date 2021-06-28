@@ -27,7 +27,7 @@ package io.github.gunpowder.mixin.base;
 import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.entities.DimensionManager;
 import io.github.gunpowder.entities.builtin.PlayerHandler;
-import io.github.gunpowder.mixin.cast.SyncPlayer;
+import io.github.gunpowder.cast.SyncPlayer;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;

@@ -47,13 +47,17 @@ object HelpCommand {
 
         Command.builder(dispatcher) {
             command("help") {
+                permission("minecraft.help", 0)
+
                 executes(::helpRoot)
 
                 argument("page", IntegerArgumentType.integer(1)) {
+                    permission("minecraft.help.page", 0)
                     executes(::helpPage)
                 }
 
                 argument("command", StringArgumentType.greedyString()) {
+                    permission("minecraft.help.command", 0)
                     executes(::helpCommand)
                 }
             }

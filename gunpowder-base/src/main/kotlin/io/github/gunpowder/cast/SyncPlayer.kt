@@ -22,31 +22,9 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.api.exposed
+package io.github.gunpowder.cast
 
-import io.github.gunpowder.api.exposed.typeimpl.BlockPosColumnType
-import io.github.gunpowder.api.exposed.typeimpl.NbtCompoundColumnType
-import io.github.gunpowder.api.exposed.typeimpl.IdentifierColumnType
-import io.github.gunpowder.api.exposed.typeimpl.ItemStackColumnType
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
-
-fun Table.blockPos(name: String) : Column<BlockPos> {
-    return registerColumn(name, BlockPosColumnType())
-}
-
-fun Table.identifier(name: String, collate: String? = null, eagerLoading: Boolean = false) : Column<Identifier> {
-    return registerColumn(name, IdentifierColumnType(collate, eagerLoading))
-}
-
-fun Table.nbtCompound(name: String): Column<NbtCompound> {
-    return registerColumn(name, NbtCompoundColumnType())
-}
-
-fun Table.itemStack(name: String) : Column<ItemStack> {
-    return registerColumn(name, ItemStackColumnType())
+interface SyncPlayer {
+    fun setNeedsSync(x: Boolean)
+    fun needsSync(): Boolean
 }

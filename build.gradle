@@ -117,6 +117,10 @@ allprojects { project ->
             name = "HavenKing"
             url = "https://hephaestus.dev/release"
         }
+        maven {
+            name = "Permissions"
+            url = "https://maven.nucleoid.xyz"
+        }
     }
 
     dependencies {
@@ -147,7 +151,6 @@ allprojects { project ->
 
         // Utils
         modImplementation libs.pal
-//        modImplementation libs.colonel
 
         // Database drivers
         modImplementation libs.postgresql
@@ -174,7 +177,8 @@ allprojects { project ->
         // Hermes
         modImplementation libs.hermes
 
-        // TODO: Permissions
+        // Permissions
+        modImplementation libs.permissions
     }
 
     // Set version in fabric.mod.json
