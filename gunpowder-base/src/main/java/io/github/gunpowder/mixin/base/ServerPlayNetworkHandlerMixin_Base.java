@@ -26,13 +26,11 @@ package io.github.gunpowder.mixin.base;
 
 import io.github.gunpowder.api.GunpowderMod;
 import io.github.gunpowder.entities.DimensionManager;
-import io.github.gunpowder.entities.GunpowderDatabase;
 import io.github.gunpowder.entities.builtin.PlayerHandler;
 import io.github.gunpowder.mixin.cast.SyncPlayer;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;

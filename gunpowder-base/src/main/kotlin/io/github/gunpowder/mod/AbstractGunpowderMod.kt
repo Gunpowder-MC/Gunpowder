@@ -26,32 +26,24 @@ package io.github.gunpowder.mod
 
 import com.google.inject.Guice
 import com.google.inject.Injector
+import io.github.gunpowder.api.GunpowderDatabase
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
-import io.github.gunpowder.api.builders.Command
 import io.github.gunpowder.api.registerConfig
 import io.github.gunpowder.configs.GunpowderConfig
 import io.github.gunpowder.entities.*
-import io.github.gunpowder.entities.builtin.PlayerHandler
+import io.github.gunpowder.entities.database.AbstractDatabase
+import io.github.gunpowder.entities.database.GunpowderClientDatabase
+import io.github.gunpowder.entities.database.GunpowderServerDatabase
 import io.github.gunpowder.injection.AbstractModule
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.tag.BlockTags
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.biome.source.HorizontalVoronoiBiomeAccessType
-import net.minecraft.world.dimension.DimensionType
-import net.minecraft.world.gen.chunk.FlatChunkGenerator
-import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig
-import net.minecraft.world.level.ServerWorldProperties
 import org.apache.logging.log4j.LogManager
-import java.util.*
 
 abstract class AbstractGunpowderMod : GunpowderMod {
     val module = "gunpowder:modules"
     override val logger = LogManager.getLogger(GunpowderMod::class.java)
     override val registry = GunpowderRegistry
-    override val database = GunpowderDatabase
+    override lateinit var database: AbstractDatabase
     override val dimensionManager = DimensionManager
     override val languageEngine = LanguageHandler
     val injector: Injector
@@ -70,6 +62,7 @@ abstract class AbstractGunpowderMod : GunpowderMod {
 
     fun initialize() {
         logger.info("Starting Gunpowder")
+        database = if (this.isClient) GunpowderClientDatabase else GunpowderServerDatabase
         GunpowderRegistry.registerBuiltin()
         LanguageHandler.get("en_us")
         logger.info("Loading modules")
@@ -77,7 +70,6 @@ abstract class AbstractGunpowderMod : GunpowderMod {
         val entrypoints = FabricLoader.getInstance().getEntrypointContainers(module, GunpowderModule::class.java).sortedBy { it.entrypoint.priority }
 
         registry.registerConfig<GunpowderConfig>("gunpowder.yaml", "gunpowder.yaml")
-        GunpowderDatabase.loadDatabase()
 
         entrypoints.forEach {
             val module = it.entrypoint

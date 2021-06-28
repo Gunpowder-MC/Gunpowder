@@ -99,7 +99,12 @@ object GunpowderRegistry : APIGunpowderRegistry {
                 }
             }
 
-            mapper.readValue(f, clz)
+            try {
+                mapper.readValue(f, clz)
+            } catch (e: Exception) {
+                System.err.println("Failed to parse config at ${f.canonicalPath}")
+                throw e
+            }
         } as T
     }
 

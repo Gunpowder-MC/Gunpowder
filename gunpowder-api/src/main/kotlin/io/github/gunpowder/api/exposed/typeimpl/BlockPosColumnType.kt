@@ -32,6 +32,9 @@ class BlockPosColumnType : ColumnType() {
     override fun sqlType(): String = currentDialect.dataTypeProvider.longType()
     override fun valueFromDB(value: Any): BlockPos = when (value) {
         is Long -> BlockPos.fromLong(value)
+        is Number -> {
+            BlockPos.fromLong(value.toLong())
+        }
         else -> error("Unexpected value of type BlockPos: $value of ${value::class.qualifiedName}")
     }
 

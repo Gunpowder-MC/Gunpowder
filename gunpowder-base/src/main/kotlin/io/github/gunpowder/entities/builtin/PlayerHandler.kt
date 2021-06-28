@@ -25,7 +25,7 @@
 package io.github.gunpowder.entities.builtin
 
 import io.github.gunpowder.api.exposed.PlayerTable
-import io.github.gunpowder.entities.GunpowderDatabase
+import io.github.gunpowder.entities.database.GunpowderServerDatabase
 import net.minecraft.server.network.ServerPlayerEntity
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -34,7 +34,7 @@ import java.time.LocalDateTime
 
 object PlayerHandler {
     private val db by lazy {
-        GunpowderDatabase
+        GunpowderServerDatabase
     }
 
     fun registerPlayer(player: ServerPlayerEntity) {

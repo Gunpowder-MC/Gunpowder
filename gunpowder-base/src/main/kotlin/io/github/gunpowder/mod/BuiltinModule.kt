@@ -24,6 +24,7 @@
 
 package io.github.gunpowder.mod
 
+import io.github.gunpowder.api.GunpowderDatabase
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.GunpowderModule
 import io.github.gunpowder.api.components.bind
@@ -31,10 +32,12 @@ import io.github.gunpowder.api.components.with
 import io.github.gunpowder.api.exposed.PlayerTable
 import io.github.gunpowder.commands.HelpCommand
 import io.github.gunpowder.commands.InfoCommand
-import io.github.gunpowder.entities.GunpowderDatabase
+import io.github.gunpowder.entities.database.GunpowderClientDatabase
+import io.github.gunpowder.entities.database.GunpowderServerDatabase
 import io.github.gunpowder.entities.arguments.ServerArgumentTypes
 import io.github.gunpowder.entities.builtin.PlayerArgumentComponent
 import io.github.gunpowder.entities.builtin.SignTypeComponent
+import io.github.gunpowder.entities.database.AbstractDatabase
 import io.github.gunpowder.entities.mc.ChestGuiContainer
 import io.github.gunpowder.entities.mc.RegisteredArgumentTypesC2SPacket
 import io.github.gunpowder.events.BlockPreBreakCallback
@@ -60,6 +63,8 @@ object BuiltinModule : GunpowderModule {
 
     val gunpowder: GunpowderMod
         get() = GunpowderMod.instance
+    val db: AbstractDatabase
+        get() = GunpowderMod.instance.database as AbstractDatabase
 
     private var counter = 0
     val guis = mutableListOf<ChestGuiContainer>()
@@ -125,9 +130,12 @@ object BuiltinModule : GunpowderModule {
             gp.reload();
         }
 
+        ServerLifecycleEvents.SERVER_STARTED.register { server ->
+            db.loadDatabase()
+        }
+
         ServerLifecycleEvents.SERVER_STOPPED.register { server ->
-            // Disable DB, unregister everything except commands
-            GunpowderDatabase.disconnect()
+            db.disconnect()
         }
 
         ServerTickEvents.START_WORLD_TICK.register(ServerTickEvents.StartWorldTick {
@@ -143,11 +151,5 @@ object BuiltinModule : GunpowderModule {
             newArgs.known.clear()
             newArgs.known.addAll(oldArgs.known)
         }
-
-//        if (GunpowderMod.instance.isClient) {
-//            ServerLifecycleEvents.SERVER_STARTED.register {
-//                GunpowderDatabase.loadDatabase()
-//            }
-//        }
     }
 }

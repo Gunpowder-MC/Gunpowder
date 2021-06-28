@@ -22,76 +22,34 @@
  * SOFTWARE.
  */
 
-package io.github.gunpowder.entities
+package io.github.gunpowder.entities.database
 
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.configs.GunpowderConfig
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.MinecraftClient
-import net.minecraft.util.WorldSavePath
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
-import kotlin.io.path.pathString
 import io.github.gunpowder.api.GunpowderDatabase as APIGunpowderDatabase
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
-object GunpowderDatabase : APIGunpowderDatabase {
-    private val queue = LinkedBlockingQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
-    private val databaseThread = thread(start = false, name = "Gunpowder Database Thread", isDaemon = true) {
-        while (true) {
-            val pair = queue.take()
-
-            try {
-                val value = dbTransaction(db) {  // Because recursion
-                    val x = pair.first.invoke(this)
-                    x
-                }
-
-                pair.second.complete(value)
-            } catch(e: Exception) {
-                GunpowderMod.instance.logger.error("Error on Database Thread! Please report to the mod author if this is unexpected!", e)
-                pair.second.completeExceptionally(e)
-            }
-        }
-    }
-
+object GunpowderServerDatabase : AbstractDatabase() {
     private val config by lazy { GunpowderMod.instance.registry.getConfig(GunpowderConfig::class.java) }
     override lateinit var db: Database
 
-    fun disconnect() {
-        try {
-            TransactionManager.closeAndUnregister(db)
-        } catch (e: UninitializedPropertyAccessException) {
-            // Ignore; Server closed before DB was created, no issues here
-        }
-    }
-
-    fun loadDatabase() {
+    override fun loadDatabase() {
         val dbc = config.database
-        var mode = dbc.mode
-
+        val mode = dbc.mode
         val databaseName = config.database.database
-
-        if (GunpowderMod.instance.isClient) {
-            mode = "sqlite"
-        }
 
         when (mode) {
             "sqlite" -> {
-                var path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
-
-                // TODO: Per-world database stuff
-//                if (GunpowderMod.instance.isClient) {
-//                    val filename = MinecraftClient.getInstance().server?.getSavePath(WorldSavePath.ROOT)?.fileName
-//                        ?: return
-//                    path += "/$filename"
-//                }
+                val path = FabricLoader.getInstance().gameDir.toFile().canonicalPath
 
                 db = Database.connect(
                         "jdbc:sqlite:$path/gunpowder.db",
@@ -119,12 +77,7 @@ object GunpowderDatabase : APIGunpowderDatabase {
                 throw AssertionError("Invalid db type")
             }
         }
-        databaseThread.start()
-    }
 
-    override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {
-        val fut = CompletableFuture<T>()
-        queue.add(Pair(callback as Transaction.() -> Any, fut as CompletableFuture<Any>))
-        return fut
+        super.loadDatabase()
     }
 }
