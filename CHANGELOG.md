@@ -1,3 +1,12 @@
+## Gunpowder 1.0.5
+
+Bugs fixed:
+- Per-world databases now on the client :tada:
+- More verbose errors when reading a config fails
+- Fix for BlockPos columns not always saving as Long
+
+---
+
 ## Gunpowder 1.0.4
 
 New features:
