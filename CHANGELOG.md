@@ -1,3 +1,9 @@
+## Gunpowder 1.0.6
+
+Fixed critical error in DB thread
+
+---
+
 ## Gunpowder 1.0.5
 
 Bugs fixed:

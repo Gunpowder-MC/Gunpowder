@@ -60,7 +60,7 @@ abstract class AbstractDatabase : GunpowderDatabase {
     private fun createThread() {
         databaseThread = thread(start = false, name = "Gunpowder Database Thread", isDaemon = true) {
             while (running) {
-                val pair = queue.poll(20, TimeUnit.MILLISECONDS) ?: break
+                val pair = queue.poll(20, TimeUnit.MILLISECONDS) ?: continue
 
                 try {
                     val value = dbTransaction(db) {  // Because recursion
