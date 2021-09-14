@@ -145,9 +145,9 @@ allprojects { project ->
         modImplementation (libs.exposed_java_time) {
             transitive = false
         }
-        modRuntimeOnly libs.exposed_core
-        modRuntimeOnly libs.exposed_jdbc
-        modRuntimeOnly libs.exposed_java_time
+        modRuntime libs.exposed_core
+        modRuntime libs.exposed_jdbc
+        modRuntime libs.exposed_java_time
 
         // Utils
         modImplementation libs.pal
