@@ -27,6 +27,8 @@ package io.github.gunpowder.entities.database
 import io.github.gunpowder.api.GunpowderDatabase
 import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.configs.GunpowderConfig
+import jdk.jfr.StackTrace
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.util.concurrent.CompletableFuture
@@ -36,7 +38,7 @@ import kotlin.concurrent.thread
 import org.jetbrains.exposed.sql.transactions.transaction as dbTransaction
 
 abstract class AbstractDatabase : GunpowderDatabase {
-    private val queue = LinkedBlockingQueue<Pair<Transaction.() -> Any, CompletableFuture<Any>>>()
+    private val queue = LinkedBlockingQueue<Triple<Transaction.() -> Any, CompletableFuture<Any>, Array<StackTraceElement>>>()
     private val config by lazy { GunpowderMod.instance.registry.getConfig(GunpowderConfig::class.java) }
     private lateinit var databaseThread: Thread
     private var running = true
@@ -60,18 +62,19 @@ abstract class AbstractDatabase : GunpowderDatabase {
     private fun createThread() {
         databaseThread = thread(start = false, name = "Gunpowder Database Thread", isDaemon = true) {
             while (running) {
-                val pair = queue.poll(20, TimeUnit.MILLISECONDS) ?: break
+                val element = queue.poll(20, TimeUnit.MILLISECONDS) ?: break
 
                 try {
                     val value = dbTransaction(db) {  // Because recursion
-                        val x = pair.first.invoke(this)
+                        val x = element.first.invoke(this)
                         x
                     }
 
-                    pair.second.complete(value)
+                    element.second.complete(value)
                 } catch(e: Exception) {
                     GunpowderMod.instance.logger.error("Error on Database Thread! Please report to the mod author if this is unexpected!", e)
-                    pair.second.completeExceptionally(e)
+                    GunpowderMod.instance.logger.error("Stacktrace before database thread:\n", element.third.joinToString("\n"))
+                    element.second.completeExceptionally(e)
                 }
             }
         }
@@ -79,7 +82,7 @@ abstract class AbstractDatabase : GunpowderDatabase {
 
     override fun <T> transaction(callback: Transaction.() -> T): CompletableFuture<T> {
         val fut = CompletableFuture<T>()
-        queue.add(Pair(callback as Transaction.() -> Any, fut as CompletableFuture<Any>))
+        queue.add(Triple(callback as Transaction.() -> Any, fut as CompletableFuture<Any>, Thread.currentThread().stackTrace))
         return fut
     }
 }

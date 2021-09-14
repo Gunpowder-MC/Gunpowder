@@ -71,7 +71,7 @@ class ChestGuiContainer(type: ScreenHandlerType<GenericContainerScreenHandler>,
 
     private fun syncInventory(playerEntity: PlayerEntity) {
         inventory.markDirty()
-        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, playerEntity.currentScreenHandler.stacks))
+        (playerEntity as ServerPlayerEntity).server.playerManager.sendToAll(InventoryS2CPacket(syncId, nextRevision(), playerEntity.currentScreenHandler.stacks, playerEntity.currentScreenHandler.cursorStack))
         sendContentUpdates()
     }
 
