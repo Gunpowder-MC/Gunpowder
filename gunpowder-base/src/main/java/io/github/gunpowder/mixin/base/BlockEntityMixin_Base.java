@@ -44,7 +44,7 @@ public class BlockEntityMixin_Base {
     }
 
     @Inject(method="writeNbt", at=@At("HEAD"))
-    void saveComponents(NbtCompound tag, CallbackInfoReturnable<NbtCompound> cir) {
+    void saveComponents(NbtCompound tag, CallbackInfo ci) {
         ComponentHandler.INSTANCE.saveComponents(tag, this);
     }
 

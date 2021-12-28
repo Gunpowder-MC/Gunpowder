@@ -124,7 +124,6 @@ allprojects { project ->
     }
 
     dependencies {
-        // Kotlin Stdlib
         minecraft(libs.minecraft) {
             transitive = false
         }
@@ -167,7 +166,9 @@ allprojects { project ->
         modImplementation libs.slf4j
 
         // Dependency Injection
-        modImplementation libs.guice
+        modImplementation(libs.guice) {
+            exclude module: "failureaccess"
+        }
         modImplementation libs.javax_inject
         modImplementation libs.aop
 
@@ -178,7 +179,7 @@ allprojects { project ->
         modImplementation libs.hermes
 
         // Permissions
-        modImplementation libs.permissions
+//        modImplementation libs.permissions
     }
 
     // Set version in fabric.mod.json

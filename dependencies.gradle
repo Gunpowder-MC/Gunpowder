@@ -14,7 +14,7 @@ ext {
 
             // Useful libs
             pal                   : "io.github.ladysnake:PlayerAbilityLib:$project.playerabilitylib",
-            permissions           : "eu.pb4:permissions-api:$project.permissions",
+//            permissions           : "eu.pb4:permissions-api:$project.permissions",
 
             // Database
             exposed_core          : "org.jetbrains.exposed:exposed-core:$project.exposed",

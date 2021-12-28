@@ -30,10 +30,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import eu.pb4.permissions.api.v0.Permissions
-import io.github.gunpowder.api.GunpowderMod
 import io.github.gunpowder.api.ext.getPresentPermission
-import io.github.gunpowder.entities.GunpowderRegistry
 import io.github.gunpowder.events.PermissionRegisterCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource

@@ -25,7 +25,7 @@
 package io.github.gunpowder.api.exposed
 
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
+import org.jetbrains.exposed.sql.javatime.datetime
 
 /**
  * A table used for player metadata.

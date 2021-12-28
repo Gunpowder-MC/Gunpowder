@@ -102,7 +102,7 @@ public abstract class ServerWorldMixin_Base extends World {
         if (DimensionManager.INSTANCE.isCustom(getRegistryKey())) {
             LevelProperties props = ((LevelProperties)getLevelProperties());
             NbtCompound tag = props.cloneWorldNbt(getRegistryManager(), new NbtCompound());
-            NbtIo.writeCompressed(tag, new File(server.session.getWorldDirectory(getRegistryKey()), "level.dat"));
+            NbtIo.writeCompressed(tag, new File(server.session.getWorldDirectory(getRegistryKey()).toFile(), "level.dat"));
         }
     }
 

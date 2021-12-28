@@ -14,7 +14,7 @@ dependencies {
     include libs.exposed_jdbc
     include libs.exposed_java_time
 
-    include libs.permissions
+//    include libs.permissions
 
     // Configs
     // Again, not shaded for compat

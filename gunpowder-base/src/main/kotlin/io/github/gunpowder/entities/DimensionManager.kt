@@ -116,7 +116,7 @@ object DimensionManager : GunpowderDimensionManager {
     }
 
     private fun getProps(key: RegistryKey<World>) : LevelProperties? {
-        val target = File(server.session.getWorldDirectory(key), "level.dat")
+        val target = File(server.session.getWorldDirectory(key).toFile(), "level.dat")
         if (target.exists()) {
             val tag = NbtIo.readCompressed(target)
             val dataFixer = Schemas.getFixer()
@@ -168,7 +168,7 @@ object DimensionManager : GunpowderDimensionManager {
             }
         }
 
-        val targetDir = server.session.getWorldDirectory(worldId)
+        val targetDir = server.session.getWorldDirectory(worldId).toFile()
         targetDir.mkdirs()
 
         val props = getProps(worldId) ?: properties
@@ -203,7 +203,7 @@ object DimensionManager : GunpowderDimensionManager {
         val world = server.worlds.remove(worldId)
         if (world != null) {
 
-            val path = world.server.session.getWorldDirectory(world.registryKey)
+            val path = world.server.session.getWorldDirectory(world.registryKey).toFile()
             FileUtils.deleteDirectory(path)
 
             for (player in server.playerManager.playerList) {

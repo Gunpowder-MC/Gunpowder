@@ -59,13 +59,22 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
             if (((SyncPlayer) player).needsSync()) {
                 GunpowderMod.getInstance().getLogger().info("Player needs sync, sending packets");
                 sendPacket(new GameJoinS2CPacket(
-                        player.getId(), player.interactionManager.getGameMode(), player.interactionManager.getPreviousGameMode(),
-                        BiomeAccess.hashSeed(player.getServerWorld().getSeed()), player.world.getLevelProperties().isHardcore(), DimensionManager.INSTANCE.getServer().getWorldRegistryKeys(),
-                        DimensionManager.INSTANCE.getServer().registryManager, player.world.getDimension(), player.world.getRegistryKey(),
-                        DimensionManager.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(), DimensionManager.INSTANCE.getServer().getPlayerManager().getViewDistance(),
+                        player.getId(),
+                        player.world.getLevelProperties().isHardcore(),
+                        player.interactionManager.getGameMode(),
+                        player.interactionManager.getPreviousGameMode(),
+                        DimensionManager.INSTANCE.getServer().getWorldRegistryKeys(),
+                        DimensionManager.INSTANCE.getServer().registryManager,
+                        player.world.getDimension(),
+                        player.world.getRegistryKey(),
+                        BiomeAccess.hashSeed(player.getWorld().getSeed()),
+                        DimensionManager.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(),
+                        DimensionManager.INSTANCE.getServer().getPlayerManager().getViewDistance(),
+                        DimensionManager.INSTANCE.getServer().getPlayerManager().getSimulationDistance(),
                         player.world.getGameRules().getBoolean(GameRules.REDUCED_DEBUG_INFO),
                         !player.world.getGameRules().getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
-                        player.world.isDebugWorld(), player.getServerWorld().isFlat()));
+                        player.world.isDebugWorld(),
+                        player.getWorld().isFlat()));
                 sendPacket(new CloseScreenS2CPacket(0));
                 ((SyncPlayer) player).setNeedsSync(false);
             }
