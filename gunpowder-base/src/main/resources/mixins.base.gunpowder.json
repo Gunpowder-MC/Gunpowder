@@ -11,7 +11,6 @@
     "CommandManagerMixin_Base",
     "EntityMixin_Base",
     "HelpCommandMixin_Base",
-    "ItemStackMixin_Base",
     "LivingEntityMixin_Base",
     "MinecraftServerMixin_Base",
     "PlayerManagerMixin_Base",

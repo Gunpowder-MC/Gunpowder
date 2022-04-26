@@ -37,6 +37,7 @@ import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.biome.source.BiomeAccess;
 import org.spongepowered.asm.mixin.Mixin;
@@ -65,7 +66,7 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
                         player.interactionManager.getPreviousGameMode(),
                         DimensionManager.INSTANCE.getServer().getWorldRegistryKeys(),
                         DimensionManager.INSTANCE.getServer().registryManager,
-                        player.world.getDimension(),
+                        new RegistryEntry.Direct<>(player.world.getDimension()),
                         player.world.getRegistryKey(),
                         BiomeAccess.hashSeed(player.getWorld().getSeed()),
                         DimensionManager.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(),

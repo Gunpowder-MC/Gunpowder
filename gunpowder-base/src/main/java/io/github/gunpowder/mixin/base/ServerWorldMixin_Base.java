@@ -29,7 +29,6 @@ import io.github.gunpowder.entities.DimensionManager;
 import io.github.gunpowder.entities.mc.ComponentState;
 import io.github.gunpowder.events.WorldPreSleepCallback;
 import io.github.gunpowder.events.WorldSleepCallback;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
@@ -40,13 +39,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ProgressListener;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.MutableWorldProperties;
-import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.Spawner;
+import net.minecraft.world.spawner.Spawner;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.ServerWorldProperties;
@@ -58,7 +57,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +80,7 @@ public abstract class ServerWorldMixin_Base extends World {
     @Shadow public abstract PersistentStateManager getPersistentStateManager();
 
     protected ServerWorldMixin_Base(MutableWorldProperties properties, RegistryKey<World> registryRef, DimensionType dimensionType, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
-        super(properties, registryRef, dimensionType, profiler, isClient, debugWorld, seed);
+        super(properties, registryRef, new RegistryEntry.Direct<>(dimensionType), profiler, isClient, debugWorld, seed);
     }
 
     @Inject(method="tick", at=@At(value="INVOKE", target="Lnet/minecraft/server/world/ServerWorld;setTimeOfDay(J)V"))
@@ -107,7 +105,7 @@ public abstract class ServerWorldMixin_Base extends World {
     }
 
     @Inject(method="<init>", at=@At("RETURN"))
-    void initComponents(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session, ServerWorldProperties properties, RegistryKey<World> registryKey, DimensionType dimensionType, WorldGenerationProgressListener worldGenerationProgressListener, ChunkGenerator chunkGenerator, boolean debugWorld, long l, List<Spawner> list, boolean bl, CallbackInfo ci) {
+    void initComponents(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session, ServerWorldProperties properties, RegistryKey<World> worldKey, RegistryEntry<DimensionType> registryEntry, WorldGenerationProgressListener worldGenerationProgressListener, ChunkGenerator chunkGenerator, boolean debugWorld, long seed, List<Spawner> spawners, boolean shouldTickTime, CallbackInfo ci) {
         ComponentHandler.INSTANCE.initComponents(this);
 
         getPersistentStateManager().getOrCreate(

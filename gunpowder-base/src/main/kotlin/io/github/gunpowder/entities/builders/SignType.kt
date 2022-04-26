@@ -43,7 +43,7 @@ class SignType(val clickEvent: (SignBlockEntity, ServerPlayerEntity) -> Unit,
 
     companion object {
         private val key = RegistryKey.ofRegistry<APISignType>(Identifier("gunpowder:sign_type"))
-        val registry = SimpleRegistry(key, Lifecycle.stable())
+        val registry = SimpleRegistry(key, Lifecycle.stable(), null)
     }
 
     class Builder : APISignType.Builder {

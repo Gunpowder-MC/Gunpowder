@@ -33,7 +33,7 @@ dependencies {
 }
 
 
-minecraft {
+loom {
     accessWidenerPath.fileValue(file("src/main/resources/gunpowder_base.accesswidener"))
 }
 

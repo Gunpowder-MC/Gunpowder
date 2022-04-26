@@ -25,12 +25,11 @@
 package io.github.gunpowder.api
 
 import com.google.common.collect.BiMap
-import com.google.common.collect.ImmutableList
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.World
 import net.minecraft.world.dimension.DimensionType
-import net.minecraft.world.gen.Spawner
+import net.minecraft.world.spawner.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.LevelProperties
 import net.minecraft.world.level.ServerWorldProperties

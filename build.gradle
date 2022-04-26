@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -80,27 +82,38 @@ allprojects { project ->
         // TODO: Add relocated exposed maybe?
     }
 
-    task remapShadowJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
             input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}.jar"
             addNestedDependencies = true
-            remapAccessWidener = true
+//            remapAccessWidener = true
         }
     }
 
-    task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: shadowJar) {
+    task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
         //afterEvaluate {
             input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
             archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
             addNestedDependencies = false
-            remapAccessWidener = true
+//            remapAccessWidener = true
         //}
+    }
+
+    prepareRemapJar {
+        enabled = false
+    }
+
+    prepareRemapMavenJar {
+        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
+    }
+
+    prepareRemapShadowJar {
+        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
     }
 
     repositories {
         mavenCentral()
-        jcenter()
         maven {
             name = "Jitpack"
             url = "https://jitpack.io"
@@ -144,9 +157,9 @@ allprojects { project ->
         modImplementation (libs.exposed_java_time) {
             transitive = false
         }
-        modRuntime libs.exposed_core
-        modRuntime libs.exposed_jdbc
-        modRuntime libs.exposed_java_time
+        modRuntimeOnly(libs.exposed_core)
+        modRuntimeOnly(libs.exposed_jdbc)
+        modRuntimeOnly(libs.exposed_java_time)
 
         // Utils
         modImplementation libs.pal
@@ -191,13 +204,13 @@ allprojects { project ->
         }
     }
 
-    build.dependsOn(shadowJar, remapShadowJar, sourcesJar, remapSourcesJar)
-    rootProject.publish.dependsOn(shadowJar, remapMavenJar, sourcesJar, remapSourcesJar)
+    build.dependsOn(shadowJar, remapShadowJar, sourcesJar, remapSourcesJar, remapMavenJar)
+    rootProject.publish.dependsOn(build)
 
     // Fix some warnings
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
-    compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_17
     compileKotlin.kotlinOptions.useIR = true
     compileKotlin.kotlinOptions.freeCompilerArgs = ['-Xjvm-default=all-compatibility']
 
@@ -209,9 +222,9 @@ dependencies {
     }
 
     // Runtime Only Dependencies
-    modRuntime libs.fabric_language_kotlin
-    modRuntime libs.fabric_api
-    modRuntime libs.hermes
+    modRuntimeOnly libs.fabric_language_kotlin
+    modRuntimeOnly libs.fabric_api
+    modRuntimeOnly libs.hermes
 }
 
 subprojects {
@@ -232,6 +245,18 @@ sourcesJar {
 }
 
 shadowJar {
+    enabled = false
+}
+
+prepareRemapJar {
+    enabled = false
+}
+
+prepareRemapMavenJar {
+    enabled = false
+}
+
+prepareRemapShadowJar {
     enabled = false
 }
 
@@ -276,7 +301,7 @@ if (file('secrets.gradle').exists()) {
                         artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-maven.jar"), classifier: ''
                         artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-dev.jar"), classifier: 'dev'
                         artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources.jar"), classifier: 'sources'
-                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
+//                        artifact source: file("${p.buildDir}/libs/${p.name}-${rootProject.version}-sources-dev.jar"), classifier: 'sources-dev'
                     }
                 }
             }

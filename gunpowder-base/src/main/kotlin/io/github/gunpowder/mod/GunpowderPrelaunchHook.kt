@@ -29,8 +29,8 @@ import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint
 class GunpowderPrelaunchHook : PreLaunchEntrypoint {
     override fun onPreLaunch() {
         try {
-            PrelaunchHook.moveToKnot("com.mojang.brigadier.Message")
-        } catch (e: Exception) {
+//            PrelaunchHook.moveToKnot("com.mojang.brigadier.Message")
+        } catch (e: RuntimeException) {
             throw IllegalStateException("Unable to initialize Brigadier Mixins, will not be able to inject")
         }
     }

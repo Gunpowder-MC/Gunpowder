@@ -40,7 +40,6 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtIo
 import net.minecraft.nbt.NbtOps
 import net.minecraft.resource.DataPackSettings
-import net.minecraft.resource.ResourceManager
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.dynamic.RegistryOps
@@ -52,7 +51,7 @@ import net.minecraft.world.World
 import net.minecraft.world.border.WorldBorder
 import net.minecraft.world.border.WorldBorderListener
 import net.minecraft.world.dimension.DimensionType
-import net.minecraft.world.gen.Spawner
+import net.minecraft.world.spawner.Spawner
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.level.LevelInfo
 import net.minecraft.world.level.LevelProperties
@@ -102,7 +101,7 @@ object DimensionManager : GunpowderDimensionManager {
         val dtype = dimTypeRegistry.idToEntry[dimensionTypeId.value]
         dimTypeRegistry.idToEntry.remove(dimensionTypeId.value)
         dimTypeRegistry.keyToEntry.remove(dimensionTypeId)
-        dimTypeRegistry.entryToLifecycle.remove(dtype)
+        dimTypeRegistry.entryToLifecycle.remove(dtype?.value())
         dimTypeRegistry.rawIdToEntry.remove(dtype)
         dimTypeRegistry.entryToRawId.removeInt(dtype)
     }
@@ -124,7 +123,7 @@ object DimensionManager : GunpowderDimensionManager {
             tag.remove("Player")
             val i = if (tag.contains("DataVersion", 99)) tag.getInt("DataVersion") else -1
             val dynamicOps: DynamicOps<NbtElement> =
-                RegistryOps.of(NbtOps.INSTANCE, ResourceManager.Empty.INSTANCE, DynamicRegistryManager.create())
+                RegistryOps.of(NbtOps.INSTANCE, DynamicRegistryManager.createAndLoad())
             val dynamic = dataFixer.update(
                 DataFixTypes.LEVEL.typeReference,
                 Dynamic(dynamicOps, tag),
@@ -154,10 +153,11 @@ object DimensionManager : GunpowderDimensionManager {
         }
 
         val dimensionType = dimTypeRegistry.get(dimensionTypeId)!!
+        val dimReference = dimTypeRegistry.idToEntry[dimensionTypeId.value]!!
 
         val overworld = server.worlds[World.OVERWORLD]!!
         val worldGenerationProgressListener = overworld.chunkManager.threadedAnvilChunkStorage.worldGenerationProgressListener
-        val seed = chunkGenerator.worldSeed
+        val seed = chunkGenerator.field_37261
         val worldBorder = object : WorldBorder() {
             override fun getCenterX(): Double {
                 return super.getCenterX() / dimensionType.coordinateScale
@@ -174,7 +174,7 @@ object DimensionManager : GunpowderDimensionManager {
         val props = getProps(worldId) ?: properties
 
         val world = ServerWorld(server, server.workerExecutor, server.session,
-                props, worldId, dimensionType,
+                props, worldId, dimReference,
                 worldGenerationProgressListener, chunkGenerator,
                 false, seed, spawners, !dimTypeRegistry.get(dimensionTypeId)!!.hasFixedTime())
         world.savingDisabled = false
