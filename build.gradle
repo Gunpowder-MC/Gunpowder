@@ -87,7 +87,7 @@ allprojects { project ->
             input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
             archiveFileName = "${project.name}-${project.version}.jar"
             addNestedDependencies = true
-//            remapAccessWidener = true
+            remapAccessWidener = true
         }
     }
 
@@ -96,7 +96,7 @@ allprojects { project ->
             input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
             archiveFileName = "${project.name}-${project.version}-maven.jar"
             addNestedDependencies = false
-//            remapAccessWidener = true
+            remapAccessWidener = true
         //}
     }
 

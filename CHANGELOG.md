@@ -1,6 +1,7 @@
-## Gunpowder 1.2.0.1
+## Gunpowder 1.2.0.2
 
 Publish the proper jars
+Properly remap AWs
 
 ---
 
