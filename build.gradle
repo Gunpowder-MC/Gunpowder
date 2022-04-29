@@ -84,8 +84,8 @@ allprojects { project ->
 
     task remapShadowJar(type: RemapJarTask, dependsOn: shadowJar) {
         afterEvaluate {
-            input = file("${project.buildDir}/libs/${archivesBaseName}-${rootProject.version}-dev.jar")
-            archiveName = "${project.archivesBaseName}-${project.version}.jar"
+            input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
+            archiveFileName = "${project.name}-${project.version}.jar"
             addNestedDependencies = true
 //            remapAccessWidener = true
         }
@@ -94,23 +94,23 @@ allprojects { project ->
     task remapMavenJar(type: RemapJarTask, dependsOn: shadowJar) {
         //afterEvaluate {
             input = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
-            archiveName = "${project.archivesBaseName}-${project.version}-maven.jar"
+            archiveFileName = "${project.name}-${project.version}-maven.jar"
             addNestedDependencies = false
 //            remapAccessWidener = true
         //}
     }
 
-    prepareRemapJar {
-        enabled = false
-    }
-
-    prepareRemapMavenJar {
-        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
-    }
-
-    prepareRemapShadowJar {
-        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
-    }
+//    prepareRemapJar {
+//        enabled = false
+//    }
+//
+//    prepareRemapMavenJar {
+//        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
+//    }
+//
+//    prepareRemapShadowJar {
+//        inputFile = file("${project.buildDir}/libs/${project.name}-${rootProject.version}-dev.jar")
+//    }
 
     repositories {
         mavenCentral()
@@ -248,17 +248,17 @@ shadowJar {
     enabled = false
 }
 
-prepareRemapJar {
-    enabled = false
-}
-
-prepareRemapMavenJar {
-    enabled = false
-}
-
-prepareRemapShadowJar {
-    enabled = false
-}
+//prepareRemapJar {
+//    enabled = false
+//}
+//
+//prepareRemapMavenJar {
+//    enabled = false
+//}
+//
+//prepareRemapShadowJar {
+//    enabled = false
+//}
 
 remapJar {
     enabled = false

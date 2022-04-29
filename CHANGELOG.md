@@ -1,3 +1,9 @@
+## Gunpowder 1.2.0.1
+
+Publish the proper jars
+
+---
+
 ## Gunpowder 1.2.0.0
 
 Update to 1.18.2
