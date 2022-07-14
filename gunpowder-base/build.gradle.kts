@@ -6,6 +6,7 @@ import groovy.lang.Closure
 import net.fabricmc.loom.task.RemapJarTask
 import net.fabricmc.loom.task.service.MixinMappingsService
 import net.fabricmc.loom.util.Constants
+import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -78,10 +79,12 @@ loom {
 }
 
 kapt {
+    useBuildCache = false
+
     arguments {
-        arg("gp.mixin.package", "io.github.gunpowder.mixin")
-        arg("gp.mixin.name", "base")
-        arg("gp.mixin.plugin", "false")
+        arg("mixin.package", "io.github.gunpowder.mixin")
+        arg("mixin.name", "base")
+        arg("mixin.plugin", "false")
     }
 }
 
@@ -105,6 +108,8 @@ tasks {
     }
 
     named<ProcessResources>("processResources") {
+        dependsOn("kaptKotlin")
+
         filesMatching("fabric.mod.json") {
             expand(
                 "version" to version
@@ -164,11 +169,16 @@ if ((publishEnabled ?: "false").toBoolean()) {
                 artifact(tasks.named("apiJar")) {
                     classifier = ""
                 }
-                artifact(tasks.named("remapJar")) {
-                    classifier = "runtime"
-                }
                 artifact(tasks.named("sourcesJar")) {
                     classifier = "sources"
+                }
+
+                // Only publish runtime jar for release builds
+                // I'm not storing 15MB for every commit smh
+                if (!publishSnapshot.toBoolean()) {
+                    artifact(tasks.named("remapJar")) {
+                        classifier = "runtime"
+                    }
                 }
             }
         }
@@ -198,7 +208,7 @@ if ((publishEnabled ?: "false").toBoolean()) {
                     })
                 }
 
-                mainArtifact(tasks.named("remapJar"))
+                mainArtifact(tasks.getByName<RemapJarTask>("remapJar").archiveFile)
             })
 
             curseGradleOptions.apply {
