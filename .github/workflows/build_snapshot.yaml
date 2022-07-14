@@ -1,0 +1,43 @@
+name: Build Snapshot
+
+on:
+  push:
+    paths:
+      - '**.kt'
+      - '**.kts'
+      - '**.yaml'
+      - '**.properties'
+    branches:
+      - master
+
+jobs:
+  build-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: 'gradle'
+
+      - name: Set up properties
+        run: |
+          touch gradle-local.properties
+          echo "publishEnabled=true" >> gradle-local.properties
+          echo "publishSnapshot=true" >> gradle-local.properties
+          echo "publishUser=github-actions" >> gradle-local.properties
+          echo "publishPassword=${{ secrets.DEPLOY_KEY }}" >> gradle-local.properties
+          echo "publishVersion=${{ github.sha }}" >> gradle-local.properties
+          echo "curseToken=${{ secrets.CURSE_TOKEN }}" >> gradle-local.properties
+
+
+      - name: Build mod
+        run: ./gradlew build
+
+      - name: Publish mod to maven
+        run: ./gradlew publish
+
+      - name: Publish mod to curseforge
+        run: ./gradlew curseforge

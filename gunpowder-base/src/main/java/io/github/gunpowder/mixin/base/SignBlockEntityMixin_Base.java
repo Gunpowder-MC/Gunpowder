@@ -1,37 +1,14 @@
-/*
- * MIT License
- *
- * Copyright (c) GunpowderMC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package io.github.gunpowder.mixin.base;
 
-import io.github.gunpowder.api.GunpowderMod;
-import io.github.gunpowder.api.components.ComponentsKt;
-import io.github.gunpowder.entities.builders.SignType;
-import io.github.gunpowder.entities.builtin.SignTypeComponent;
+import io.github.gunpowder.api.types.SignType;
+import io.github.gunpowder.mod.GunpowderRegistryImpl;
+import io.github.gunpowder.mixinterfaces.SignTypeBE;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -39,19 +16,21 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(SignBlockEntity.class)
-public abstract class SignBlockEntityMixin_Base extends BlockEntity {
+public abstract class SignBlockEntityMixin_Base extends BlockEntity implements SignTypeBE {
     public SignBlockEntityMixin_Base(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -59,23 +38,51 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity {
     @Shadow
     public abstract void setTextOnRow(int row, Text text);
 
-    @Shadow @Final private Text[] texts;
+    @Shadow @Final
+    private Text[] texts;
 
-    @Shadow @Nullable private UUID editor;
+    @Shadow @Nullable
+    private UUID editor;
+
+    private SignType gpSignType;
 
     @Inject(method = "onActivate", at = @At("HEAD"), cancellable = true)
     void activate(ServerPlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
-        SignTypeComponent comp = ComponentsKt.with(this, SignTypeComponent.class);
-        if (comp.onActivate(player)) {
-            cir.setReturnValue(true);
+        if (gpSignType != null) {
+            gpSignType.onClick((SignBlockEntity)(Object)this, player);
         }
     }
 
     @Inject(method = "setTextColor", at = @At("RETURN"))
     void keepHeaderColor(DyeColor value, CallbackInfoReturnable<Boolean> cir) {
-        SignTypeComponent comp = ComponentsKt.with(this, SignTypeComponent.class);
-        if (comp.getCustom()) {
-            setTextOnRow(0, new LiteralText(texts[0].asString()).styled((s) -> s.withColor(Formatting.BLUE)));
+        if (gpSignType != null) {
+            setTextOnRow(0, new LiteralText(texts[0].asString()).styled(s -> s.withColor(Formatting.BLUE)));
+        }
+    }
+
+    @Inject(method="readNbt", at=@At("HEAD"))
+    void readSignData(NbtCompound nbt, CallbackInfo ci) {
+        NbtCompound tag = nbt.getCompound("gp:signdata");
+        if (tag != null) {
+            String id = tag.getString("gp:signtypeid");
+            SimpleRegistry<SignType> reg = GunpowderRegistryImpl.INSTANCE.getSignRegistry();
+            Identifier[] ids = reg.idToEntry.keySet().stream().filter(j -> j.getPath().equals(id)).toArray(Identifier[]::new);
+            Optional<SignType> typ = reg.getOrEmpty(new Identifier(id));
+            SignType type = typ.orElseGet(() -> reg.get(ids[0]));
+            if (type != null) {
+                type.deserialize((SignBlockEntity) (Object) this, tag);
+            }
+            gpSignType = type;
+        }
+    }
+
+    @Inject(method="writeNbt", at=@At("HEAD"))
+    void writeSignData(NbtCompound nbt, CallbackInfo ci) {
+        if (gpSignType != null) {
+            NbtCompound tag = new NbtCompound();
+            gpSignType.serialize((SignBlockEntity) (Object) this, tag);
+            tag.putString("gp:signtypeid", gpSignType.getId().toString());
+            nbt.put("gp:signdata", tag);
         }
     }
 
@@ -86,10 +93,15 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity {
 
         String header = texts[0].asString();
         if (header.startsWith("[") && header.endsWith("]")) {
+            SimpleRegistry<SignType> reg = GunpowderRegistryImpl.INSTANCE.getSignRegistry();
             String signId = header.substring(1, header.length() - 1);
-            Identifier[] ids = SignType.Companion.getRegistry().idToEntry.keySet().stream().filter((id) -> id.getPath().equals(signId)).toArray(Identifier[]::new);
-            Optional<io.github.gunpowder.api.builders.SignType> typ = SignType.Companion.getRegistry().getOrEmpty(new Identifier(signId));
-            ServerPlayerEntity player = GunpowderMod.getInstance().getServer().getPlayerManager().getPlayer(editor);
+            Identifier[] ids = reg.idToEntry.keySet().stream().filter(id -> id.getPath().equals(signId)).toArray(Identifier[]::new);
+            Optional<SignType> typ = reg.getOrEmpty(new Identifier(signId));
+            ServerPlayerEntity player = GunpowderRegistryImpl.INSTANCE.getServer().getPlayerManager().getPlayer(editor);
+
+            if (player == null) {
+                return;
+            }
 
             if (ids.length > 1 && typ.isEmpty()) {
                 // Multiple options, error
@@ -101,14 +113,29 @@ public abstract class SignBlockEntityMixin_Base extends BlockEntity {
                 return;
             }
 
-            SignType type = (SignType) typ.orElseGet(() -> SignType.Companion.getRegistry().get(ids[0]));
+            SignType type = typ.orElseGet(() -> reg.get(ids[0]));
 
-            if (type != null && type.getConditionEvent().invoke((SignBlockEntity) (Object) this, player)) {
-                setTextOnRow(0, new LiteralText(header).styled((s) -> s.withColor(Formatting.BLUE)));
-                type.getCreateEvent().invoke((SignBlockEntity) (Object) this, player);
-                SignTypeComponent comp = ComponentsKt.with(this, SignTypeComponent.class);
-                comp.create(editor, type);
+            if (type != null && type.canCreate((SignBlockEntity) (Object) this, player)) {
+                setTextOnRow(0, new LiteralText(header).styled(s -> s.withColor(Formatting.BLUE)));
+                type.onCreate((SignBlockEntity) (Object) this, player);
+                this.gpSignType = type;
             }
         }
+    }
+
+    @Override
+    public boolean isCustom() {
+        return gpSignType != null;
+    }
+
+    @Override
+    public boolean isCreator(@Nullable PlayerEntity player) {
+        return player != null && editor != null && editor.equals(player.getUuid());
+    }
+
+    @Nullable
+    @Override
+    public SignType getSignType() {
+        return gpSignType;
     }
 }

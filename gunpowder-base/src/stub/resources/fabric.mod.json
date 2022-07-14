@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "gunpowder-api",
+  "version": "${version}",
+  "name": "Gunpowder API",
+  "description": "The API jar for Gunpowder",
+  "license": "MIT",
+  "icon": "assets/gunpowder/icon.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.14.8",
+    "fabric": ">=0.57.0",
+    "fabric-language-kotlin": "*"
+  },
+  "conflicts": {
+    "carpet": "*",
+    "immersive-portals": "*"
+  }
+}

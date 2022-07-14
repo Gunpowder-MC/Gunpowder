@@ -1,51 +1,47 @@
-# gradle
-
-.gradle/
+.gradle
 build/
-out/
-classes/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# eclipse
-
-*.launch
-
-# idea
-
-.idea/
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
 *.iml
 *.ipr
-*.iws
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-# vscode
-
-.settings/
-.vscode/
-bin/
+### Eclipse ###
+.apt_generated
 .classpath
+.factorypath
 .project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
-# fabric
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
-run/
-# remappedSrc is for migrate mappings
-remappedSrc/
-logs/
+### VS Code ###
+.vscode/
 
-# Mac Os
+### Mac OS ###
+.DS_Store
 
-.DS_Store # Folder Info
-.Trashes # Files to be deleted
-.AppleDouble # File System Fork
-Icon? # Folder icon
-._* # Thumbnail fikes
-.Spotlight-V100 # File System Indexer
-.fseventsd # File System Info
-.TemperoryItems # Temperory Items
-Thumbs.db # Random generated file
-
-# VM Crash logs
-
-hs_err_pid*
-
-# CF key
-secrets.gradle
+### Custom ###
+gradle-local.properties
+.idea/
+**/run/

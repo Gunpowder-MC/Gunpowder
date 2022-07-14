@@ -1,3 +1,10 @@
+## Gunpowder 2.0.0
+
+- Finally do a major rewrite
+- Update to 1.18.2
+
+---
+
 ## Gunpowder 1.2.0.2
 
 Publish the proper jars
@@ -44,8 +51,8 @@ Misc:
 New features:
 
 - (Arguments) Server-side argument types
-  - This is mostly code from Colonel updated and reworked
-    and will serve as placeholder until updated.
+    - This is mostly code from Colonel updated and reworked
+      and will serve as placeholder until updated.
 
 Misc:
 
@@ -60,11 +67,11 @@ New features:
 - (Help) Reworked /help to add pagination
 - (Component) Added ticking components
 - (Component) Added support for serialization in more places
-  
+
 Improvements:
 
 - (Gradle) Re-enable licenser
-- (Component) Reworked internals 
+- (Component) Reworked internals
 
 ---
 
@@ -73,7 +80,7 @@ Improvements:
 New Features:
 
 - Added component system
-- Added module for tables and components 
+- Added module for tables and components
 
 Improvements:
 
@@ -102,7 +109,7 @@ Other:
 
 New Features:
 
-- (Misc) Added utility methods for non-persistant custom properties 
+- (Misc) Added utility methods for non-persistant custom properties
 - (ChestGUI) Added utility methods for guis (credit to @williambl)
 
 Other:
@@ -128,8 +135,8 @@ Bugs fixed:
 New Features:
 
 - (Database) Added two new column types:
-  - ItemStack
-  - CompoundTag
+    - ItemStack
+    - CompoundTag
 
 Improvements:
 
@@ -157,7 +164,7 @@ Bugs fixed:
 New Features:
 
 - Added the ability to specify spawners for worlds.
-  - The old method is now marked as deprecated.
+    - The old method is now marked as deprecated.
 
 Improvements:
 
@@ -178,7 +185,7 @@ Bugs fixed:
 
 New Features:
 - Specify database in gunpowder.yaml
-  - THIS IS A BREAKING CHANGE! OLD CONFIGS WILL NOT LOAD!
+    - THIS IS A BREAKING CHANGE! OLD CONFIGS WILL NOT LOAD!
 
 ---
 
@@ -255,7 +262,7 @@ Improvements:
 
 Other:
 
-- (misc) Made errors in commands log the full error 
+- (misc) Made errors in commands log the full error
 
 ---
 

@@ -4,54 +4,63 @@ Gunpowder aims to provide an all-in-one API for your server modding needs.
 
 ## Support
 
-If you find a bug or want to suggest a feature, go to the [Issues tab](https://github.com/Gunpowder-MC/Gunpowder/issues)
-If the bug is related to one of our modules, go to that specific module [here](https://github.com/Gunpowder-MC)
-If you want to ask for help and/or clarify a bug, or even contribute to the project, you can find us on the [AOF discord in #gunpowder](https://discord.gg/6rkdm48)
-
-## Official modules
-
-- [Gunpowder Currency](https://www.curseforge.com/minecraft/mc-mods/gunpowder-currency)
-- [Gunpowder Market](https://www.curseforge.com/minecraft/mc-mods/gunpowder-market)
-- [Gunpowder Teleport](https://www.curseforge.com/minecraft/mc-mods/gunpowder-teleport)
-- [Gunpowder Sleepvote](https://www.curseforge.com/minecraft/mc-mods/gunpowder-sleepvote)
-- [Gunpowder Utilities](https://www.curseforge.com/minecraft/mc-mods/gunpowder-utilities)
+If you find a bug or want to suggest a feature, go to the [Youtrack Page](https://youtrack.martmists.com/issues/Gunpowder)
 
 ## License
 
-This mod is available under the [MIT license](LICENSE).
-
-## Contributing
-
-More information will be provided soon. Contributions should follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
+Gunpowder for 1.18.2 and above is licensed under the BSD-3-Clause license.
+Gunpowder for prior versions is licensed under the MIT license.
 
 ## Extending
 
-If you want to use Gunpowder, use our [template project](https://github.com/gunpowder-mc/gunpowdertemplate) or follow the steps below:
+If you want to use Gunpowder, use our [template project](https://github.com/Gunpowder-MC/GunpowderTemplate) or follow the steps below:
 
-Add the following to your build.gradle:
-
-```gradle
+Add the following to your build.gradle.kts:
+    
+```kotlin
 dependencies {
-    modApi "io.github.gunpowder:gunpowder-api:${gunpowder_version}+${minecraft_version}"
+    modCompileOnly("io.github.gunpowder:gunpowder:${gunpowder_version}+${minecraft_version}")
+    modRuntimeOnly("io.github.gunpowder:gunpowder:${gunpowder_version}+${minecraft_version}:runtime")
 }
 
 repositories {
-    maven {
-        name = "Gunpowder"
-        url = "https://maven.martmists.com/releases"
+    maven("https://maven.martmists.com/releases")
+    maven("https://maven.martmists.com/snapshots")  // For development builds
+}
+
+// If you wish to autogenerate a mixins.json:
+plugins {
+    kotlin("kapt")
+}
+
+dependencies {
+    kapt("io.github.gunpowder:gunpowder-processor:${gunpowder_version}")
+}
+
+kapt {
+    arguments {
+        // Package where mixins and plugins are located 
+        arg("mixin.package", "io.github.gunpowder.mixin")
+        
+        // all mixins are in package `${mixin.package}.${mixin.name}`, so here `io.github.gunpowder.mixin.base`
+        arg("mixin.name", "base")
+        
+        // We don't have a mixin plugin. Set to true if you do. 
+        // Should be located at `${mixin.package}.plugin.${mixin.name.capitalized()}ModulePlugin`, 
+        // so here io.github.gunpowder.mixin.base.BaseModulePlugin
+        arg("mixin.plugin", "false")
     }
 }
 ```
 
-Create a class extending GunpowderModule (e.g. com.example.ExampleModule), and then fabric.mod.json, add:
+Create a class extending GunpowderModule (e.g. com.example.ExampleModule) and add it to your fabric.mod.json:
 
 ```json
 {
-  "entrypoints": {
-    "gunpowder:modules": [
-      "com.example.ExampleModule"
-    ]  
-  }
+    "entrypoints": {
+        "gunpowder:module": [
+          "com.example.ExampleModule"
+        ]  
+    }
 }
 ```
-

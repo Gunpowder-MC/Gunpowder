@@ -1,33 +1,7 @@
-/*
- * MIT License
- *
- * Copyright (c) GunpowderMC
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package io.github.gunpowder.mixin.base;
 
-import io.github.gunpowder.api.GunpowderMod;
-import io.github.gunpowder.entities.DimensionManager;
-import io.github.gunpowder.entities.builtin.PlayerHandler;
-import io.github.gunpowder.cast.SyncPlayer;
+import io.github.gunpowder.mixinterfaces.SyncPlayer;
+import io.github.gunpowder.mod.GunpowderRegistryImpl;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
@@ -36,7 +10,6 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.biome.source.BiomeAccess;
@@ -56,34 +29,26 @@ public abstract class ServerPlayNetworkHandlerMixin_Base {
 
     @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
     void appendPackets(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> listener, CallbackInfo ci) {
-        if (packet instanceof PlayerRespawnS2CPacket) {
-            if (((SyncPlayer) player).needsSync()) {
-                GunpowderMod.getInstance().getLogger().info("Player needs sync, sending packets");
-                sendPacket(new GameJoinS2CPacket(
-                        player.getId(),
-                        player.world.getLevelProperties().isHardcore(),
-                        player.interactionManager.getGameMode(),
-                        player.interactionManager.getPreviousGameMode(),
-                        DimensionManager.INSTANCE.getServer().getWorldRegistryKeys(),
-                        DimensionManager.INSTANCE.getServer().registryManager,
-                        new RegistryEntry.Direct<>(player.world.getDimension()),
-                        player.world.getRegistryKey(),
-                        BiomeAccess.hashSeed(player.getWorld().getSeed()),
-                        DimensionManager.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(),
-                        DimensionManager.INSTANCE.getServer().getPlayerManager().getViewDistance(),
-                        DimensionManager.INSTANCE.getServer().getPlayerManager().getSimulationDistance(),
-                        player.world.getGameRules().getBoolean(GameRules.REDUCED_DEBUG_INFO),
-                        !player.world.getGameRules().getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
-                        player.world.isDebugWorld(),
-                        player.getWorld().isFlat()));
-                sendPacket(new CloseScreenS2CPacket(0));
-                ((SyncPlayer) player).setNeedsSync(false);
-            }
+        if (packet instanceof PlayerRespawnS2CPacket && ((SyncPlayer) player).needsSync()) {
+            sendPacket(new GameJoinS2CPacket(
+                    player.getId(),
+                    player.world.getLevelProperties().isHardcore(),
+                    player.interactionManager.getGameMode(),
+                    player.interactionManager.getPreviousGameMode(),
+                    GunpowderRegistryImpl.INSTANCE.getServer().getWorldRegistryKeys(),
+                    GunpowderRegistryImpl.INSTANCE.getServer().registryManager,
+                    new RegistryEntry.Direct<>(player.world.getDimension()),
+                    player.world.getRegistryKey(),
+                    BiomeAccess.hashSeed(player.getWorld().getSeed()),
+                    GunpowderRegistryImpl.INSTANCE.getServer().getPlayerManager().getMaxPlayerCount(),
+                    GunpowderRegistryImpl.INSTANCE.getServer().getPlayerManager().getViewDistance(),
+                    GunpowderRegistryImpl.INSTANCE.getServer().getPlayerManager().getSimulationDistance(),
+                    player.world.getGameRules().getBoolean(GameRules.REDUCED_DEBUG_INFO),
+                    !player.world.getGameRules().getBoolean(GameRules.DO_IMMEDIATE_RESPAWN),
+                    player.world.isDebugWorld(),
+                    player.getWorld().isFlat()));
+            sendPacket(new CloseScreenS2CPacket(0));
+            ((SyncPlayer) player).setNeedsSync(false);
         }
-    }
-
-    @Inject(method = "onDisconnected", at=@At("HEAD"))
-    void setLastSeen(Text reason, CallbackInfo ci) {
-        PlayerHandler.INSTANCE.lastSeenPlayer(player);
     }
 }
