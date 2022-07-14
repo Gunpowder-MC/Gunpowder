@@ -6,7 +6,7 @@ import org.koin.core.component.inject
 
 abstract class GunpowderModule : KoinComponent {
     abstract val name: String
-    abstract val priority: Int
+    open val priority: Int = 1000
 
     var enabled: Boolean = false
         internal set
@@ -14,6 +14,8 @@ abstract class GunpowderModule : KoinComponent {
 
     val gunpowder by inject<GunpowderMod>()
     val database by inject<GunpowderDatabase>()
+    val registry by inject<GunpowderRegistry>()
+    val scheduler by inject<GunpowderScheduler>()
 
     open fun onLoad() { }
     open fun onEnable() { }

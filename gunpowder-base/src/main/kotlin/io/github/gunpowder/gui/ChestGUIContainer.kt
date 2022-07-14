@@ -12,10 +12,6 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-import kotlin.concurrent.thread
 
 class ChestGUIContainer(syncId: Int, playerInv: PlayerInventory, private val gui: ChestGUI) : GenericContainerScreenHandler(getType(gui.rows),  syncId, playerInv, SimpleInventory(9 * gui.rows), gui.rows), KoinComponent {
     private val player = playerInv.player

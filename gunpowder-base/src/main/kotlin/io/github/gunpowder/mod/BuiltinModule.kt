@@ -28,7 +28,6 @@ import org.jetbrains.exposed.sql.SchemaUtils
 
 object BuiltinModule : GunpowderModule() {
     override val name = "base"
-    override val priority = 1000
 
     override fun onLoad() {
         commands {
