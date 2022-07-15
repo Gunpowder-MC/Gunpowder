@@ -24,6 +24,7 @@ jobs:
           echo "publishSnapshot=false" >> gradle-local.properties
           echo "publishUser=github-actions" >> gradle-local.properties
           echo "publishPassword=${{ secrets.DEPLOY_KEY }}" >> gradle-local.properties
+          echo "publishVersion=$(git describe --tags)" >> gradle-local.properties
           echo "curseToken=${{ secrets.CURSE_TOKEN }}" >> gradle-local.properties
 
       - name: Build mod

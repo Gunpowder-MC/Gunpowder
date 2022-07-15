@@ -29,7 +29,7 @@ jobs:
           echo "publishSnapshot=true" >> gradle-local.properties
           echo "publishUser=github-actions" >> gradle-local.properties
           echo "publishPassword=${{ secrets.DEPLOY_KEY }}" >> gradle-local.properties
-          echo "publishVersion=${{ github.sha }}" >> gradle-local.properties
+          echo "publishVersion=$(git log -1 --pretty=format:%h)" >> gradle-local.properties
           echo "curseToken=${{ secrets.CURSE_TOKEN }}" >> gradle-local.properties
 
 

@@ -204,7 +204,7 @@ if ((publishEnabled ?: "false").toBoolean()) {
                 }
 
                 mainArtifact(tasks.getByName<RemapJarTask>("remapJar").archiveFile, closureOf<CurseArtifact> {
-                    displayName = "gunpowder-${publishVersion?.let { "$it+${minecraftVersion}" } ?: project.version.toString()}.jar"
+                    displayName = "gunpowder-${project.version}${if (publishSnapshot.toBoolean()) "-$publishVersion" else ""}.jar"
                 })
             })
 
