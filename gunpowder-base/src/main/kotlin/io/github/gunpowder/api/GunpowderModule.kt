@@ -17,14 +17,23 @@ abstract class GunpowderModule : KoinComponent {
     val registry by inject<GunpowderRegistry>()
     val scheduler by inject<GunpowderScheduler>()
 
+    // Always called
     open fun onLoad() { }
+
+    // Called when the module is set to enabled (or on server start if it was already enabled)
     open fun onEnable() { }
+
+    // Called when the module is set to disabled
     open fun onDisable() { }
+
+    // Called on /reload, ONLY if the module is enabled
+    open fun onReload() { }
 
     private object Builders : KoinComponent {
         val commands by inject<CommandBuilderContext>()
     }
 
+    // Commands registered this way are automatically disabled when the module is disabled
     fun commands(block: CommandBuilderContext.() -> Unit) {
         block(Builders.commands)
     }

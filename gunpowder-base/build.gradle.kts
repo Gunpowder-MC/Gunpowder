@@ -1,12 +1,11 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.martmists.commons.*
+import com.martmists.commons.commonJVMModule
+import com.martmists.commons.martmistsPublish
+import com.matthewprenger.cursegradle.CurseArtifact
 import com.matthewprenger.cursegradle.CurseProject
 import com.matthewprenger.cursegradle.CurseRelation
 import groovy.lang.Closure
 import net.fabricmc.loom.task.RemapJarTask
-import net.fabricmc.loom.task.service.MixinMappingsService
-import net.fabricmc.loom.util.Constants
-import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -17,7 +16,6 @@ plugins {
     kotlin("kapt")
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.matthewprenger.cursegradle") version "1.4.0"
-    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
 }
 
 val minecraftVersion = "1.18.2"
@@ -107,7 +105,7 @@ tasks {
         }
     }
 
-    named<ProcessResources>("processResources") {
+    withType<ProcessResources> {
         dependsOn("kaptKotlin")
 
         filesMatching("fabric.mod.json") {
@@ -146,9 +144,6 @@ tasks {
 }
 
 val publishEnabled: String? by project
-
-println("Publish enabled: $publishEnabled")
-
 if ((publishEnabled ?: "false").toBoolean()) {
     val publishUser: String by project
     val publishPassword: String by project
@@ -157,14 +152,14 @@ if ((publishEnabled ?: "false").toBoolean()) {
 
     publishing {
         repositories {
-            martmistsPublish(publishUser, publishPassword, publishSnapshot.toBoolean())
+             martmistsPublish(publishUser, publishPassword, publishSnapshot.toBoolean())
         }
 
         publications {
             create<MavenPublication>("jvm") {
-                groupId = project.group as String
+                groupId = project.group.toString()
                 artifactId = rootProject.name
-                version = publishVersion ?: project.version as String
+                version = publishVersion?.let { "$it+${minecraftVersion}" } ?: project.version.toString()
 
                 artifact(tasks.named("apiJar")) {
                     classifier = ""
@@ -208,7 +203,9 @@ if ((publishEnabled ?: "false").toBoolean()) {
                     })
                 }
 
-                mainArtifact(tasks.getByName<RemapJarTask>("remapJar").archiveFile)
+                mainArtifact(tasks.getByName<RemapJarTask>("remapJar").archiveFile, closureOf<CurseArtifact> {
+                    displayName = "gunpowder-${publishVersion?.let { "$it+${minecraftVersion}" } ?: project.version.toString()}.jar"
+                })
             })
 
             curseGradleOptions.apply {

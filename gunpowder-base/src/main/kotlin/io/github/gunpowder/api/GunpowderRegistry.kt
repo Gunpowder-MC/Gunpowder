@@ -41,7 +41,7 @@ interface GunpowderRegistry {
     fun getLinkedWorlds(): BiMap<RegistryKey<World>, RegistryKey<World>>
 
     // == Config files ==
-    fun <T> config(path: String, clazz: Class<T>): Delegate<T>
+    fun <T: Any> config(path: String, clazz: Class<T>): Delegate<T>
 
     // == Sign Types ==
     fun register(signType: SignType)
@@ -50,4 +50,4 @@ interface GunpowderRegistry {
     fun register(argumentType: ServerArgumentType<*>)
 }
 
-inline fun <reified T> GunpowderRegistry.config(path: String) = config(path, T::class.java)
+inline fun <reified T: Any> GunpowderRegistry.config(path: String) = config(path, T::class.java)

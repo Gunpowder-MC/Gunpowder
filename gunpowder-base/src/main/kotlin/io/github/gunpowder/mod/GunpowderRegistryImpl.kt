@@ -254,11 +254,13 @@ object GunpowderRegistryImpl : GunpowderRegistry, KoinComponent {
         }
     }
 
-    override fun <T> config(path: String, clazz: Class<T>): Delegate<T> {
+    override fun <T : Any> config(path: String, clazz: Class<T>): Delegate<T> {
         val default = clazz.getResourceAsStream(path) ?: throw IllegalArgumentException("No such resource in classpath: $path")
         val file = File("${FabricLoader.getInstance().configDir.toFile().absolutePath}/$path")
         return Delegate { _, _ ->
-            return@Delegate loader.load(file, clazz, default)
+            BuiltinModule.configCache.getOrPut(path) {
+                loader.load(file, clazz, default)
+            } as T
         }
     }
 

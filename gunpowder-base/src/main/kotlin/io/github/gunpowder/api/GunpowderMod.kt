@@ -7,4 +7,6 @@ interface GunpowderMod {
     val modules: List<GunpowderModule>
     val server: MinecraftServer
     val registry: GunpowderRegistry
+    val database: GunpowderDatabase
+    val scheduler: GunpowderScheduler
 }

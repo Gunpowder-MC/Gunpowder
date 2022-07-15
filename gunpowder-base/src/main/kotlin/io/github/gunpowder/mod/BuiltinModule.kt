@@ -29,6 +29,8 @@ import org.jetbrains.exposed.sql.SchemaUtils
 object BuiltinModule : GunpowderModule() {
     override val name = "base"
 
+    internal val configCache = mutableMapOf<String, Any>()
+
     override fun onLoad() {
         commands {
             HelpCommand.build()
@@ -72,5 +74,9 @@ object BuiltinModule : GunpowderModule() {
                 })
             }
         }
+    }
+
+    override fun onReload() {
+        configCache.clear()
     }
 }

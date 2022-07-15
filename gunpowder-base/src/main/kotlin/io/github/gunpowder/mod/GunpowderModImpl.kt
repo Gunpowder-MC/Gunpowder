@@ -15,6 +15,7 @@ import io.github.gunpowder.exposed.ColumnHandlerImpl
 import io.github.gunpowder.gui.ChestGUIOpenerImpl
 import io.github.gunpowder.mod.database.GunpowderDatabaseImpl
 import io.github.gunpowder.mod.tables.ModuleTable
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
@@ -29,6 +30,8 @@ abstract class GunpowderModImpl(database: () -> GunpowderDatabase) : GunpowderMo
     private val logger by logger()
     override val modules = mutableListOf<GunpowderModule>()
     override val registry = GunpowderRegistryImpl
+    override val database by inject<GunpowderDatabase>()
+    override val scheduler by inject<GunpowderScheduler>()
 
     private val koinModule = module {
         // Gunpowder internals
@@ -46,9 +49,6 @@ abstract class GunpowderModImpl(database: () -> GunpowderDatabase) : GunpowderMo
         single<SidebarBuilderContext> { SidebarBuilderContextImpl }
         single<TextBuilderContext> { TextBuilderContextImpl }
     }
-
-    private val database by inject<GunpowderDatabase>()
-    private val scheduler by inject<GunpowderScheduler>()
 
     protected fun onInitialize() {
         startKoin {
@@ -100,11 +100,18 @@ abstract class GunpowderModImpl(database: () -> GunpowderDatabase) : GunpowderMo
             }
         }
 
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register { _, _ ->
+            for (module in modules) {
+                if (module.enabled) {
+                    module.onReload()
+                }
+            }
+        }
+
         for (container in FabricLoader.getInstance().getEntrypointContainers("gunpowder:module", GunpowderModule::class.java).sortedBy { it.entrypoint.priority }) {
             val module = container.entrypoint
             modules.add(module)
 
-            println("Loading module ${module.name}")
             logger.info("Loading module ${module.name} from mod ${container.provider.metadata.name} (${container.provider.metadata.id})")
             module.onLoad()
         }
