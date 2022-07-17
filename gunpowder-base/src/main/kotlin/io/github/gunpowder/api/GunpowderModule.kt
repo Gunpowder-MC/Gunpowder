@@ -9,7 +9,14 @@ abstract class GunpowderModule : KoinComponent {
     open val priority: Int = 1000
 
     var enabled: Boolean = false
-        internal set
+        internal set(value) {
+            field = value
+            if (field) {
+                onEnable()
+            } else {
+                onDisable()
+            }
+        }
     open val toggleable = false
 
     val gunpowder by inject<GunpowderMod>()
@@ -20,10 +27,14 @@ abstract class GunpowderModule : KoinComponent {
     // Always called
     open fun onLoad() { }
 
-    // Called when the module is set to enabled (or on server start if it was already enabled)
+    // Called when:
+    // - the module is set to enabled
+    // - on server start if it wasn't previously disabled or if it's not toggleable
     open fun onEnable() { }
 
-    // Called when the module is set to disabled
+    // Called when:
+    // - the module is set to disabled
+    // - on server shutdown
     open fun onDisable() { }
 
     // Called on /reload, ONLY if the module is enabled

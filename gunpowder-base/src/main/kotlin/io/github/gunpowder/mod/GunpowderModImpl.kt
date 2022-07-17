@@ -80,23 +80,18 @@ abstract class GunpowderModImpl(database: () -> GunpowderDatabase) : GunpowderMo
 
                     if (enabled) {
                         module.enabled = true
-                        module.onEnable()
-                    } else {
+                    } else if (module.enabled) {
                         logger.debug("Module ${module.name} is marked as disabled, not enabling...")
                     }
                 } else {
                     module.enabled = true
-                    module.onEnable()
                 }
             }
         }
 
         DatabaseEvents.DATABASE_CLOSED.register {
             for (module in modules) {
-                if (module.toggleable) {
-                    module.enabled = false
-                    module.onDisable()
-                }
+                module.enabled = false
             }
         }
 

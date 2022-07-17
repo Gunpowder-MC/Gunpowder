@@ -2,6 +2,7 @@ package io.github.gunpowder.mod
 
 import com.martmists.commons.logging.logger
 import io.github.gunpowder.api.GunpowderScheduler
+import io.github.gunpowder.api.types.CancellableTask
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import java.time.LocalDateTime
 import java.time.temporal.UnsupportedTemporalTypeException
@@ -19,7 +20,13 @@ class GunpowderSchedulerImpl(private val poolSize: Int) : GunpowderScheduler {
     private lateinit var pool: List<Thread>
 
     data class Entry(val task: Task, val runAt: LocalDateTime)
-    data class Task(val interval: io.github.gunpowder.api.types.TimeUnit, val check: () -> Boolean, val onComplete: () -> Unit, val block: () -> Unit)
+    inner class Task(val interval: io.github.gunpowder.api.types.TimeUnit, val check: () -> Boolean, val onComplete: () -> Unit, val block: () -> Unit) : CancellableTask {
+        override fun cancel() {
+            schedule.removeIf {
+                it.task === this
+            }
+        }
+    }
 
     private fun createPool() = List(poolSize) {
         thread(start = false, isDaemon = true, name = "Gunpowder Scheduler Thread #$it") {
@@ -98,8 +105,10 @@ class GunpowderSchedulerImpl(private val poolSize: Int) : GunpowderScheduler {
         check: () -> Boolean,
         onComplete: () -> Unit,
         block: () -> Unit
-    ) {
-        schedule.add(Entry(Task(interval, check, onComplete, block), LocalDateTime.now().plus(runAfter.value, runAfter.unit)))
+    ): CancellableTask {
+        val task = Task(interval, check, onComplete, block)
+        schedule.add(Entry(task, LocalDateTime.now().plus(runAfter.value, runAfter.unit)))
+        return task
     }
 
     fun setupListeners() {

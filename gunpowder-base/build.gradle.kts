@@ -135,6 +135,7 @@ tasks {
         from(sourceSets["stub"].output)
         from(zipTree(remapJar.archiveFile)) {
             include("io/github/gunpowder/api/**")
+            include("META-INF/${project.name}.kotlin_module")
         }
     }
 
