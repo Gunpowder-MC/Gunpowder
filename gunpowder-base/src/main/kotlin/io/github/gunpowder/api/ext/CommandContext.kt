@@ -2,7 +2,9 @@ package io.github.gunpowder.api.ext
 
 import com.mojang.brigadier.context.CommandContext
 import io.github.gunpowder.api.builders.TextBuilderContext
+import me.lucko.fabric.api.permissions.v0.Options
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.server.network.ServerPlayerEntity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

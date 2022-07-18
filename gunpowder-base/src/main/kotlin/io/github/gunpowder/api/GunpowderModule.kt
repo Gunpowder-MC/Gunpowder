@@ -40,12 +40,16 @@ abstract class GunpowderModule : KoinComponent {
     // Called on /reload, ONLY if the module is enabled
     open fun onReload() { }
 
+    internal interface CommandBuilderContextProvider {
+        fun get(module: GunpowderModule): CommandBuilderContext
+    }
+
     private object Builders : KoinComponent {
-        val commands by inject<CommandBuilderContext>()
+        val commands by inject<CommandBuilderContextProvider>()
     }
 
     // Commands registered this way are automatically disabled when the module is disabled
     fun commands(block: CommandBuilderContext.() -> Unit) {
-        block(Builders.commands)
+        block(Builders.commands.get(this))
     }
 }

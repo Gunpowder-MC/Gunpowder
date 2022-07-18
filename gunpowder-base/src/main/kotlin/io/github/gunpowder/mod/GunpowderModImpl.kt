@@ -9,6 +9,7 @@ import io.github.gunpowder.api.events.DatabaseEvents
 import io.github.gunpowder.api.ext.ChestGUIOpener
 import io.github.gunpowder.api.ext.ColumnHandler
 import io.github.gunpowder.builders.CommandBuilderContextImpl
+import io.github.gunpowder.builders.CommandBuilderContextProviderImpl
 import io.github.gunpowder.builders.SidebarBuilderContextImpl
 import io.github.gunpowder.builders.TextBuilderContextImpl
 import io.github.gunpowder.exposed.ColumnHandlerImpl
@@ -45,7 +46,7 @@ abstract class GunpowderModImpl(database: () -> GunpowderDatabase) : GunpowderMo
         single<ChestGUIOpener> { ChestGUIOpenerImpl }
 
         // Builders
-        single<CommandBuilderContext> { CommandBuilderContextImpl }
+        single<GunpowderModule.CommandBuilderContextProvider> { CommandBuilderContextProviderImpl }
         single<SidebarBuilderContext> { SidebarBuilderContextImpl }
         single<TextBuilderContext> { TextBuilderContextImpl }
     }

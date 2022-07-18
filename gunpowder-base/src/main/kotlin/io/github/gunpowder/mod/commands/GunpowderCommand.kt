@@ -28,9 +28,10 @@ object GunpowderCommand : Command, KoinComponent {
     private val mod by inject<GunpowderMod>()
     private val db by inject<GunpowderDatabase>()
 
-    context(GunpowderModule, CommandBuilderContext)
-    override fun build() {
+    override fun CommandBuilderContext.build() {
         command("gunpowder") {
+            permission("gunpowder.info", true)
+
             executes {
                 source.player.showSidebar {
                     title("Gunpowder", Formatting.BOLD)
@@ -50,6 +51,8 @@ object GunpowderCommand : Command, KoinComponent {
             }
 
             literal("toggle") {
+                permission("gunpowder.toggle", 4)
+
                 argument("module", StringArgumentType.greedyString()) { module ->
                     executes {
                         val mod = mod.modules.firstOrNull { it.name == module() }

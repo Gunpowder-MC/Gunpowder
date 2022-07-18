@@ -21,9 +21,10 @@ object HelpCommand : Command {
     lateinit var dispatcher: CommandDispatcher<ServerCommandSource>
     private const val ITEMS_PER_PAGE = 12
 
-    context(GunpowderModule, CommandBuilderContext)
-    override fun build() {
+    override fun CommandBuilderContext.build() {
         command("help") {
+            permission("gunpowder.help", true)
+
             optArgument("page", IntegerArgumentType.integer(1)) { page ->
                 executes {
                     helpPage(page() ?: 1)

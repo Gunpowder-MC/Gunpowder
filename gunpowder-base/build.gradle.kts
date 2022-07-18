@@ -24,6 +24,7 @@ project.version = "${version}+${minecraftVersion}"
 
 repositories {
     maven("https://maven.nucleoid.xyz")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 val shade by configurations.creating
@@ -45,6 +46,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:1.8.0+kotlin.1.7.0")
 
     include(modApi("fr.catcore:server-translations-api:1.4.12+1.18.2")!!)
+    include(modApi("me.lucko:fabric-permissions-api:0.2-SNAPSHOT")!!)
 
     shade(api(commonJVMModule("logging")) {
         excludeKotlin()

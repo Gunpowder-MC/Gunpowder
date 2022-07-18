@@ -33,8 +33,8 @@ object BuiltinModule : GunpowderModule() {
 
     override fun onLoad() {
         commands {
-            HelpCommand.build()
-            GunpowderCommand.build()
+            load(HelpCommand)
+            load(GunpowderCommand)
         }
 
         DatabaseEvents.DATABASE_READY.register {
