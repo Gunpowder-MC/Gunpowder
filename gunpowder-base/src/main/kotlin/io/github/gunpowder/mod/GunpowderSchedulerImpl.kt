@@ -6,6 +6,7 @@ import io.github.gunpowder.api.types.CancellableTask
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import java.time.LocalDateTime
 import java.time.temporal.UnsupportedTemporalTypeException
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.PriorityBlockingQueue
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -21,10 +22,21 @@ class GunpowderSchedulerImpl(private val poolSize: Int) : GunpowderScheduler {
 
     data class Entry(val task: Task, val runAt: LocalDateTime)
     inner class Task(val interval: io.github.gunpowder.api.types.TimeUnit, val check: () -> Boolean, val onComplete: () -> Unit, val block: () -> Unit) : CancellableTask {
+        private val future = CompletableFuture<Unit>()
+
         override fun cancel() {
             schedule.removeIf {
                 it.task === this
             }
+        }
+
+        override fun get() {
+            future.get()
+        }
+
+        fun complete() {
+            future.complete(Unit)
+            onComplete()
         }
     }
 
@@ -66,10 +78,11 @@ class GunpowderSchedulerImpl(private val poolSize: Int) : GunpowderScheduler {
                                         )
                                     } catch (e: UnsupportedTemporalTypeException) {
                                         // ChronoUnit.FOREVER or similar, ignore because it shouldn't run again
+                                        task.complete()
                                     }
                                 }
                             } else {
-                                task.onComplete()
+                                task.complete()
                             }
                         } else {
                             // This task shouldn't run yet, add it back to the queue

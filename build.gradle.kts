@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.gunpowder"
-version = "2.0.3"
+version = "2.0.4"
 
 subprojects {
     buildDir = file(rootProject.buildDir.absolutePath + "/" + project.name)
